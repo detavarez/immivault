@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ImmiVault Ver001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#3A6B5C;--sage-d:#2C5246;--sage-l:#E6EFEB;--gold:#B8892B;--gold-l:#FBF3DF;--rose:#B23A48;--rose-l:#FBE9EB;--ink:#1D2A26;--mute:#5B6A65;--line:#D8E0DC;--bg:#F6F8F7;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;margin:0 0 .5rem}
+header{background:var(--sage);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+header .brand{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:700}
+.ver{font-family:'DM Mono',monospace;background:#fff;color:var(--sage-d);border-radius:6px;padding:2px 8px;font-size:.85rem;font-weight:500}
+header .sp{flex:1}
+main{max-width:860px;margin:0 auto;padding:16px 16px 96px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0}
+.btn{font:inherit;font-weight:500;border:1px solid var(--sage);background:var(--sage);color:#fff;border-radius:8px;padding:10px 16px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--sage-d)}
+.btn.sec{background:#fff;color:var(--sage-d)}
+.btn.warn{background:var(--gold);border-color:var(--gold)}
+.btn.sm{padding:6px 10px;min-height:36px;font-size:.9rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+header .btn{background:transparent;border-color:#fff;min-height:36px;padding:4px 10px}
+label{display:block;font-weight:500;margin:12px 0 4px}
+input,select,textarea{width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;min-height:44px}
+input:focus,select:focus,textarea:focus,.btn:focus{outline:3px solid #9CC3B5;outline-offset:1px}
+textarea{min-height:90px}
+.help{color:var(--mute);font-size:.88rem;margin-top:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.yn{display:flex;gap:8px}
+.yn label{flex:1;margin:0;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-weight:500;background:#fff}
+.yn input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}
+.yn label{position:relative}
+.yn label:has(input:focus-visible){outline:3px solid #9CC3B5;outline-offset:1px}
+.yn input:checked+span{color:#fff}
+.yn label:has(input:checked){background:var(--sage);color:#fff;border-color:var(--sage)}
+.yn label.no:has(input:checked){background:var(--ink);border-color:var(--ink)}
+.banner{border-radius:10px;padding:12px 14px;margin:12px 0;border:1px solid}
+.banner.gold{background:var(--gold-l);border-color:var(--gold)}
+.banner.rose{background:var(--rose-l);border-color:var(--rose)}
+.banner.sage{background:var(--sage-l);border-color:var(--sage)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;justify-content:space-between;align-items:center;z-index:5}
+.nav .mid{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--mute);text-align:center;flex:1}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0 16px}
+.bar i{display:block;height:100%;background:var(--sage)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row .grow{flex:1}
+.item{border:1px dashed var(--line);border-radius:10px;padding:12px;margin:10px 0;background:#FAFCFB}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700;font-family:'DM Mono',monospace}
+.pill.l{background:var(--sage-l);color:var(--sage-d)}.pill.w{background:var(--gold-l);color:#7A5A12}.pill.r{background:var(--rose-l);color:var(--rose)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+.mono{font-family:'DM Mono',monospace}
+.hide{display:none!important}
+.case{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.partnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.partnav button{font:inherit;font-size:.82rem;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px;cursor:pointer}
+.partnav button.on{background:var(--sage);color:#fff;border-color:var(--sage)}
+.partnav button.done{border-color:var(--sage)}
+@media print{header,.nav,.noprint{display:none!important}body{background:#fff}.card{border:0;padding:0}main{padding:0}}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">ImmiVault</span><span class="ver" id="ver"></span>
+  <span class="sp"></span>
+  <button class="btn" id="home" data-act="home"></button>
+  <button class="btn" id="lang" data-act="lang"></button>
+  <button class="btn" id="lock" data-act="lock"></button>
+</header>
+<main id="app"></main>
+<div class="nav hide" id="nav">
+  <button class="btn sec" data-act="prev" id="prev"></button>
+  <div class="mid" id="mid"></div>
+  <button class="btn" data-act="next" id="next"></button>
+</div>
+
+<script>
+const VER='Ver001';
+const KEY_ENC='immivault.enc.v1';
+const KEY_PLAIN='immivault.plain.v1';
+const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+const L=(en,es)=>({en,es});
+
+const UI={
+ home:L('Cases','Casos'),lock:L('Lock','Bloquear'),lang:L('Español','English'),
+ newCase:L('New case','Nuevo caso'),caseName:L('Person / case name','Nombre de la persona / caso'),
+ open:L('Open','Abrir'),del:L('Delete','Borrar'),confirmDel:L('Delete this case permanently?','¿Borrar este caso permanentemente?'),
+ noCases:L('No cases yet.','Aún no hay casos.'),
+ backup:L('Backup','Respaldo'),exportAll:L('Export all (JSON)','Exportar todo (JSON)'),importAll:L('Import backup','Importar respaldo'),
+ backupNote:L('Data lives only in this browser. Export a backup regularly.','Los datos viven solo en este navegador. Exporte un respaldo con regularidad.'),
+ setPass:L('Protect with a passphrase','Proteger con una contraseña'),passNote:L('Everything is encrypted in this browser with your passphrase. If you forget it, the data cannot be recovered.','Todo se cifra en este navegador con su contraseña. Si la olvida, los datos no se pueden recuperar.'),
+ passphrase:L('Passphrase','Contraseña'),unlock:L('Unlock','Desbloquear'),skipPass:L('Continue without a passphrase (not recommended)','Continuar sin contraseña (no recomendado)'),
+ setBtn:L('Set passphrase','Crear contraseña'),wrongPass:L('Wrong passphrase.','Contraseña incorrecta.'),minPass:L('Use at least 8 characters.','Use al menos 8 caracteres.'),
+ disclaimerTitle:L('Before you start','Antes de empezar'),
+ disclaimer:L('This tool helps organize information for Form N-400. It is not legal advice and does not replace an attorney or accredited representative. Verify every answer against the official USCIS form and instructions before filing.','Esta herramienta ayuda a organizar información para el Formulario N-400. No es asesoría legal y no reemplaza a un abogado o representante acreditado. Verifique cada respuesta con el formulario e instrucciones oficiales de USCIS antes de presentar.'),
+ ack:L('I understand','Entiendo'),
+ prev:L('Back','Atrás'),next:L('Next','Siguiente'),review:L('Review','Revisión'),
+ add:L('Add','Agregar'),remove:L('Remove','Quitar'),yes:L('Yes','Sí'),no:L('No','No'),select:L('Select…','Seleccione…'),required:L('Required','Obligatorio'),
+ explain:L('Explain (what, when, where, outcome)','Explique (qué, cuándo, dónde, resultado)'),
+ saved:L('Saved','Guardado'),
+ reviewTitle:L('Review','Revisión'),missing:L('Missing required answers','Respuestas obligatorias faltantes'),allComplete:L('All required answers are complete.','Todas las respuestas obligatorias están completas.'),
+ risk:L('Risk screen','Evaluación de riesgo'),score:L('Score','Puntuación'),
+ tier0:L('Log only','Solo registro'),tier1:L('Warning: review these answers carefully','Aviso: revise estas respuestas con cuidado'),tier2:L('Flagged: strongly consider an attorney before filing','Marcado: considere seriamente un abogado antes de presentar'),tier3:L('Attorney review required before filing','Se requiere revisión de un abogado antes de presentar'),tier4:L('Blocked: do not file without an attorney','Bloqueado: no presente sin un abogado'),
+ flagged:L('Answers that raised the score','Respuestas que aumentaron la puntuación'),
+ continueAnyway:L('I have read this and want to continue anyway','He leído esto y deseo continuar de todos modos'),
+ attorneyName:L('Reviewing attorney / representative','Abogado / representante que revisó'),attorneyDate:L('Review date','Fecha de revisión'),
+ elig:L('Eligibility screen','Evaluación de elegibilidad'),
+ eligNote:L('Screening only. Rules have exceptions; confirm with the official instructions or an attorney.','Solo orientativo. Las reglas tienen excepciones; confirme con las instrucciones oficiales o un abogado.'),
+ ageOk:L('Age 18 or older','Edad de 18 años o más'),earliest:L('Earliest filing date (90 days early rule)','Fecha más temprana para presentar (regla de 90 días)'),
+ daysIn:L('Days in the U.S. during the period (estimate)','Días en EE. UU. durante el período (estimado)'),needDays:L('Physical presence needed (half of period)','Presencia física requerida (mitad del período)'),
+ longTrip:L('Trip of 6+ months: continuous residence may be questioned','Viaje de 6+ meses: la residencia continua puede cuestionarse'),
+ breakTrip:L('Trip of 1+ year: continuous residence likely broken','Viaje de 1+ año: la residencia continua probablemente se interrumpió'),
+ noLpr:L('Enter the permanent resident date to compute dates.','Ingrese la fecha de residencia permanente para calcular fechas.'),
+ outputs:L('Outputs','Salidas'),print:L('Print answers worksheet','Imprimir hoja de respuestas'),exportCase:L('Export this case (JSON)','Exportar este caso (JSON)'),
+ fillPdf:L('Fill the official N-400 PDF','Llenar el PDF oficial del N-400'),
+ pdfNote:L('Upload the current official N-400 PDF from uscis.gov. Match each answer to a PDF field once; the mapping is saved on this device.','Suba el PDF oficial actual del N-400 de uscis.gov. Relacione cada respuesta con un campo del PDF una vez; la relación se guarda en este dispositivo.'),
+ uploadPdf:L('Choose the N-400 PDF','Elija el PDF del N-400'),autoMatch:L('Auto-match obvious fields','Relacionar campos obvios'),
+ download:L('Download filled PDF','Descargar PDF llenado'),pdfFields:L('PDF fields found','Campos del PDF encontrados'),
+ exportMap:L('Export mapping','Exportar relación'),importMap:L('Import mapping','Importar relación'),
+ answer:L('Answer','Respuesta'),pdfField:L('PDF field','Campo del PDF'),pdfFieldNo:L('PDF field for "No"','Campo del PDF para "No"'),none:L('— none —','— ninguno —'),
+ pdfLibFail:L('Could not load the PDF library (internet needed once).','No se pudo cargar la biblioteca PDF (se necesita internet).'),
+ blockedMsg:L('Output is blocked at this risk level.','La salida está bloqueada en este nivel de riesgo.'),
+ unlockNeeds:L('Complete the acknowledgement below to unlock outputs.','Complete la confirmación abajo para habilitar las salidas.'),
+ translateNote:L('Spanish text is a working translation; official form language is English.','El texto en español es una traducción de trabajo; el idioma oficial del formulario es inglés.'),
+ caseOf:L('Case','Caso'),part:L('Part','Parte'),of:L('of','de'),
+ filledN:L('fields filled','campos llenados')
+};
+
+const T=(o)=>{const lg=S.lang;return (o&&(o[lg]||o.en))||''};
+
+const OPT={
+ basis:[['general',L('General: 5 years as a permanent resident','General: 5 años como residente permanente')],['spouse',L('Married to a U.S. citizen for 3 years','Casado(a) con ciudadano(a) de EE. UU. por 3 años')],['military',L('Military service','Servicio militar')],['other',L('Other basis','Otra base')]],
+ gender:[['male',L('Male','Masculino')],['female',L('Female','Femenino')],['another',L('Another gender identity','Otra identidad de género')]],
+ ethnicity:[['hispanic',L('Hispanic or Latino','Hispano o latino')],['not',L('Not Hispanic or Latino','No hispano ni latino')]],
+ race:[['white',L('White','Blanco')],['asian',L('Asian','Asiático')],['black',L('Black or African American','Negro o afroamericano')],['native',L('American Indian or Alaska Native','Indígena americano o nativo de Alaska')],['pacific',L('Native Hawaiian or Pacific Islander','Nativo de Hawái o isleño del Pacífico')]],
+ eye:[['black',L('Black','Negros')],['blue',L('Blue','Azules')],['brown',L('Brown','Marrones')],['gray',L('Gray','Grises')],['green',L('Green','Verdes')],['hazel',L('Hazel','Avellana')],['maroon',L('Maroon','Granate')],['pink',L('Pink','Rosados')],['unknown',L('Unknown/other','Desconocido/otro')]],
+ hair:[['bald',L('Bald','Calvo')],['black',L('Black','Negro')],['blond',L('Blond','Rubio')],['brown',L('Brown','Castaño')],['gray',L('Gray','Canoso')],['red',L('Red','Pelirrojo')],['sandy',L('Sandy','Arena')],['white',L('White','Blanco')],['unknown',L('Unknown/other','Desconocido/otro')]],
+ marital:[['single',L('Single, never married','Soltero(a), nunca casado(a)')],['married',L('Married','Casado(a)')],['divorced',L('Divorced','Divorciado(a)')],['widowed',L('Widowed','Viudo(a)')],['separated',L('Separated','Separado(a)')],['annulled',L('Marriage annulled','Matrimonio anulado')]]
+};
+
+const RISK=[
+ ['claimedUSC',35,L('Ever claimed to be a U.S. citizen','Alguna vez afirmó ser ciudadano(a) de EE. UU.')],
+ ['voted',30,L('Ever registered or voted in a U.S. election','Alguna vez se registró o votó en una elección de EE. UU.')],
+ ['taxNotFiled',20,L('Failed to file a required tax return','No presentó una declaración de impuestos requerida')],
+ ['taxOwed',15,L('Owes overdue taxes','Debe impuestos vencidos')],
+ ['taxNonresident',20,L('Called yourself a nonresident on a tax return','Se declaró no residente en una declaración de impuestos')],
+ ['communist',30,L('Member of or tied to the Communist or another totalitarian party','Miembro o vinculado al Partido Comunista u otro partido totalitario')],
+ ['terror',80,L('Involved with terrorism or violent groups','Involucrado con terrorismo o grupos violentos')],
+ ['genocide',90,L('Involved in genocide, torture or killings','Involucrado en genocidio, tortura o asesinatos')],
+ ['military',35,L('Served in a military unit, militia or armed group','Sirvió en una unidad militar, milicia o grupo armado')],
+ ['detention',40,L('Worked at a prison or detention facility','Trabajó en una cárcel o centro de detención')],
+ ['persecute',60,L('Ever harmed or persecuted someone because of race, religion, nationality, opinion or group','Alguna vez dañó o persiguió a alguien por raza, religión, nacionalidad, opinión o grupo')],
+ ['crimeNoArrest',30,L('Committed a crime or offense without being arrested','Cometió un delito o infracción sin ser arrestado(a)')],
+ ['arrested',35,L('Ever arrested, cited or detained by any authority','Alguna vez arrestado(a), citado(a) o detenido(a) por una autoridad')],
+ ['charged',35,L('Ever charged with a crime','Alguna vez acusado(a) de un delito')],
+ ['convicted',45,L('Ever convicted, or put in an alternative sentence or diversion program','Alguna vez condenado(a), o en sentencia alternativa o programa de desvío')],
+ ['probation',30,L('Currently on probation, parole or suspended sentence','Actualmente en libertad condicional o sentencia suspendida')],
+ ['prostitution',25,L('Involved in prostitution or commercial vice','Involucrado en prostitución o vicio comercial')],
+ ['polygamy',25,L('Practiced or married more than one spouse at once','Practicó la poligamia o tuvo más de un cónyuge a la vez')],
+ ['gambling',20,L('Earned income from illegal gambling','Obtuvo ingresos de juegos ilegales')],
+ ['drunkard',20,L('Habitual drunkard','Ebrio habitual')],
+ ['drugs',35,L('Used, sold or trafficked controlled substances (including where legal under local law)','Usó, vendió o traficó sustancias controladas (incluso donde sea legal localmente)')],
+ ['smuggle',45,L('Helped anyone enter the U.S. illegally','Ayudó a alguien a entrar ilegalmente a EE. UU.')],
+ ['lied',40,L('Lied or gave false information to a government official to get a benefit','Mintió o dio información falsa a un funcionario para obtener un beneficio')],
+ ['fakeDocs',45,L('Used false documents to get a benefit','Usó documentos falsos para obtener un beneficio')],
+ ['removal',55,L('Ever in removal, exclusion or deportation proceedings','Alguna vez en procedimientos de remoción, exclusión o deportación')],
+ ['ordered',60,L('Ever ordered removed or deported','Alguna vez con orden de remoción o deportación')],
+ ['abandoned',25,L('Left the U.S. to avoid the military draft','Salió de EE. UU. para evitar el servicio militar obligatorio')],
+ ['selective',30,L('Male who lived in the U.S. at ages 18–26 and did not register for Selective Service','Hombre que vivió en EE. UU. entre los 18 y 26 años y no se registró en el Servicio Selectivo')],
+ ['benefitsFraud',30,L('Received public benefits by fraud or misreporting','Recibió beneficios públicos mediante fraude o información falsa')],
+ ['childSupport',20,L('Unpaid court-ordered child or spousal support','Manutención de hijos o cónyuge ordenada por un tribunal sin pagar')]
+];
+const OATH=[
+ ['oathSupport',L('Do you support the U.S. Constitution and form of government?','¿Apoya la Constitución y la forma de gobierno de EE. UU.?'),true],
+ ['oathWilling',L('Are you willing to take the full Oath of Allegiance?','¿Está dispuesto(a) a prestar el Juramento de Lealtad completo?'),true],
+ ['oathArms',L('If the law requires, are you willing to bear arms for the U.S.?','Si la ley lo exige, ¿está dispuesto(a) a portar armas por EE. UU.?'),true],
+ ['oathService',L('If the law requires, are you willing to do noncombatant service or work of national importance?','Si la ley lo exige, ¿está dispuesto(a) a prestar servicio no combatiente o trabajo de importancia nacional?'),true]
+];
+
+const f=(k,type,l,o={})=>Object.assign({k,type,l},o);
+const NAME_SUB=[f('given','text',L('Given name','Nombre')),f('family','text',L('Family name','Apellido'))];
+const ADDR_SUB=[f('street','text',L('Street number and name','Número y nombre de la calle'),{req:1}),f('apt','text',L('Apt/Ste/Flr','Apto/Ste/Piso')),f('city','text',L('City','Ciudad'),{req:1}),f('state','text',L('State / province','Estado / provincia'),{req:1}),f('zip','text',L('ZIP / postal code','Código postal')),f('country','text',L('Country','País'),{req:1}),f('from','date',L('From','Desde'),{req:1}),f('to','date',L('To (blank if current)','Hasta (vacío si actual)'))];
+const isMarried=a=>a.marital==='married'||a.marital==='separated';
+
+const PARTS=[
+ {id:1,t:L('Eligibility','Elegibilidad'),fields:[
+  f('basis','select',L('Basis for applying','Base para solicitar'),{opts:'basis',req:1}),
+  f('lprDate','date',L('Date you became a permanent resident','Fecha en que obtuvo la residencia permanente'),{req:1}),
+  f('aNumber','text',L('A-Number','Número A'),{req:1,pdf:['ANumber','AlienNumber']}),
+  f('uscisAccount','text',L('USCIS online account number (if any)','Número de cuenta en línea de USCIS (si tiene)'))]},
+ {id:2,t:L('About you','Sobre usted'),fields:[
+  f('givenName','text',L('Given name (first)','Nombre'),{req:1,pdf:['GivenName','FirstName']}),
+  f('middleName','text',L('Middle name','Segundo nombre'),{pdf:['MiddleName']}),
+  f('familyName','text',L('Family name (last)','Apellido'),{req:1,pdf:['FamilyName','LastName']}),
+  f('otherNamesUsed','yesno',L('Have you used other names?','¿Ha usado otros nombres?')),
+  f('otherNames','list',L('Other names used','Otros nombres usados'),{item:NAME_SUB,show:a=>a.otherNamesUsed==='yes'}),
+  f('dob','date',L('Date of birth','Fecha de nacimiento'),{req:1,pdf:['DateOfBirth','DOB']}),
+  f('gender','select',L('Gender','Género'),{opts:'gender',req:1}),
+  f('countryBirth','text',L('Country of birth','País de nacimiento'),{req:1,pdf:['CountryOfBirth']}),
+  f('countryCit','text',L('Country of citizenship or nationality','País de ciudadanía o nacionalidad'),{req:1}),
+  f('ssn','text',L('Social Security number','Número de Seguro Social'),{pdf:['SSN','SocialSecurity']}),
+  f('disabilityWaiver','yesno',L('Requesting a disability exception (English/civics)?','¿Solicita excepción por discapacidad (inglés/educación cívica)?'))]},
+ {id:3,t:L('Biographic','Datos biográficos'),fields:[
+  f('ethnicity','select',L('Ethnicity','Origen étnico'),{opts:'ethnicity',req:1}),
+  f('race','select',L('Race','Raza'),{opts:'race',req:1}),
+  f('heightFt','number',L('Height (feet)','Estatura (pies)'),{req:1}),
+  f('heightIn','number',L('Height (inches)','Estatura (pulgadas)'),{req:1}),
+  f('weightLb','number',L('Weight (pounds)','Peso (libras)'),{req:1}),
+  f('eye','select',L('Eye color','Color de ojos'),{opts:'eye',req:1}),
+  f('hair','select',L('Hair color','Color de cabello'),{opts:'hair',req:1})]},
+ {id:4,t:L('Residence','Residencia'),fields:[
+  f('residences','list',L('Addresses for the required period (most recent first)','Direcciones del período requerido (la más reciente primero)'),{item:ADDR_SUB,min:1,help:L('List every address for the last 5 years (3 if applying through marriage).','Liste cada dirección de los últimos 5 años (3 si solicita por matrimonio).')}),
+  f('mailingSame','yesno',L('Is your mailing address the same as your current address?','¿Su dirección postal es igual a la actual?'),{req:1}),
+  f('mailing','list',L('Mailing address','Dirección postal'),{item:ADDR_SUB.slice(0,6),max:1,min:1,show:a=>a.mailingSame==='no'})]},
+ {id:5,t:L('Marital history','Historial matrimonial'),fields:[
+  f('marital','select',L('Current marital status','Estado civil actual'),{opts:'marital',req:1}),
+  f('timesMarried','number',L('Times you have been married','Veces que se ha casado'),{show:a=>a.marital&&a.marital!=='single'}),
+  f('spouseGiven','text',L('Spouse given name','Nombre del cónyuge'),{show:isMarried,req:1}),
+  f('spouseFamily','text',L('Spouse family name','Apellido del cónyuge'),{show:isMarried,req:1}),
+  f('spouseDob','date',L('Spouse date of birth','Fecha de nacimiento del cónyuge'),{show:isMarried}),
+  f('marriageDate','date',L('Date of marriage','Fecha de matrimonio'),{show:isMarried}),
+  f('spouseUSC','yesno',L('Is your spouse a U.S. citizen?','¿Su cónyuge es ciudadano(a) de EE. UU.?'),{show:isMarried})]},
+ {id:6,t:L('Children','Hijos'),fields:[
+  f('hasChildren','yesno',L('Do you have children (any age)?','¿Tiene hijos (de cualquier edad)?'),{req:1}),
+  f('children','list',L('Children','Hijos'),{show:a=>a.hasChildren==='yes',min:1,item:[f('given','text',L('Given name','Nombre')),f('family','text',L('Family name','Apellido')),f('dob','date',L('Date of birth','Fecha de nacimiento')),f('country','text',L('Country of birth','País de nacimiento')),f('livesWith','yesno',L('Lives with you?','¿Vive con usted?'))]})]},
+ {id:7,t:L('Employment and schools','Empleo y escuelas'),fields:[
+  f('employment','list',L('Employers and schools for the required period (most recent first)','Empleadores y escuelas del período requerido (el más reciente primero)'),{min:1,help:L('Include periods of unemployment. Use "Unemployed" as the employer.','Incluya períodos sin empleo. Use "Desempleado" como empleador.'),item:[f('employer','text',L('Employer or school','Empleador o escuela'),{req:1}),f('occupation','text',L('Occupation / field of study','Ocupación / campo de estudio')),f('city','text',L('City','Ciudad')),f('state','text',L('State / country','Estado / país')),f('from','date',L('From','Desde')),f('to','date',L('To (blank if current)','Hasta (vacío si actual)'))]})]},
+ {id:8,t:L('Time outside the U.S.','Tiempo fuera de EE. UU.'),fields:[
+  f('anyTrips','yesno',L('Have you traveled outside the U.S. during the required period?','¿Ha viajado fuera de EE. UU. durante el período requerido?'),{req:1}),
+  f('trips','list',L('Trips (24 hours or longer)','Viajes (24 horas o más)'),{show:a=>a.anyTrips==='yes',min:1,item:[f('out','date',L('Date left','Fecha de salida'),{req:1}),f('back','date',L('Date returned','Fecha de regreso'),{req:1}),f('countries','text',L('Countries visited','Países visitados'))]})]},
+ {id:9,t:L('Additional questions','Preguntas adicionales'),risk:1,fields:[]},
+ {id:11,t:L('Contact and preparer','Contacto y preparador'),fields:[
+  f('phone','text',L('Daytime phone','Teléfono de día'),{req:1,pdf:['DaytimePhone','Phone']}),
+  f('email','text',L('Email','Correo electrónico'),{pdf:['Email']}),
+  f('needsInterpreter','yesno',L('Does the applicant need an interpreter to read the form?','¿El solicitante necesita intérprete para leer el formulario?')),
+  f('preparedBy','yesno',L('Was this prepared by someone other than the applicant?','¿Fue preparado por alguien que no es el solicitante?')),
+  f('preparerName','text',L('Preparer full name','Nombre completo del preparador'),{show:a=>a.preparedBy==='yes'}),
+  f('preparerOrg','text',L('Preparer organization (if any)','Organización del preparador (si hay)'),{show:a=>a.preparedBy==='yes'}),
+  f('preparerPhone','text',L('Preparer phone','Teléfono del preparador'),{show:a=>a.preparedBy==='yes'})]},
+ {id:14,t:L('Additional information','Información adicional'),fields:[
+  f('additionalInfo','textarea',L('Anything that did not fit elsewhere (reference the Part and Item)','Cualquier cosa que no cupo en otra parte (indique la Parte y el Ítem)'))]}
+];
+
+function riskFields(){
+ const out=[];
+ RISK.forEach(([id,w,l])=>{out.push(f('q_'+id,'yesno',l,{req:1,w}));out.push(f('x_'+id,'textarea',UI.explain,{show:a=>a['q_'+id]==='yes',req:1,sub:1}));});
+ OATH.forEach(([id,l])=>out.push(f('q_'+id,'yesno',l,{req:1,oath:1})));
+ return out;
+}
+PARTS.find(p=>p.risk).fields=riskFields();
+
+let S={lang:'en',db:{cases:[],lang:'en'},key:null,salt:null,mode:'boot',caseId:null,partIdx:0,pdf:{doc:null,name:'',fields:[],map:{}},ack:{}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+
+async function deriveKey(pass,salt){
+ const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
+ return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function persist(){
+ try{
+  if(S.key){
+   const iv=crypto.getRandomValues(new Uint8Array(12));
+   const data=await crypto.subtle.encrypt({name:'AES-GCM',iv},S.key,new TextEncoder().encode(JSON.stringify(S.db)));
+   localStorage.setItem(KEY_ENC,JSON.stringify({salt:b64(S.salt),iv:b64(iv),data:b64(data)}));
+   localStorage.removeItem(KEY_PLAIN);
+  }else{
+   localStorage.setItem(KEY_PLAIN,JSON.stringify(S.db));
+  }
+  flash();
+ }catch(e){console.error(e)}
+}
+let flashT;
+function flash(){const m=$('#mid');if(!m||S.mode!=='wizard')return;m.dataset.s=m.textContent;m.textContent=T(UI.saved);clearTimeout(flashT);flashT=setTimeout(updateMid,900)}
+let saveT;
+function saveSoon(){clearTimeout(saveT);saveT=setTimeout(persist,400)}
+
+function boot(){
+ let enc=null,plain=null;
+ try{enc=localStorage.getItem(KEY_ENC);plain=localStorage.getItem(KEY_PLAIN)}catch(e){}
+ if(enc){S.mode='unlock'}
+ else if(plain){try{S.db=JSON.parse(plain)}catch(e){}S.lang=S.db.lang||'en';S.mode='home'}
+ else{S.mode='setpass'}
+ render();
+}
+
+function chrome(){
+ $('#ver').textContent=VER;
+ $('#home').textContent=T(UI.home);$('#lang').textContent=T(UI.lang);$('#lock').textContent=T(UI.lock);
+ const open=S.mode!=='unlock'&&S.mode!=='setpass';
+ $('#home').classList.toggle('hide',!open);$('#lock').classList.toggle('hide',!open||!S.key);
+ $('#nav').classList.toggle('hide',S.mode!=='wizard');
+ $('#prev').textContent=T(UI.prev);
+ document.documentElement.lang=S.lang;
+}
+
+function render(){
+ chrome();
+ const a=$('#app');
+ if(S.mode==='setpass')a.innerHTML=viewSetPass();
+ else if(S.mode==='unlock')a.innerHTML=viewUnlock();
+ else if(S.mode==='home')a.innerHTML=viewHome();
+ else if(S.mode==='disclaimer')a.innerHTML=viewDisclaimer();
+ else if(S.mode==='wizard'){a.innerHTML=viewWizard();updateMid();}
+ else if(S.mode==='review'){a.innerHTML=viewReview();$('#nav').classList.add('hide')}
+ window.scrollTo(0,0);
+}
+
+const viewSetPass=()=>`<div class="card"><h2>${T(UI.setPass)}</h2><p class="help">${T(UI.passNote)}</p>
+<label>${T(UI.passphrase)}</label><input type="password" id="pp" autocomplete="new-password"><div id="err" class="help" style="color:var(--rose)"></div>
+<div class="row" style="margin-top:12px"><button class="btn" data-act="setpass">${T(UI.setBtn)}</button><button class="btn sec" data-act="skippass">${T(UI.skipPass)}</button></div></div>`;
+const viewUnlock=()=>`<div class="card"><h2>${T(UI.unlock)}</h2><label>${T(UI.passphrase)}</label><input type="password" id="pp" autocomplete="current-password"><div id="err" class="help" style="color:var(--rose)"></div>
+<div class="row" style="margin-top:12px"><button class="btn" data-act="unlock">${T(UI.unlock)}</button></div></div>`;
+
+function viewHome(){
+ const rows=S.db.cases.map(c=>`<div class="card case"><div><strong>${esc(c.name)}</strong><div class="help mono">${esc((c.updated||'').slice(0,10))} · ${pctDone(c)}%</div></div><div class="row"><button class="btn sm" data-act="open" data-id="${c.id}">${T(UI.open)}</button><button class="btn sm sec" data-act="delcase" data-id="${c.id}">${T(UI.del)}</button></div></div>`).join('')||`<p class="help">${T(UI.noCases)}</p>`;
+ return `<h2>${T(UI.caseOf)}s</h2>${rows}
+<div class="card"><h3>${T(UI.newCase)}</h3><label>${T(UI.caseName)}</label><input id="cname"><div class="row" style="margin-top:12px"><button class="btn" data-act="newcase">${T(UI.newCase)}</button></div></div>
+<div class="card"><h3>${T(UI.backup)}</h3><p class="help">${T(UI.backupNote)}</p><div class="row"><button class="btn sec" data-act="exportall">${T(UI.exportAll)}</button><label class="btn sec" style="margin:0">${T(UI.importAll)}<input type="file" accept="application/json" data-act="importall" class="hide"></label></div></div>
+<p class="help">${T(UI.translateNote)}</p>`;
+}
+const viewDisclaimer=()=>`<div class="banner gold"><h3>${T(UI.disclaimerTitle)}</h3><p>${T(UI.disclaimer)}</p><button class="btn warn" data-act="ackdisc">${T(UI.ack)}</button></div>`;
+
+function cur(){return S.db.cases.find(c=>c.id===S.caseId)}
+function visible(fl,a){return fl.filter(x=>!x.show||x.show(a))}
+function isEmpty(v){return v===undefined||v===null||v===''||(Array.isArray(v)&&v.length===0)}
+function missingFor(c){
+ const out=[];const a=c.answers;
+ PARTS.forEach(p=>{
+  visible(p.fields,a).forEach(x=>{
+   if(x.type==='list'){
+    const arr=a[x.k]||[];
+    if(x.min&&arr.length<x.min)out.push([p.id,x.l]);
+    arr.forEach((it,i)=>x.item.forEach(s=>{if(s.req&&isEmpty(it[s.k]))out.push([p.id,L(`${x.l.en} #${i+1}: ${s.l.en}`,`${x.l.es} #${i+1}: ${s.l.es}`)])}));
+   }else if(x.req&&isEmpty(a[x.k]))out.push([p.id,x.l]);
+  });
+ });
+ return out;
+}
+function pctDone(c){
+ let total=0,done=0;const a=c.answers;
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{if(x.req||(x.type==='list'&&x.min)){total++;if(x.type==='list'?(a[x.k]||[]).length>=(x.min||1):!isEmpty(a[x.k]))done++}}));
+ return total?Math.round(done/total*100):0;
+}
+
+function inputHtml(x,val,path,scope){
+ const id=path;
+ const ph=x.req?' data-req="1"':'';
+ if(x.type==='yesno'){
+  return `<div class="yn" role="radiogroup"><label><input type="radio" name="${id}" value="yes" data-path="${id}" data-t="yesno" ${val==='yes'?'checked':''}><span>${T(UI.yes)}</span></label><label class="no"><input type="radio" name="${id}" value="no" data-path="${id}" data-t="yesno" ${val==='no'?'checked':''}><span>${T(UI.no)}</span></label></div>`;
+ }
+ if(x.type==='select'){
+  const opts=(typeof x.opts==='string'?OPT[x.opts]:x.opts)||[];
+  return `<select data-path="${id}" data-t="select"><option value="">${T(UI.select)}</option>${opts.map(([v,l])=>`<option value="${v}" ${val===v?'selected':''}>${esc(T(l))}</option>`).join('')}</select>`;
+ }
+ if(x.type==='textarea')return `<textarea data-path="${id}" data-t="text">${esc(val||'')}</textarea>`;
+ const type=x.type==='date'?'date':x.type==='number'?'number':'text';
+ return `<input type="${type}" ${type==='number'?'inputmode="numeric" min="0"':''} value="${esc(val||'')}" data-path="${id}" data-t="text" ${x.k==='ssn'?'autocomplete="off"':''}>`;
+}
+function fieldHtml(x,a){
+ if(x.type==='list'){
+  const arr=a[x.k]||[];
+  const max=x.max||99;
+  return `<div class="card" style="padding:12px"><label style="margin-top:0">${T(x.l)}${x.min?' *':''}</label>${x.help?`<div class="help">${T(x.help)}</div>`:''}
+  ${arr.map((it,i)=>`<div class="item"><div class="row"><strong class="grow">#${i+1}</strong><button class="btn sm sec" data-act="rmitem" data-k="${x.k}" data-i="${i}">${T(UI.remove)}</button></div><div class="grid">${x.item.map(s=>`<div><label>${T(s.l)}${s.req?' *':''}</label>${inputHtml(s,it[s.k],`${x.k}.${i}.${s.k}`)}</div>`).join('')}</div></div>`).join('')}
+  ${arr.length<max?`<button class="btn sm sec" data-act="additem" data-k="${x.k}">+ ${T(UI.add)}</button>`:''}</div>`;
+ }
+ const cls=x.sub?'help':'';
+ return `<div><label>${T(x.l)}${x.req?' *':''}</label>${x.help?`<div class="help">${T(x.help)}</div>`:''}${inputHtml(x,a[x.k],x.k)}</div>`;
+}
+function viewWizard(){
+ const c=cur();const p=PARTS[S.partIdx];const a=c.answers;
+ const nav=PARTS.map((q,i)=>`<button class="${i===S.partIdx?'on':''}" data-act="goto" data-i="${i}">${q.id}</button>`).join('');
+ const fl=visible(p.fields,a);
+ let body='';
+ if(p.risk){
+  body=`<div class="banner sage help">${T(L('Answer each question honestly. A "Yes" does not automatically disqualify; it helps decide whether you need an attorney. Details matter.','Responda cada pregunta con honestidad. Un "Sí" no descalifica automáticamente; ayuda a decidir si necesita un abogado. Los detalles importan.'))}</div>`+fl.map(x=>x.sub?`<div class="item">${fieldHtml(x,a)}</div>`:fieldHtml(x,a)).join('');
+ }else{
+  const grouped=[];let buf=[];
+  fl.forEach(x=>{if(x.type==='list'||x.type==='textarea'||x.type==='yesno'){if(buf.length){grouped.push(`<div class="grid">${buf.join('')}</div>`);buf=[]}grouped.push(fieldHtml(x,a))}else buf.push(fieldHtml(x,a))});
+  if(buf.length)grouped.push(`<div class="grid">${buf.join('')}</div>`);
+  body=grouped.join('');
+ }
+ return `<div class="partnav noprint">${nav}</div><div class="bar"><i style="width:${Math.round((S.partIdx+1)/PARTS.length*100)}%"></i></div>
+ <div class="card"><h2>${T(UI.part)} ${p.id}: ${T(p.t)}</h2>${body}</div>`;
+}
+function updateMid(){const m=$('#mid');if(!m)return;m.textContent=`${S.partIdx+1} ${T(UI.of)} ${PARTS.length}`;$('#next').textContent=S.partIdx===PARTS.length-1?T(UI.review):T(UI.next);$('#prev').textContent=T(UI.prev)}
+
+function setPath(c,path,val){
+ const seg=path.split('.');
+ if(seg.length===1){c.answers[seg[0]]=val}
+ else{const arr=c.answers[seg[0]]=c.answers[seg[0]]||[];const it=arr[+seg[1]]=arr[+seg[1]]||{};it[seg[2]]=val}
+ c.updated=new Date().toISOString();
+}
+
+function riskCalc(c){
+ const a=c.answers;let score=0;const hits=[];
+ RISK.forEach(([id,w,l])=>{if(a['q_'+id]==='yes'){score+=w;hits.push({id,w,l,x:a['x_'+id]})}});
+ OATH.forEach(([id,l])=>{if(a['q_'+id]==='no'){score+=25;hits.push({id,w:25,l,x:''})}});
+ score=Math.min(100,score);
+ const tier=score<=30?0:score<=50?1:score<=65?2:score<=80?3:4;
+ return{score,hits,tier};
+}
+const DAY=86400000;
+function eligCalc(c){
+ const a=c.answers;const r={items:[],ok:true};
+ const years=a.basis==='spouse'?3:5;
+ if(a.dob){const age=(Date.now()-new Date(a.dob))/DAY/365.25;r.items.push({ok:age>=18,t:UI.ageOk})}
+ if(!a.lprDate){r.noLpr=true;return r}
+ const start=new Date(a.lprDate);const earliest=new Date(start);earliest.setFullYear(earliest.getFullYear()+years);earliest.setDate(earliest.getDate()-90);
+ r.earliest=earliest.toISOString().slice(0,10);r.earliestOk=earliest<=new Date();
+ const periodStart=new Date();periodStart.setFullYear(periodStart.getFullYear()-years);
+ const from=new Date(Math.max(periodStart,start));
+ const totalDays=Math.round((Date.now()-from)/DAY);
+ let out=0;r.long=[];r.broke=[];
+ (a.anyTrips==='yes'?(a.trips||[]):[]).forEach(t=>{
+  if(!t.out||!t.back)return;
+  const o=new Date(t.out),b=new Date(t.back);const len=Math.round((b-o)/DAY);
+  const s=Math.max(o,from),e=Math.min(b,Date.now());if(e>s)out+=Math.round((e-s)/DAY);
+  if(len>=365)r.broke.push(t);else if(len>=180)r.long.push(t);
+ });
+ r.daysIn=totalDays-out;r.need=Math.ceil(totalDays/2);r.years=years;
+ return r;
+}
+
+function viewReview(){
+ const c=cur();const a=c.answers;const miss=missingFor(c);const rk=riskCalc(c);const el=eligCalc(c);
+ const tcls=['l','w','w','r','r'][rk.tier];
+ const ackKey=c.id;const ak=S.ack[ackKey]||{};
+ let unlocked=true,gate='';
+ if(rk.tier===4){unlocked=false;gate=`<div class="banner rose"><strong>${T(UI.tier4)}</strong><div>${T(UI.blockedMsg)}</div></div>`}
+ else if(rk.tier===3){
+  const okAtt=(a.attorneyName||'').trim()&&a.attorneyDate;unlocked=!!okAtt;
+  gate=`<div class="banner rose"><strong>${T(UI.tier3)}</strong><div class="grid"><div><label>${T(UI.attorneyName)}</label><input data-path="attorneyName" data-t="text" value="${esc(a.attorneyName||'')}"></div><div><label>${T(UI.attorneyDate)}</label><input type="date" data-path="attorneyDate" data-t="text" value="${esc(a.attorneyDate||'')}"></div></div>${okAtt?'':`<div class="help">${T(UI.unlockNeeds)}</div>`}</div>`;
+ }else if(rk.tier>=1){
+  unlocked=!!ak.go;
+  gate=`<div class="banner ${rk.tier===2?'rose':'gold'}"><strong>${T(rk.tier===2?UI.tier2:UI.tier1)}</strong><label style="font-weight:400"><input type="checkbox" style="width:auto;min-height:0" data-act="goack" ${ak.go?'checked':''}> ${T(UI.continueAnyway)}</label></div>`;
+ }
+ const eli=el.noLpr?`<p class="help">${T(UI.noLpr)}</p>`:`<table>
+  ${el.items.map(i=>`<tr><td>${T(i.t)}</td><td><span class="pill ${i.ok?'l':'r'}">${i.ok?'OK':'!'}</span></td></tr>`).join('')}
+  <tr><td>${T(UI.earliest)}</td><td class="mono">${el.earliest} <span class="pill ${el.earliestOk?'l':'w'}">${el.earliestOk?'OK':'…'}</span></td></tr>
+  <tr><td>${T(UI.daysIn)}</td><td class="mono">${el.daysIn} <span class="pill ${el.daysIn>=el.need?'l':'r'}">${el.daysIn>=el.need?'OK':'!'}</span></td></tr>
+  <tr><td>${T(UI.needDays)}</td><td class="mono">${el.need}</td></tr>
+  ${el.long.map(t=>`<tr><td colspan="2"><span class="pill w">6+ mo</span> ${esc(t.out)} → ${esc(t.back)}: ${T(UI.longTrip)}</td></tr>`).join('')}
+  ${el.broke.map(t=>`<tr><td colspan="2"><span class="pill r">1+ yr</span> ${esc(t.out)} → ${esc(t.back)}: ${T(UI.breakTrip)}</td></tr>`).join('')}
+ </table>`;
+ return `<div class="noprint"><div class="row"><button class="btn sec sm" data-act="backwiz">${T(UI.prev)}</button><h2 class="grow" style="margin:0">${T(UI.reviewTitle)}: ${esc(c.name)}</h2></div></div>
+ <div class="card"><h3>${T(UI.missing)}</h3>${miss.length?`<ul>${miss.map(([pid,l])=>`<li><a href="#" data-act="gotopart" data-pid="${pid}">${T(UI.part)} ${pid}</a>: ${T(l)}</li>`).join('')}</ul>`:`<p>${T(UI.allComplete)}</p>`}</div>
+ <div class="card"><h3>${T(UI.risk)} <span class="pill ${tcls}">${T(UI.score)} ${rk.score}</span></h3><p>${T([UI.tier0,UI.tier1,UI.tier2,UI.tier3,UI.tier4][rk.tier])}</p>
+  ${rk.hits.length?`<div class="help">${T(UI.flagged)}</div><ul>${rk.hits.map(h=>`<li>${T(h.l)} <span class="pill w">+${h.w}</span>${h.x?`<div class="help">${esc(h.x)}</div>`:''}</li>`).join('')}</ul>`:''}
+  <div class="banner gold help">${T(UI.disclaimer)}</div>${gate}</div>
+ <div class="card"><h3>${T(UI.elig)}</h3><p class="help">${T(UI.eligNote)}</p>${eli}</div>
+ <div class="card noprint"><h3>${T(UI.outputs)}</h3><div class="row">
+  <button class="btn" data-act="print" ${unlocked?'':'disabled'}>${T(UI.print)}</button>
+  <button class="btn sec" data-act="exportcase" ${unlocked?'':'disabled'}>${T(UI.exportCase)}</button></div>
+  <div style="margin-top:16px"><h3>${T(UI.fillPdf)}</h3><p class="help">${T(UI.pdfNote)}</p>
+  <label class="btn sec" style="display:inline-block;margin:0">${T(UI.uploadPdf)}<input type="file" accept="application/pdf" data-act="pdfload" class="hide" ${unlocked?'':'disabled'}></label>
+  <div id="pdfzone">${S.pdf.doc?viewPdfMap(c):''}</div></div></div>
+ <div id="worksheet" class="card">${viewWorksheet(c)}</div>`;
+}
+function fmt(v){return v===undefined||v===null||v===''?'—':esc(v)}
+function labelOpt(x,v){const o=(typeof x.opts==='string'?OPT[x.opts]:x.opts)||[];const m=o.find(([k])=>k===v);return m?T(m[1]):v}
+function viewWorksheet(c){
+ const a=c.answers;
+ return `<h2>${esc(c.name)} — N-400 ${T(L('answers worksheet','hoja de respuestas'))}</h2><div class="help">ImmiVault ${VER} · ${new Date().toISOString().slice(0,10)}</div>`+
+ PARTS.map(p=>{
+  const rows=visible(p.fields,a).filter(x=>!x.sub).map(x=>{
+   if(x.type==='list'){const arr=a[x.k]||[];return `<tr><td>${T(x.l)}</td><td>${arr.length?arr.map((it,i)=>`<div>#${i+1} ${x.item.map(s=>fmt(s.type==='yesno'?(it[s.k]?T(it[s.k]==='yes'?UI.yes:UI.no):''):it[s.k])).join(' · ')}</div>`).join(''):'—'}</td></tr>`}
+   let v=a[x.k];if(x.type==='yesno')v=v?T(v==='yes'?UI.yes:UI.no):'';else if(x.type==='select')v=labelOpt(x,v);
+   const ex=a['x_'+x.k.slice(2)];
+   return `<tr><td>${T(x.l)}</td><td>${fmt(v)}${x.k.startsWith('q_')&&a[x.k]==='yes'&&ex?`<div class="help">${esc(ex)}</div>`:''}</td></tr>`;
+  }).join('');
+  return `<h3 style="margin-top:16px">${T(UI.part)} ${p.id}: ${T(p.t)}</h3><table>${rows}</table>`;
+ }).join('');
+}
+
+function pdfKeys(c){
+ const a=c.answers;const keys=[];
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{
+  if(x.sub)return;
+  if(x.type==='list'){(a[x.k]||[]).forEach((it,i)=>x.item.forEach(s=>keys.push({key:`${x.k}.${i}.${s.k}`,label:`${T(x.l)} #${i+1} · ${T(s.l)}`,val:it[s.k],type:s.type,hint:[]})))}
+  else keys.push({key:x.k,label:T(x.l),val:a[x.k],type:x.type,hint:x.pdf||[],opts:x.opts});
+ }));
+ return keys;
+}
+function displayVal(k){
+ if(k.type==='yesno')return k.val==='yes'?'Yes':k.val==='no'?'No':'';
+ if(k.type==='select'){const o=(typeof k.opts==='string'?OPT[k.opts]:[])||[];const m=o.find(([v])=>v===k.val);return m?m[1].en:(k.val||'')}
+ return k.val==null?'':String(k.val);
+}
+function viewPdfMap(c){
+ const keys=pdfKeys(c);const opts=['<option value="">'+T(UI.none)+'</option>'].concat(S.pdf.fields.map(fl=>`<option value="${esc(fl.name)}">${esc(fl.name)} (${fl.kind})</option>`)).join('');
+ const sel=(key,cur)=>opts.replace(`value="${esc(cur||'')}"`,`value="${esc(cur||'')}" selected`);
+ return `<p class="mono help">${esc(S.pdf.name)} · ${T(UI.pdfFields)}: ${S.pdf.fields.length}</p>
+ <div class="row"><button class="btn sm sec" data-act="automatch">${T(UI.autoMatch)}</button><button class="btn sm sec" data-act="exportmap">${T(UI.exportMap)}</button><label class="btn sm sec" style="margin:0">${T(UI.importMap)}<input type="file" accept="application/json" data-act="importmap" class="hide"></label><button class="btn sm" data-act="fillpdf">${T(UI.download)}</button></div>
+ <div style="overflow-x:auto"><table><tr><th>${T(UI.answer)}</th><th>${T(UI.pdfField)}</th></tr>
+ ${keys.map(k=>{const m=S.pdf.map[k.key]||{};return `<tr><td>${esc(k.label)}<div class="help mono">${esc(displayVal(k)||'—')}</div></td><td><select data-pmap="${esc(k.key)}" data-slot="yes">${sel(k.key,m.yes)}</select>${k.type==='yesno'?`<div class="help">${T(UI.pdfFieldNo)}</div><select data-pmap="${esc(k.key)}" data-slot="no">${sel(k.key,m.no)}</select>`:''}</td></tr>`}).join('')}</table></div>`;
+}
+function loadPdfLib(){
+ if(window.PDFLib)return Promise.resolve();
+ return new Promise((res,rej)=>{const s=document.createElement('script');s.src=PDFLIB_URL;s.onload=res;s.onerror=()=>rej(new Error('pdf-lib'));document.head.appendChild(s)});
+}
+function mapStoreKey(){return 'immivault.pdfmap.'+S.pdf.name}
+function loadMap(){try{S.pdf.map=JSON.parse(localStorage.getItem(mapStoreKey())||'{}')}catch(e){S.pdf.map={}}}
+function saveMap(){try{localStorage.setItem(mapStoreKey(),JSON.stringify(S.pdf.map))}catch(e){}}
+function norm(s){return String(s).replace(/\[\d+\]/g,'').replace(/[^A-Za-z]/g,'').toLowerCase()}
+function autoMatch(){
+ const c=cur();const keys=pdfKeys(c);let n=0;
+ keys.forEach(k=>{
+  if(!k.hint.length||S.pdf.map[k.key]?.yes)return;
+  const hit=S.pdf.fields.find(fl=>fl.kind==='text'&&k.hint.some(h=>norm(fl.name).includes(norm(h))));
+  if(hit){S.pdf.map[k.key]={yes:hit.name};n++}
+ });
+ saveMap();return n;
+}
+async function fillPdf(){
+ const c=cur();
+ try{await loadPdfLib()}catch(e){alert(T(UI.pdfLibFail));return}
+ const {PDFDocument}=window.PDFLib;
+ const doc=await PDFDocument.load(S.pdf.bytes);const form=doc.getForm();let n=0;
+ const setText=(name,val)=>{try{form.getTextField(name).setText(String(val));n++}catch(e){try{form.getDropdown(name).select(String(val));n++}catch(e2){}}};
+ const setCheck=(name,on)=>{try{const cb=form.getCheckBox(name);on?cb.check():cb.uncheck();n++}catch(e){}};
+ pdfKeys(c).forEach(k=>{
+  const m=S.pdf.map[k.key];if(!m)return;
+  if(k.type==='yesno'){
+   if(m.yes)setCheck(m.yes,k.val==='yes');
+   if(m.no)setCheck(m.no,k.val==='no');
+  }else if(m.yes){const v=displayVal(k);if(v!=='')setText(m.yes,v)}
+ });
+ const bytes=await doc.save();
+ const blob=new Blob([bytes],{type:'application/pdf'});
+ dl(blob,`${c.name.replace(/\W+/g,'_')}_N-400_filled.pdf`);
+ alert(`${n} ${T(UI.filledN)}`);
+}
+function dl(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},500)}
+
+document.addEventListener('click',async e=>{
+ const el=e.target.closest('[data-act]');if(!el)return;
+ const act=el.dataset.act;
+ if(el.tagName==='INPUT'&&el.type==='file')return;
+ if(el.tagName==='A')e.preventDefault();
+ const c=S.caseId?cur():null;
+ switch(act){
+  case 'lang':S.lang=S.lang==='en'?'es':'en';S.db.lang=S.lang;persist();render();break;
+  case 'home':S.mode='home';S.caseId=null;render();break;
+  case 'lock':S.key=null;S.salt=null;S.db={cases:[],lang:S.lang};S.caseId=null;S.mode='unlock';render();break;
+  case 'setpass':{
+   const p=$('#pp').value;if(p.length<8){$('#err').textContent=T(UI.minPass);break}
+   S.salt=crypto.getRandomValues(new Uint8Array(16));S.key=await deriveKey(p,S.salt);S.mode='home';await persist();render();break}
+  case 'skippass':S.mode='home';await persist();render();break;
+  case 'unlock':{
+   try{
+    const st=JSON.parse(localStorage.getItem(KEY_ENC));const salt=unb64(st.salt);const key=await deriveKey($('#pp').value,salt);
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(st.iv)},key,unb64(st.data));
+    S.db=JSON.parse(new TextDecoder().decode(pt));S.key=key;S.salt=salt;S.lang=S.db.lang||'en';S.mode='home';render();
+   }catch(err){$('#err').textContent=T(UI.wrongPass)}
+   break}
+  case 'newcase':{
+   const name=$('#cname').value.trim();if(!name){$('#cname').focus();break}
+   const nc={id:uid(),name,answers:{},updated:new Date().toISOString(),disc:false};
+   S.db.cases.unshift(nc);await persist();S.caseId=nc.id;S.partIdx=0;S.mode='disclaimer';render();break}
+  case 'open':S.caseId=el.dataset.id;S.partIdx=0;S.mode=cur().disc?'wizard':'disclaimer';render();break;
+  case 'delcase':if(confirm(T(UI.confirmDel))){S.db.cases=S.db.cases.filter(x=>x.id!==el.dataset.id);await persist();render()}break;
+  case 'ackdisc':cur().disc=true;await persist();S.mode='wizard';render();break;
+  case 'goto':S.partIdx=+el.dataset.i;render();break;
+  case 'gotopart':S.partIdx=PARTS.findIndex(p=>p.id===+el.dataset.pid);S.mode='wizard';render();break;
+  case 'prev':if(S.partIdx>0){S.partIdx--;render()}break;
+  case 'next':if(S.partIdx<PARTS.length-1){S.partIdx++;render()}else{S.mode='review';render()}break;
+  case 'backwiz':S.mode='wizard';render();break;
+  case 'additem':{const arr=c.answers[el.dataset.k]=c.answers[el.dataset.k]||[];arr.push({});await persist();render();break}
+  case 'rmitem':{c.answers[el.dataset.k].splice(+el.dataset.i,1);await persist();render();break}
+  case 'exportall':dl(new Blob([JSON.stringify(S.db)],{type:'application/json'}),`ImmiVault-${VER}-backup.json`);break;
+  case 'exportcase':dl(new Blob([JSON.stringify(c)],{type:'application/json'}),`${c.name.replace(/\W+/g,'_')}.json`);break;
+  case 'print':window.print();break;
+  case 'goack':S.ack[c.id]={go:el.checked};render();break;
+  case 'automatch':{const n=autoMatch();$('#pdfzone').innerHTML=viewPdfMap(c);break}
+  case 'exportmap':dl(new Blob([JSON.stringify(S.pdf.map)],{type:'application/json'}),'n400-mapping.json');break;
+  case 'fillpdf':await fillPdf();break;
+ }
+});
+
+document.addEventListener('change',async e=>{
+ const el=e.target;
+ if(el.dataset.act==='importall'){
+  const txt=await el.files[0].text();try{const d=JSON.parse(txt);if(!Array.isArray(d.cases))throw 0;d.cases.forEach(cs=>{if(!S.db.cases.find(x=>x.id===cs.id))S.db.cases.push(cs)});await persist();render()}catch(err){alert('Invalid file')}
+  return}
+ if(el.dataset.act==='pdfload'){
+  try{await loadPdfLib()}catch(err){alert(T(UI.pdfLibFail));return}
+  const buf=await el.files[0].arrayBuffer();S.pdf.bytes=buf.slice(0);S.pdf.name=el.files[0].name;
+  const doc=await window.PDFLib.PDFDocument.load(buf);S.pdf.doc=true;
+  S.pdf.fields=doc.getForm().getFields().map(fl=>({name:fl.getName(),kind:fl instanceof window.PDFLib.PDFTextField?'text':fl instanceof window.PDFLib.PDFCheckBox?'checkbox':fl instanceof window.PDFLib.PDFDropdown?'dropdown':'other'}));
+  loadMap();$('#pdfzone').innerHTML=viewPdfMap(cur());return}
+ if(el.dataset.act==='importmap'){
+  try{S.pdf.map=JSON.parse(await el.files[0].text());saveMap();$('#pdfzone').innerHTML=viewPdfMap(cur())}catch(err){alert('Invalid file')}return}
+ if(el.dataset.pmap){
+  const k=el.dataset.pmap;S.pdf.map[k]=S.pdf.map[k]||{};if(el.value)S.pdf.map[k][el.dataset.slot]=el.value;else delete S.pdf.map[k][el.dataset.slot];saveMap();return}
+ if(el.dataset.path&&(el.dataset.t==='yesno'||el.dataset.t==='select')){
+  setPath(cur(),el.dataset.path,el.value);await persist();render();return}
+ if(el.dataset.path&&S.mode==='review'){setPath(cur(),el.dataset.path,el.value);await persist();render()}
+});
+document.addEventListener('input',e=>{
+ const el=e.target;
+ if(el.dataset.path&&el.dataset.t==='text'&&S.mode==='wizard'){setPath(cur(),el.dataset.path,el.value);saveSoon()}
+});
+
+boot();
+</script>
+</body>
+</html>
