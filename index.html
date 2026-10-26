@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver001</title>
+<title>ImmiVault Ver002</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -80,7 +80,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 </div>
 
 <script>
-const VER='Ver001';
+const VER='Ver002';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -123,6 +123,9 @@ const UI={
  download:L('Download filled PDF','Descargar PDF llenado'),pdfFields:L('PDF fields found','Campos del PDF encontrados'),
  exportMap:L('Export mapping','Exportar relación'),importMap:L('Import mapping','Importar relación'),
  answer:L('Answer','Respuesta'),pdfField:L('PDF field','Campo del PDF'),pdfFieldNo:L('PDF field for "No"','Campo del PDF para "No"'),none:L('— none —','— ninguno —'),
+ pdfLoading:L('Reading the PDF…','Leyendo el PDF…'),
+ pdfNoFields:L('This PDF has no fillable fields. Download the fillable N-400 from uscis.gov, open it in Adobe Acrobat Reader, save a copy, and upload that copy.','Este PDF no tiene campos para llenar. Descargue el N-400 llenable de uscis.gov, ábralo en Adobe Acrobat Reader, guarde una copia y suba esa copia.'),
+ pdfErr:L('Could not read this PDF.','No se pudo leer este PDF.'),
  pdfLibFail:L('Could not load the PDF library (internet needed once).','No se pudo cargar la biblioteca PDF (se necesita internet).'),
  blockedMsg:L('Output is blocked at this risk level.','La salida está bloqueada en este nivel de riesgo.'),
  unlockNeeds:L('Complete the acknowledgement below to unlock outputs.','Complete la confirmación abajo para habilitar las salidas.'),
@@ -302,7 +305,8 @@ function chrome(){
  document.documentElement.lang=S.lang;
 }
 
-function render(){
+function render(keep){
+ const y0=window.scrollY;
  chrome();
  const a=$('#app');
  if(S.mode==='setpass')a.innerHTML=viewSetPass();
@@ -311,7 +315,7 @@ function render(){
  else if(S.mode==='disclaimer')a.innerHTML=viewDisclaimer();
  else if(S.mode==='wizard'){a.innerHTML=viewWizard();updateMid();}
  else if(S.mode==='review'){a.innerHTML=viewReview();$('#nav').classList.add('hide')}
- window.scrollTo(0,0);
+ window.scrollTo(0,keep?y0:0);
 }
 
 const viewSetPass=()=>`<div class="card"><h2>${T(UI.setPass)}</h2><p class="help">${T(UI.passNote)}</p>
@@ -462,8 +466,8 @@ function viewReview(){
   <button class="btn" data-act="print" ${unlocked?'':'disabled'}>${T(UI.print)}</button>
   <button class="btn sec" data-act="exportcase" ${unlocked?'':'disabled'}>${T(UI.exportCase)}</button></div>
   <div style="margin-top:16px"><h3>${T(UI.fillPdf)}</h3><p class="help">${T(UI.pdfNote)}</p>
-  <label class="btn sec" style="display:inline-block;margin:0">${T(UI.uploadPdf)}<input type="file" accept="application/pdf" data-act="pdfload" class="hide" ${unlocked?'':'disabled'}></label>
-  <div id="pdfzone">${S.pdf.doc?viewPdfMap(c):''}</div></div></div>
+  <label class="btn sec" style="display:inline-block;margin:0;${unlocked?'':'opacity:.45'}">${T(UI.uploadPdf)}<input type="file" accept="application/pdf" data-act="pdfload" class="hide" ${unlocked?'':'disabled'}></label>
+  <div id="pdfmsg" class="help" role="status"></div><div id="pdfzone">${S.pdf.doc?viewPdfMap(c):''}</div></div></div>
  <div id="worksheet" class="card">${viewWorksheet(c)}</div>`;
 }
 function fmt(v){return v===undefined||v===null||v===''?'—':esc(v)}
@@ -508,6 +512,7 @@ function loadPdfLib(){
  if(window.PDFLib)return Promise.resolve();
  return new Promise((res,rej)=>{const s=document.createElement('script');s.src=PDFLIB_URL;s.onload=res;s.onerror=()=>rej(new Error('pdf-lib'));document.head.appendChild(s)});
 }
+function pdfMsg(t,bad){const m=document.getElementById('pdfmsg');if(!m)return;m.textContent=t||'';m.style.color=bad?'var(--rose)':'var(--mute)'}
 function mapStoreKey(){return 'immivault.pdfmap.'+S.pdf.name}
 function loadMap(){try{S.pdf.map=JSON.parse(localStorage.getItem(mapStoreKey())||'{}')}catch(e){S.pdf.map={}}}
 function saveMap(){try{localStorage.setItem(mapStoreKey(),JSON.stringify(S.pdf.map))}catch(e){}}
@@ -525,7 +530,8 @@ async function fillPdf(){
  const c=cur();
  try{await loadPdfLib()}catch(e){alert(T(UI.pdfLibFail));return}
  const {PDFDocument}=window.PDFLib;
- const doc=await PDFDocument.load(S.pdf.bytes);const form=doc.getForm();let n=0;
+ let doc,form;try{doc=await PDFDocument.load(S.pdf.bytes,{ignoreEncryption:true,updateMetadata:false});form=doc.getForm()}catch(err){pdfMsg(T(UI.pdfErr)+' ('+err.message+')',true);return}
+ let n=0;
  const setText=(name,val)=>{try{form.getTextField(name).setText(String(val));n++}catch(e){try{form.getDropdown(name).select(String(val));n++}catch(e2){}}};
  const setCheck=(name,on)=>{try{const cb=form.getCheckBox(name);on?cb.check():cb.uncheck();n++}catch(e){}};
  pdfKeys(c).forEach(k=>{
@@ -535,10 +541,10 @@ async function fillPdf(){
    if(m.no)setCheck(m.no,k.val==='no');
   }else if(m.yes){const v=displayVal(k);if(v!=='')setText(m.yes,v)}
  });
- const bytes=await doc.save();
+ let bytes;try{bytes=await doc.save()}catch(err){pdfMsg(T(UI.pdfErr)+' ('+err.message+')',true);return}
  const blob=new Blob([bytes],{type:'application/pdf'});
  dl(blob,`${c.name.replace(/\W+/g,'_')}_N-400_filled.pdf`);
- alert(`${n} ${T(UI.filledN)}`);
+ pdfMsg(`${n} ${T(UI.filledN)}`);
 }
 function dl(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},500)}
 
@@ -549,7 +555,7 @@ document.addEventListener('click',async e=>{
  if(el.tagName==='A')e.preventDefault();
  const c=S.caseId?cur():null;
  switch(act){
-  case 'lang':S.lang=S.lang==='en'?'es':'en';S.db.lang=S.lang;persist();render();break;
+  case 'lang':S.lang=S.lang==='en'?'es':'en';S.db.lang=S.lang;persist();render(true);break;
   case 'home':S.mode='home';S.caseId=null;render();break;
   case 'lock':S.key=null;S.salt=null;S.db={cases:[],lang:S.lang};S.caseId=null;S.mode='unlock';render();break;
   case 'setpass':{
@@ -575,12 +581,12 @@ document.addEventListener('click',async e=>{
   case 'prev':if(S.partIdx>0){S.partIdx--;render()}break;
   case 'next':if(S.partIdx<PARTS.length-1){S.partIdx++;render()}else{S.mode='review';render()}break;
   case 'backwiz':S.mode='wizard';render();break;
-  case 'additem':{const arr=c.answers[el.dataset.k]=c.answers[el.dataset.k]||[];arr.push({});await persist();render();break}
-  case 'rmitem':{c.answers[el.dataset.k].splice(+el.dataset.i,1);await persist();render();break}
+  case 'additem':{const arr=c.answers[el.dataset.k]=c.answers[el.dataset.k]||[];arr.push({});await persist();render(true);break}
+  case 'rmitem':{c.answers[el.dataset.k].splice(+el.dataset.i,1);await persist();render(true);break}
   case 'exportall':dl(new Blob([JSON.stringify(S.db)],{type:'application/json'}),`ImmiVault-${VER}-backup.json`);break;
   case 'exportcase':dl(new Blob([JSON.stringify(c)],{type:'application/json'}),`${c.name.replace(/\W+/g,'_')}.json`);break;
   case 'print':window.print();break;
-  case 'goack':S.ack[c.id]={go:el.checked};render();break;
+  case 'goack':S.ack[c.id]={go:el.checked};render(true);break;
   case 'automatch':{const n=autoMatch();$('#pdfzone').innerHTML=viewPdfMap(c);break}
   case 'exportmap':dl(new Blob([JSON.stringify(S.pdf.map)],{type:'application/json'}),'n400-mapping.json');break;
   case 'fillpdf':await fillPdf();break;
@@ -593,18 +599,29 @@ document.addEventListener('change',async e=>{
   const txt=await el.files[0].text();try{const d=JSON.parse(txt);if(!Array.isArray(d.cases))throw 0;d.cases.forEach(cs=>{if(!S.db.cases.find(x=>x.id===cs.id))S.db.cases.push(cs)});await persist();render()}catch(err){alert('Invalid file')}
   return}
  if(el.dataset.act==='pdfload'){
-  try{await loadPdfLib()}catch(err){alert(T(UI.pdfLibFail));return}
-  const buf=await el.files[0].arrayBuffer();S.pdf.bytes=buf.slice(0);S.pdf.name=el.files[0].name;
-  const doc=await window.PDFLib.PDFDocument.load(buf);S.pdf.doc=true;
-  S.pdf.fields=doc.getForm().getFields().map(fl=>({name:fl.getName(),kind:fl instanceof window.PDFLib.PDFTextField?'text':fl instanceof window.PDFLib.PDFCheckBox?'checkbox':fl instanceof window.PDFLib.PDFDropdown?'dropdown':'other'}));
-  loadMap();$('#pdfzone').innerHTML=viewPdfMap(cur());return}
+  const file=el.files&&el.files[0];if(!file)return;
+  pdfMsg(T(UI.pdfLoading));
+  try{
+   await loadPdfLib();
+   const buf=await file.arrayBuffer();S.pdf.bytes=buf.slice(0);S.pdf.name=file.name;
+   const doc=await window.PDFLib.PDFDocument.load(buf,{ignoreEncryption:true,updateMetadata:false});
+   const P=window.PDFLib;
+   S.pdf.fields=doc.getForm().getFields().map(fl=>({name:fl.getName(),kind:fl instanceof P.PDFTextField?'text':fl instanceof P.PDFCheckBox?'checkbox':fl instanceof P.PDFDropdown?'dropdown':'other'}));
+   S.pdf.doc=true;
+   if(!S.pdf.fields.length){pdfMsg(T(UI.pdfNoFields),true);return}
+   loadMap();pdfMsg('');$('#pdfzone').innerHTML=viewPdfMap(cur());
+  }catch(err){
+   console.error(err);
+   pdfMsg(String(err&&err.message||'').includes('pdf-lib')?T(UI.pdfLibFail):T(UI.pdfErr)+' ('+(err&&err.message||err)+')',true);
+  }
+  el.value='';return}
  if(el.dataset.act==='importmap'){
   try{S.pdf.map=JSON.parse(await el.files[0].text());saveMap();$('#pdfzone').innerHTML=viewPdfMap(cur())}catch(err){alert('Invalid file')}return}
  if(el.dataset.pmap){
   const k=el.dataset.pmap;S.pdf.map[k]=S.pdf.map[k]||{};if(el.value)S.pdf.map[k][el.dataset.slot]=el.value;else delete S.pdf.map[k][el.dataset.slot];saveMap();return}
  if(el.dataset.path&&(el.dataset.t==='yesno'||el.dataset.t==='select')){
-  setPath(cur(),el.dataset.path,el.value);await persist();render();return}
- if(el.dataset.path&&S.mode==='review'){setPath(cur(),el.dataset.path,el.value);await persist();render()}
+  setPath(cur(),el.dataset.path,el.value);await persist();render(true);return}
+ if(el.dataset.path&&S.mode==='review'){setPath(cur(),el.dataset.path,el.value);await persist();render(true)}
 });
 document.addEventListener('input',e=>{
  const el=e.target;
