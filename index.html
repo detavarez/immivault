@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver003</title>
+<title>ImmiVault Ver004</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -80,7 +80,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 </div>
 
 <script>
-const VER='Ver003';
+const VER='Ver004';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -93,7 +93,7 @@ const UI={
  newCase:L('New case','Nuevo caso'),caseName:L('Person / case name','Nombre de la persona / caso'),
  open:L('Open','Abrir'),del:L('Delete','Borrar'),confirmDel:L('Delete this case permanently?','¿Borrar este caso permanentemente?'),
  noCases:L('No cases yet.','Aún no hay casos.'),
- backup:L('Backup','Respaldo'),exportAll:L('Export all (JSON)','Exportar todo (JSON)'),importAll:L('Import backup','Importar respaldo'),
+ backup:L('Backup','Respaldo'),exportAll:L('Export all (JSON)','Exportar todo (JSON)'),importAll:L('Import backup or single case (JSON)','Importar respaldo o un caso (JSON)'),
  backupNote:L('Data lives only in this browser. Export a backup regularly.','Los datos viven solo en este navegador. Exporte un respaldo con regularidad.'),
  setPass:L('Protect with a passphrase','Proteger con una contraseña'),passNote:L('Everything is encrypted in this browser with your passphrase. If you forget it, the data cannot be recovered.','Todo se cifra en este navegador con su contraseña. Si la olvida, los datos no se pueden recuperar.'),
  passphrase:L('Passphrase','Contraseña'),unlock:L('Unlock','Desbloquear'),skipPass:L('Continue without a passphrase (not recommended)','Continuar sin contraseña (no recomendado)'),
@@ -802,7 +802,7 @@ document.addEventListener('click',async e=>{
 document.addEventListener('change',async e=>{
  const el=e.target;
  if(el.dataset.act==='importall'){
-  const txt=await el.files[0].text();try{const d=JSON.parse(txt);if(!Array.isArray(d.cases))throw 0;d.cases.forEach(cs=>{if(!S.db.cases.find(x=>x.id===cs.id))S.db.cases.push(cs)});await persist();render()}catch(err){alert('Invalid file')}
+  const txt=await el.files[0].text();try{let d=JSON.parse(txt);if(!Array.isArray(d.cases)){if(d&&d.answers)d={cases:[d]};else throw 0}d.cases.forEach(cs=>{const i=S.db.cases.findIndex(x=>x.id===cs.id);if(i<0)S.db.cases.push(cs);else S.db.cases[i]=cs});await persist();render()}catch(err){alert('Invalid file')}
   return}
  if(el.dataset.act==='goack'){S.ack[S.caseId]={go:el.checked};render(true);return}
  if(el.dataset.path&&el.dataset.t==='multi'){
