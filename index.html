@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver002</title>
+<title>ImmiVault Ver003</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -80,10 +80,12 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 </div>
 
 <script>
-const VER='Ver002';
+const VER='Ver003';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+const BLANK_PDF='n400-01-20-25.pdf';
+const FORM_EDITION='01/20/25';
 const L=(en,es)=>({en,es});
 
 const UI={
@@ -97,12 +99,11 @@ const UI={
  passphrase:L('Passphrase','Contraseña'),unlock:L('Unlock','Desbloquear'),skipPass:L('Continue without a passphrase (not recommended)','Continuar sin contraseña (no recomendado)'),
  setBtn:L('Set passphrase','Crear contraseña'),wrongPass:L('Wrong passphrase.','Contraseña incorrecta.'),minPass:L('Use at least 8 characters.','Use al menos 8 caracteres.'),
  disclaimerTitle:L('Before you start','Antes de empezar'),
- disclaimer:L('This tool helps organize information for Form N-400. It is not legal advice and does not replace an attorney or accredited representative. Verify every answer against the official USCIS form and instructions before filing.','Esta herramienta ayuda a organizar información para el Formulario N-400. No es asesoría legal y no reemplaza a un abogado o representante acreditado. Verifique cada respuesta con el formulario e instrucciones oficiales de USCIS antes de presentar.'),
+ disclaimer:L('This tool helps organize information for Form N-400 (edition 01/20/25). It is not legal advice and does not replace an attorney or accredited representative. Verify every answer against the official USCIS form and instructions before filing.','Esta herramienta ayuda a organizar información para el Formulario N-400 (edición 01/20/25). No es asesoría legal y no reemplaza a un abogado o representante acreditado. Verifique cada respuesta con el formulario e instrucciones oficiales de USCIS antes de presentar.'),
  ack:L('I understand','Entiendo'),
  prev:L('Back','Atrás'),next:L('Next','Siguiente'),review:L('Review','Revisión'),
- add:L('Add','Agregar'),remove:L('Remove','Quitar'),yes:L('Yes','Sí'),no:L('No','No'),select:L('Select…','Seleccione…'),required:L('Required','Obligatorio'),
- explain:L('Explain (what, when, where, outcome)','Explique (qué, cuándo, dónde, resultado)'),
- saved:L('Saved','Guardado'),
+ add:L('Add','Agregar'),remove:L('Remove','Quitar'),yes:L('Yes','Sí'),no:L('No','No'),select:L('Select…','Seleccione…'),
+ saved:L('Saved','Guardado'),item:L('Item','Ítem'),
  reviewTitle:L('Review','Revisión'),missing:L('Missing required answers','Respuestas obligatorias faltantes'),allComplete:L('All required answers are complete.','Todas las respuestas obligatorias están completas.'),
  risk:L('Risk screen','Evaluación de riesgo'),score:L('Score','Puntuación'),
  tier0:L('Log only','Solo registro'),tier1:L('Warning: review these answers carefully','Aviso: revise estas respuestas con cuidado'),tier2:L('Flagged: strongly consider an attorney before filing','Marcado: considere seriamente un abogado antes de presentar'),tier3:L('Attorney review required before filing','Se requiere revisión de un abogado antes de presentar'),tier4:L('Blocked: do not file without an attorney','Bloqueado: no presente sin un abogado'),
@@ -115,149 +116,277 @@ const UI={
  daysIn:L('Days in the U.S. during the period (estimate)','Días en EE. UU. durante el período (estimado)'),needDays:L('Physical presence needed (half of period)','Presencia física requerida (mitad del período)'),
  longTrip:L('Trip of 6+ months: continuous residence may be questioned','Viaje de 6+ meses: la residencia continua puede cuestionarse'),
  breakTrip:L('Trip of 1+ year: continuous residence likely broken','Viaje de 1+ año: la residencia continua probablemente se interrumpió'),
- noLpr:L('Enter the permanent resident date to compute dates.','Ingrese la fecha de residencia permanente para calcular fechas.'),
+ noLpr:L('Enter the permanent resident date (Part 2, Item 7) to compute dates.','Ingrese la fecha de residencia permanente (Parte 2, Ítem 7) para calcular fechas.'),
  outputs:L('Outputs','Salidas'),print:L('Print answers worksheet','Imprimir hoja de respuestas'),exportCase:L('Export this case (JSON)','Exportar este caso (JSON)'),
  fillPdf:L('Fill the official N-400 PDF','Llenar el PDF oficial del N-400'),
- pdfNote:L('Upload the current official N-400 PDF from uscis.gov. Match each answer to a PDF field once; the mapping is saved on this device.','Suba el PDF oficial actual del N-400 de uscis.gov. Relacione cada respuesta con un campo del PDF una vez; la relación se guarda en este dispositivo.'),
- uploadPdf:L('Choose the N-400 PDF','Elija el PDF del N-400'),autoMatch:L('Auto-match obvious fields','Relacionar campos obvios'),
- download:L('Download filled PDF','Descargar PDF llenado'),pdfFields:L('PDF fields found','Campos del PDF encontrados'),
- exportMap:L('Export mapping','Exportar relación'),importMap:L('Import mapping','Importar relación'),
- answer:L('Answer','Respuesta'),pdfField:L('PDF field','Campo del PDF'),pdfFieldNo:L('PDF field for "No"','Campo del PDF para "No"'),none:L('— none —','— ninguno —'),
- pdfLoading:L('Reading the PDF…','Leyendo el PDF…'),
- pdfNoFields:L('This PDF has no fillable fields. Download the fillable N-400 from uscis.gov, open it in Adobe Acrobat Reader, save a copy, and upload that copy.','Este PDF no tiene campos para llenar. Descargue el N-400 llenable de uscis.gov, ábralo en Adobe Acrobat Reader, guarde una copia y suba esa copia.'),
- pdfErr:L('Could not read this PDF.','No se pudo leer este PDF.'),
- pdfLibFail:L('Could not load the PDF library (internet needed once).','No se pudo cargar la biblioteca PDF (se necesita internet).'),
+ pdfNote:L('Fills the official fillable N-400, edition 01/20/25 (expires 02/28/2027). Check uscis.gov/n-400 to confirm this is still the current edition. Signatures and dates are left blank for you to sign by hand.','Llena el N-400 oficial, edición 01/20/25 (vence 02/28/2027). Verifique en uscis.gov/n-400 que siga siendo la edición vigente. Las firmas y fechas quedan en blanco para firmarlas a mano.'),
+ download:L('Fill and download the PDF','Llenar y descargar el PDF'),
+ pdfLoading:L('Preparing the PDF…','Preparando el PDF…'),pdfLibFail:L('Could not load the PDF library (internet needed once).','No se pudo cargar la biblioteca PDF (se necesita internet).'),
+ pdfBlankFail:L('Could not load the blank N-400. Open ImmiVault from its web address (not a downloaded file).','No se pudo cargar el N-400 en blanco. Abra ImmiVault desde su dirección web (no desde un archivo descargado).'),
+ pdfErr:L('Could not fill the PDF.','No se pudo llenar el PDF.'),
+ pdfDone:L('fields filled','campos llenados'),pdfTrunc:L('values were too long and were shortened','valores eran demasiado largos y se acortaron'),pdfMiss:L('values could not be placed (see Part 14 sheet)','valores no se pudieron colocar (vea la hoja de la Parte 14)'),
+ p14sheet:L('Part 14 continuation sheet','Hoja de continuación de la Parte 14'),
+ p14note:L('Print this sheet, add your name and A-Number at the top, sign and date it, and attach it to the form.','Imprima esta hoja, agregue su nombre y Número A arriba, fírmela y féchela, y adjúntela al formulario.'),
  blockedMsg:L('Output is blocked at this risk level.','La salida está bloqueada en este nivel de riesgo.'),
  unlockNeeds:L('Complete the acknowledgement below to unlock outputs.','Complete la confirmación abajo para habilitar las salidas.'),
  translateNote:L('Spanish text is a working translation; official form language is English.','El texto en español es una traducción de trabajo; el idioma oficial del formulario es inglés.'),
  caseOf:L('Case','Caso'),part:L('Part','Parte'),of:L('of','de'),
- filledN:L('fields filled','campos llenados')
+ cap:L('rows fit on the form; extra rows go to Part 14','filas caben en el formulario; las demás van a la Parte 14'),
+ explain:L('Explain (what, when, where, outcome) — goes to Part 14','Explique (qué, cuándo, dónde, resultado) — va a la Parte 14'),
+ part9intro:L('When a question says EVER, include conduct anywhere in the world, at any time. A "Yes" does not automatically disqualify; it helps decide whether you need an attorney. Details matter.','Cuando una pregunta dice ALGUNA VEZ (EVER), incluya conducta en cualquier lugar del mundo y en cualquier momento. Un "Sí" no descalifica automáticamente; ayuda a decidir si necesita un abogado. Los detalles importan.')
 };
-
 const T=(o)=>{const lg=S.lang;return (o&&(o[lg]||o.en))||''};
 
 const OPT={
- basis:[['general',L('General: 5 years as a permanent resident','General: 5 años como residente permanente')],['spouse',L('Married to a U.S. citizen for 3 years','Casado(a) con ciudadano(a) de EE. UU. por 3 años')],['military',L('Military service','Servicio militar')],['other',L('Other basis','Otra base')]],
- gender:[['male',L('Male','Masculino')],['female',L('Female','Femenino')],['another',L('Another gender identity','Otra identidad de género')]],
- ethnicity:[['hispanic',L('Hispanic or Latino','Hispano o latino')],['not',L('Not Hispanic or Latino','No hispano ni latino')]],
- race:[['white',L('White','Blanco')],['asian',L('Asian','Asiático')],['black',L('Black or African American','Negro o afroamericano')],['native',L('American Indian or Alaska Native','Indígena americano o nativo de Alaska')],['pacific',L('Native Hawaiian or Pacific Islander','Nativo de Hawái o isleño del Pacífico')]],
- eye:[['black',L('Black','Negros')],['blue',L('Blue','Azules')],['brown',L('Brown','Marrones')],['gray',L('Gray','Grises')],['green',L('Green','Verdes')],['hazel',L('Hazel','Avellana')],['maroon',L('Maroon','Granate')],['pink',L('Pink','Rosados')],['unknown',L('Unknown/other','Desconocido/otro')]],
- hair:[['bald',L('Bald','Calvo')],['black',L('Black','Negro')],['blond',L('Blond','Rubio')],['brown',L('Brown','Castaño')],['gray',L('Gray','Canoso')],['red',L('Red','Pelirrojo')],['sandy',L('Sandy','Arena')],['white',L('White','Blanco')],['unknown',L('Unknown/other','Desconocido/otro')]],
- marital:[['single',L('Single, never married','Soltero(a), nunca casado(a)')],['married',L('Married','Casado(a)')],['divorced',L('Divorced','Divorciado(a)')],['widowed',L('Widowed','Viudo(a)')],['separated',L('Separated','Separado(a)')],['annulled',L('Marriage annulled','Matrimonio anulado')]]
+ reason:[['A',L('A. General provision (5 years as a permanent resident)','A. Disposición general (5 años como residente permanente)')],['B',L('B. Spouse of a U.S. citizen (3 years)','B. Cónyuge de ciudadano(a) de EE. UU. (3 años)')],['C',L('C. VAWA (spouse, former spouse or child of a U.S. citizen)','C. VAWA (cónyuge, excónyuge o hijo(a) de ciudadano(a))')],['D',L('D. Spouse of a U.S. citizen working abroad for a qualified employer','D. Cónyuge de ciudadano(a) que trabaja en el exterior para un empleador calificado')],['E',L('E. Military service during a period of hostilities','E. Servicio militar durante un período de hostilidades')],['F',L('F. At least one year of honorable military service','F. Al menos un año de servicio militar honorable')],['G',L('G. Other reason not listed','G. Otra razón no listada')]],
+ sex:[['M',L('Male','Masculino')],['F',L('Female','Femenino')]],
+ ethnicity:[['Y',L('Hispanic or Latino','Hispano o latino')],['N',L('Not Hispanic or Latino','No hispano ni latino')]],
+ race:[['I',L('American Indian or Alaska Native','Indígena americano o nativo de Alaska')],['A',L('Asian','Asiático')],['B',L('Black or African American','Negro o afroamericano')],['P',L('Native Hawaiian or Other Pacific Islander','Nativo de Hawái u otro isleño del Pacífico')],['W',L('White','Blanco')]],
+ eye:[['BLK',L('Black','Negros')],['BLU',L('Blue','Azules')],['BRO',L('Brown','Marrones')],['GRY',L('Gray','Grises')],['GRN',L('Green','Verdes')],['HAZ',L('Hazel','Avellana')],['MAR',L('Maroon','Granate')],['PNK',L('Pink','Rosados')],['XXX',L('Unknown/other','Desconocido/otro')]],
+ hair:[['BAL',L('Bald (no hair)','Calvo (sin cabello)')],['BLK',L('Black','Negro')],['BLN',L('Blond','Rubio')],['BRO',L('Brown','Castaño')],['GRY',L('Gray','Canoso')],['RED',L('Red','Pelirrojo')],['SDY',L('Sandy','Arena')],['WHI',L('White','Blanco')],['XXX',L('Unknown/other','Desconocido/otro')]],
+ unit:[['',L('None','Ninguno')],['apt',L('Apt.','Apto.')],['ste',L('Ste.','Ste.')],['flr',L('Flr.','Piso')]],
+ marital:[['S',L('Single, never married','Soltero(a), nunca casado(a)')],['M',L('Married','Casado(a)')],['D',L('Divorced','Divorciado(a)')],['W',L('Widowed','Viudo(a)')],['E',L('Separated','Separado(a)')],['A',L('Marriage annulled','Matrimonio anulado')]],
+ spouseCit:[['B',L('By birth in the United States','Por nacimiento en Estados Unidos')],['O',L('Other (give the date)','Otro (indique la fecha)')]],
+ resides:[['resides with me',L('Resides with me','Vive conmigo')],['does not reside with me',L('Does not reside with me','No vive conmigo')],['unknown',L('Unknown','Desconocido')],['missing',L('Missing','Desaparecido')]],
+ relation:[['biological son or daughter',L('Biological son or daughter','Hijo(a) biológico(a)')],['stepchild',L('Stepchild','Hijastro(a)')],['legally adopted son or daughter',L('Legally adopted son or daughter','Hijo(a) adoptado(a) legalmente')]],
+ feet:['2','3','4','5','6','7','8'].map(v=>[v,{en:v,es:v}]),
+ inches:['0','1','2','3','4','5','6','7','8','9','10','11'].map(v=>[v,{en:v,es:v}])
 };
 
-const RISK=[
- ['claimedUSC',35,L('Ever claimed to be a U.S. citizen','Alguna vez afirmó ser ciudadano(a) de EE. UU.')],
- ['voted',30,L('Ever registered or voted in a U.S. election','Alguna vez se registró o votó en una elección de EE. UU.')],
- ['taxNotFiled',20,L('Failed to file a required tax return','No presentó una declaración de impuestos requerida')],
- ['taxOwed',15,L('Owes overdue taxes','Debe impuestos vencidos')],
- ['taxNonresident',20,L('Called yourself a nonresident on a tax return','Se declaró no residente en una declaración de impuestos')],
- ['communist',30,L('Member of or tied to the Communist or another totalitarian party','Miembro o vinculado al Partido Comunista u otro partido totalitario')],
- ['terror',80,L('Involved with terrorism or violent groups','Involucrado con terrorismo o grupos violentos')],
- ['genocide',90,L('Involved in genocide, torture or killings','Involucrado en genocidio, tortura o asesinatos')],
- ['military',35,L('Served in a military unit, militia or armed group','Sirvió en una unidad militar, milicia o grupo armado')],
- ['detention',40,L('Worked at a prison or detention facility','Trabajó en una cárcel o centro de detención')],
- ['persecute',60,L('Ever harmed or persecuted someone because of race, religion, nationality, opinion or group','Alguna vez dañó o persiguió a alguien por raza, religión, nacionalidad, opinión o grupo')],
- ['crimeNoArrest',30,L('Committed a crime or offense without being arrested','Cometió un delito o infracción sin ser arrestado(a)')],
- ['arrested',35,L('Ever arrested, cited or detained by any authority','Alguna vez arrestado(a), citado(a) o detenido(a) por una autoridad')],
- ['charged',35,L('Ever charged with a crime','Alguna vez acusado(a) de un delito')],
- ['convicted',45,L('Ever convicted, or put in an alternative sentence or diversion program','Alguna vez condenado(a), o en sentencia alternativa o programa de desvío')],
- ['probation',30,L('Currently on probation, parole or suspended sentence','Actualmente en libertad condicional o sentencia suspendida')],
- ['prostitution',25,L('Involved in prostitution or commercial vice','Involucrado en prostitución o vicio comercial')],
- ['polygamy',25,L('Practiced or married more than one spouse at once','Practicó la poligamia o tuvo más de un cónyuge a la vez')],
- ['gambling',20,L('Earned income from illegal gambling','Obtuvo ingresos de juegos ilegales')],
- ['drunkard',20,L('Habitual drunkard','Ebrio habitual')],
- ['drugs',35,L('Used, sold or trafficked controlled substances (including where legal under local law)','Usó, vendió o traficó sustancias controladas (incluso donde sea legal localmente)')],
- ['smuggle',45,L('Helped anyone enter the U.S. illegally','Ayudó a alguien a entrar ilegalmente a EE. UU.')],
- ['lied',40,L('Lied or gave false information to a government official to get a benefit','Mintió o dio información falsa a un funcionario para obtener un beneficio')],
- ['fakeDocs',45,L('Used false documents to get a benefit','Usó documentos falsos para obtener un beneficio')],
- ['removal',55,L('Ever in removal, exclusion or deportation proceedings','Alguna vez en procedimientos de remoción, exclusión o deportación')],
- ['ordered',60,L('Ever ordered removed or deported','Alguna vez con orden de remoción o deportación')],
- ['abandoned',25,L('Left the U.S. to avoid the military draft','Salió de EE. UU. para evitar el servicio militar obligatorio')],
- ['selective',30,L('Male who lived in the U.S. at ages 18–26 and did not register for Selective Service','Hombre que vivió en EE. UU. entre los 18 y 26 años y no se registró en el Servicio Selectivo')],
- ['benefitsFraud',30,L('Received public benefits by fraud or misreporting','Recibió beneficios públicos mediante fraude o información falsa')],
- ['childSupport',20,L('Unpaid court-ordered child or spousal support','Manutención de hijos o cónyuge ordenada por un tribunal sin pagar')]
-];
-const OATH=[
- ['oathSupport',L('Do you support the U.S. Constitution and form of government?','¿Apoya la Constitución y la forma de gobierno de EE. UU.?'),true],
- ['oathWilling',L('Are you willing to take the full Oath of Allegiance?','¿Está dispuesto(a) a prestar el Juramento de Lealtad completo?'),true],
- ['oathArms',L('If the law requires, are you willing to bear arms for the U.S.?','Si la ley lo exige, ¿está dispuesto(a) a portar armas por EE. UU.?'),true],
- ['oathService',L('If the law requires, are you willing to do noncombatant service or work of national importance?','Si la ley lo exige, ¿está dispuesto(a) a prestar servicio no combatiente o trabajo de importancia nacional?'),true]
-];
-
 const f=(k,type,l,o={})=>Object.assign({k,type,l},o);
-const NAME_SUB=[f('given','text',L('Given name','Nombre')),f('family','text',L('Family name','Apellido'))];
-const ADDR_SUB=[f('street','text',L('Street number and name','Número y nombre de la calle'),{req:1}),f('apt','text',L('Apt/Ste/Flr','Apto/Ste/Piso')),f('city','text',L('City','Ciudad'),{req:1}),f('state','text',L('State / province','Estado / provincia'),{req:1}),f('zip','text',L('ZIP / postal code','Código postal')),f('country','text',L('Country','País'),{req:1}),f('from','date',L('From','Desde'),{req:1}),f('to','date',L('To (blank if current)','Hasta (vacío si actual)'))];
-const isMarried=a=>a.marital==='married'||a.marital==='separated';
+const rows=(prefix,n,suffix='[0]')=>Array.from({length:n},(_,i)=>`${prefix}${i+1}${suffix}`);
+const isB=a=>a.reason==='B'||a.reason==='D';
+const married=a=>a.marital==='M'||a.marital==='E';
+const notSingle=a=>a.marital&&a.marital!=='S';
+const fam=(k,en,es,o)=>f(k,'text',L(en,es),o);
+
+const ADDR_CUR=(pfx,state,from,mailing)=>[
+ f('careOf','text',L('In care of name (if any)','A/C de (si aplica)'),{t:pfx+'InCareOfName[0]'}),
+ f('street','text',L('Street number and name','Número y nombre de la calle'),{req:!mailing,t:pfx+'StreetName[0]'}),
+ f('unitType','select',L('Unit type','Tipo de unidad'),{opts:'unit',c:{apt:pfx+'Unit[2]',ste:pfx+'Unit[1]',flr:pfx+'Unit[0]'}}),
+ f('unitNum','text',L('Unit number','Número de unidad'),{t:pfx+'Number[0]'}),
+ f('city','text',L('City or town','Ciudad o pueblo'),{req:!mailing,t:pfx+'City[0]'}),
+ f('state','text',L('State (2 letters, U.S. only)','Estado (2 letras, solo EE. UU.)'),{d:state,up:1}),
+ f('zip','text',L('ZIP code','Código ZIP'),{t:pfx+'ZipCode[0]',dg:1}),
+ f('province','text',L('Province (outside U.S.)','Provincia (fuera de EE. UU.)'),{t:pfx+'Province[0]'}),
+ f('postal','text',L('Postal code (outside U.S.)','Código postal (fuera de EE. UU.)'),{t:pfx+'PostalCode[0]'}),
+ f('country','text',L('Country','País'),{req:!mailing,t:pfx+'Country[0]'})
+].concat(from?[f('from','date',L('Lived here from','Vive aquí desde'),{req:1,t:from})]:[]);
 
 const PARTS=[
- {id:1,t:L('Eligibility','Elegibilidad'),fields:[
-  f('basis','select',L('Basis for applying','Base para solicitar'),{opts:'basis',req:1}),
-  f('lprDate','date',L('Date you became a permanent resident','Fecha en que obtuvo la residencia permanente'),{req:1}),
-  f('aNumber','text',L('A-Number','Número A'),{req:1,pdf:['ANumber','AlienNumber']}),
-  f('uscisAccount','text',L('USCIS online account number (if any)','Número de cuenta en línea de USCIS (si tiene)'))]},
- {id:2,t:L('About you','Sobre usted'),fields:[
-  f('givenName','text',L('Given name (first)','Nombre'),{req:1,pdf:['GivenName','FirstName']}),
-  f('middleName','text',L('Middle name','Segundo nombre'),{pdf:['MiddleName']}),
-  f('familyName','text',L('Family name (last)','Apellido'),{req:1,pdf:['FamilyName','LastName']}),
-  f('otherNamesUsed','yesno',L('Have you used other names?','¿Ha usado otros nombres?')),
-  f('otherNames','list',L('Other names used','Otros nombres usados'),{item:NAME_SUB,show:a=>a.otherNamesUsed==='yes'}),
-  f('dob','date',L('Date of birth','Fecha de nacimiento'),{req:1,pdf:['DateOfBirth','DOB']}),
-  f('gender','select',L('Gender','Género'),{opts:'gender',req:1}),
-  f('countryBirth','text',L('Country of birth','País de nacimiento'),{req:1,pdf:['CountryOfBirth']}),
-  f('countryCit','text',L('Country of citizenship or nationality','País de ciudadanía o nacionalidad'),{req:1}),
-  f('ssn','text',L('Social Security number','Número de Seguro Social'),{pdf:['SSN','SocialSecurity']}),
-  f('disabilityWaiver','yesno',L('Requesting a disability exception (English/civics)?','¿Solicita excepción por discapacidad (inglés/educación cívica)?'))]},
- {id:3,t:L('Biographic','Datos biográficos'),fields:[
-  f('ethnicity','select',L('Ethnicity','Origen étnico'),{opts:'ethnicity',req:1}),
-  f('race','select',L('Race','Raza'),{opts:'race',req:1}),
-  f('heightFt','number',L('Height (feet)','Estatura (pies)'),{req:1}),
-  f('heightIn','number',L('Height (inches)','Estatura (pulgadas)'),{req:1}),
-  f('weightLb','number',L('Weight (pounds)','Peso (libras)'),{req:1}),
-  f('eye','select',L('Eye color','Color de ojos'),{opts:'eye',req:1}),
-  f('hair','select',L('Hair color','Color de cabello'),{opts:'hair',req:1})]},
- {id:4,t:L('Residence','Residencia'),fields:[
-  f('residences','list',L('Addresses for the required period (most recent first)','Direcciones del período requerido (la más reciente primero)'),{item:ADDR_SUB,min:1,help:L('List every address for the last 5 years (3 if applying through marriage).','Liste cada dirección de los últimos 5 años (3 si solicita por matrimonio).')}),
-  f('mailingSame','yesno',L('Is your mailing address the same as your current address?','¿Su dirección postal es igual a la actual?'),{req:1}),
-  f('mailing','list',L('Mailing address','Dirección postal'),{item:ADDR_SUB.slice(0,6),max:1,min:1,show:a=>a.mailingSame==='no'})]},
+ {id:1,t:L('Information about your eligibility','Información sobre su elegibilidad'),fields:[
+  f('reason','select',L('Reason for filing','Motivo de la solicitud'),{no:'1',opts:'reason',req:1,c:{A:'Part1_Eligibility[2]',B:'Part1_Eligibility[1]',C:'Part1_Eligibility[0]',D:'Part1_Eligibility[6]',E:'Part1_Eligibility[3]',F:'Part1_Eligibility[4]',G:'Part1_Eligibility[5]'}}),
+  f('reasonD','text',L('USCIS field office for the interview (only if your residence is outside the U.S.)','Oficina de USCIS para la entrevista (solo si reside fuera de EE. UU.)'),{show:a=>a.reason==='D',d:'DropDownList1[0]',fuzzy:1}),
+  f('reasonG','text',L('Explain the other reason','Explique la otra razón'),{show:a=>a.reason==='G',t:'Part1Line5_OtherExplain[0]'}),
+  f('aNumber','text',L('A-Number (9 digits)','Número A (9 dígitos)'),{req:1,dg:1,help:L('Shown at the top of every page of the form.','Aparece arriba en cada página del formulario.'),tf:(v)=>Array.from({length:14},(_,i)=>[`Line1_AlienNumber[${i}]`,v])})]},
+ {id:2,t:L('Information about you','Información sobre usted'),fields:[
+  fam('familyName','Family name (last)','Apellido',{no:'1',req:1,t:'P2_Line1_FamilyName[0]',tf2:['P2_Line1_FamilyName[1]']}),
+  fam('givenName','Given name (first)','Nombre',{no:'1',req:1,t:'P2_Line1_GivenName[0]',tf2:['P2_Line1_GivenName[1]']}),
+  fam('middleName','Middle name','Segundo nombre',{no:'1',t:'P2_Line1_MiddleName[0]',tf2:['P2_Line1_MiddleName[1]']}),
+  f('otherNamesUsed','yesno',L('Have you used other names since birth (include maiden names, aliases)?','¿Ha usado otros nombres desde su nacimiento (incluya apellido de soltera, alias)?'),{no:'2'}),
+  f('otherNames','list',L('Other names used','Otros nombres usados'),{no:'2',show:a=>a.otherNamesUsed==='yes',min:1,cap:2,part:2,page:1,item:[
+    f('family','text',L('Family name','Apellido'),{t:['Line2_FamilyName1[0]','Line2_FamilyName2[0]']}),
+    f('given','text',L('Given name','Nombre'),{t:['Line3_GivenName1[0]','Line3_GivenName2[0]']}),
+    f('middle','text',L('Middle name','Segundo nombre'),{t:['Line3_MiddleName1[0]','Line3_MiddleName2[0]']})]}),
+  f('nameChange','yesno',L('Would you like to legally change your name?','¿Desea cambiar legalmente su nombre?'),{no:'3',y:'P2_Line34_NameChange'}),
+  fam('newFamily','New family name','Nuevo apellido',{no:'3',show:a=>a.nameChange==='yes',t:'Part2Line3_FamilyName[0]'}),
+  fam('newGiven','New given name','Nuevo nombre',{no:'3',show:a=>a.nameChange==='yes',t:'Part2Line4a_GivenName[0]'}),
+  fam('newMiddle','New middle name','Nuevo segundo nombre',{no:'3',show:a=>a.nameChange==='yes',t:'Part2Line4a_MiddleName[0]'}),
+  fam('uscisAccount','USCIS online account number (if any)','Número de cuenta en línea de USCIS (si tiene)',{no:'4',t:'P2_Line6_USCISELISAcctNumber[0]',dg:1}),
+  f('sex','select',L('Sex','Sexo'),{no:'5',opts:'sex',req:1,c:{M:'P2_Line7_Gender[0]',F:'P2_Line7_Gender[1]'}}),
+  f('dob','date',L('Date of birth','Fecha de nacimiento'),{no:'6',req:1,t:'P2_Line8_DateOfBirth[0]'}),
+  f('otherDobs','text',L('Other dates of birth you have ever used (if any)','Otras fechas de nacimiento que haya usado (si hay)'),{no:'6',p14:{part:2,item:'6',page:2}}),
+  f('lprDate','date',L('Date you became a lawful permanent resident','Fecha en que se hizo residente permanente legal'),{no:'7',req:1,t:'P2_Line9_DateBecamePermanentResident[0]'}),
+  fam('countryBirth','Country of birth','País de nacimiento',{no:'8',req:1,t:'P2_Line10_CountryOfBirth[0]'}),
+  fam('countryNat','Country of citizenship or nationality','País de ciudadanía o nacionalidad',{no:'9',req:1,t:'P2_Line11_CountryOfNationality[0]'}),
+  fam('moreNat','Other countries of nationality (if any)','Otros países de nacionalidad (si hay)',{no:'9',p14:{part:2,item:'9',page:2}}),
+  f('parentUSC','yesno',L('Was your mother or father (including adoptive) a U.S. citizen before your 18th birthday? If Yes, you may already be a citizen; talk to an attorney before filing.','¿Su madre o padre (incluso adoptivo) era ciudadano(a) de EE. UU. antes de sus 18 años? Si es Sí, quizá ya sea ciudadano(a); consulte a un abogado antes de presentar.'),{no:'10',req:1,y:'P2_Line10_claimdisability'}),
+  f('disability','yesno',L('Do you have a physical, developmental or mental impairment that prevents you from showing English or civics knowledge? (If Yes, Form N-648 is needed.)','¿Tiene un impedimento físico, del desarrollo o mental que le impide demostrar conocimiento de inglés o educación cívica? (Si es Sí, se necesita el Formulario N-648.)'),{no:'11',req:1,y:'P2_Line11_claimdisability'}),
+  f('ssaUpdate','yesno',L('Do you want SSA to issue or replace your Social Security card and update your status when you are naturalized?','¿Desea que SSA emita o reemplace su tarjeta de Seguro Social y actualice su estatus cuando se naturalice?'),{no:'12.a',req:1,y:'Line12a_Checkbox'}),
+  fam('ssn','Social Security number','Número de Seguro Social',{no:'12.b',show:a=>a.ssaUpdate==='yes',t:'Line12b_SSN[0]',dg:1}),
+  f('ssaConsent','yesno',L('Consent to disclose information to SSA (must be Yes if you answered Yes to 12.a)','Consentimiento para divulgar información a SSA (debe ser Sí si respondió Sí en 12.a)'),{no:'12.c',show:a=>a.ssaUpdate==='yes',y:'Line12.c_Checkbox'})]},
+ {id:3,t:L('Biographic information','Información biográfica'),fields:[
+  f('ethnicity','select',L('Ethnicity','Origen étnico'),{no:'1',opts:'ethnicity',req:1,c:{Y:'P7_Line1_Ethnicity[1]',N:'P7_Line1_Ethnicity[0]'}}),
+  f('race','multi',L('Race (select all that apply)','Raza (seleccione todas las que apliquen)'),{no:'2',opts:'race',req:1,c:{I:'P7_Line2_Race[0]',A:'P7_Line2_Race[1]',B:'P7_Line2_Race[2]',P:'P7_Line2_Race[3]',W:'P7_Line2_Race[4]'}}),
+  f('heightFt','select',L('Height (feet)','Estatura (pies)'),{no:'3',opts:'feet',req:1,d:'P7_Line3_HeightFeet[0]'}),
+  f('heightIn','select',L('Height (inches)','Estatura (pulgadas)'),{no:'3',opts:'inches',req:1,d:'P7_Line3_HeightInches[0]'}),
+  f('weight','number',L('Weight (pounds)','Peso (libras)'),{no:'4',req:1,tf:(v)=>{const s=String(Math.max(0,Math.min(999,Math.round(+v)))).padStart(3,' ');return [['P7_Line4_Pounds1[0]',s[0]],['P7_Line4_Pounds2[0]',s[1]],['P7_Line4_Pounds3[0]',s[2]]].filter(x=>x[1].trim())}}),
+  f('eye','select',L('Eye color','Color de ojos'),{no:'5',opts:'eye',req:1,c:{BLK:'P7_Line5_Eye[5]',BLU:'P7_Line5_Eye[1]',BRO:'P7_Line5_Eye[0]',GRY:'P7_Line5_Eye[4]',GRN:'P7_Line5_Eye[2]',HAZ:'P7_Line5_Eye[3]',MAR:'P7_Line5_Eye[7]',PNK:'P7_Line5_Eye[6]',XXX:'P7_Line5_Eye[8]'}}),
+  f('hair','select',L('Hair color','Color de cabello'),{no:'6',opts:'hair',req:1,c:{BAL:'P7_Line6_Hair[0]',BLK:'P7_Line6_Hair[7]',BLN:'P7_Line6_Hair[5]',BRO:'P7_Line6_Hair[6]',GRY:'P7_Line6_Hair[4]',RED:'P7_Line6_Hair[2]',SDY:'P7_Line6_Hair[1]',WHI:'P7_Line6_Hair[3]',XXX:'P7_Line6_Hair[8]'}})]},
+ {id:4,t:L('Information about your residence','Información sobre su residencia'),fields:[
+  f('curAddr','group',L('Current physical address (Item 1)','Dirección física actual (Ítem 1)'),{no:'1',sub:ADDR_CUR('P4_Line1_','P4_Line1_State[0]','P4_Line1_DatesofResidence[1]',false)}),
+  f('prevAddr','list',L('Previous addresses for the required period (most recent first)','Direcciones anteriores del período requerido (la más reciente primero)'),{no:'1',cap:3,part:4,page:3,help:L('Last 5 years (3 if filing as spouse of a U.S. citizen). Go back to the date you became a permanent resident if that is more recent.','Últimos 5 años (3 si solicita como cónyuge de ciudadano). Retroceda hasta la fecha de residencia permanente si es más reciente.'),item:[
+    f('street','text',L('Street address','Dirección'),{t:rows('P4_Line3_PhysicalAddress',3)}),
+    f('city','text',L('City or town','Ciudad o pueblo'),{t:rows('P4_Line3_CityTown',3)}),
+    f('state','text',L('State / province','Estado / provincia'),{t:rows('P4_Line3_State',3)}),
+    f('zip','text',L('ZIP / postal code','Código ZIP / postal'),{t:rows('P4_Line3_ZipCode',3)}),
+    f('country','text',L('Country','País'),{t:rows('P4_Line3_Country',3)}),
+    f('from','date',L('From','Desde'),{t:rows('P4_Line3_From',3)}),
+    f('to','date',L('To','Hasta'),{t:['P4_Line3_From1[1]','P4_Line3_To2[0]','P4_Line3_To3[0]']})]}),
+  f('mailingSame','yesno',L('Is your current physical address also your mailing address?','¿Su dirección física actual es también su dirección postal?'),{no:'2',req:1,y:'Pt3_Line2a_Checkbox'}),
+  f('mailAddr','group',L('Current mailing address (Item 3)','Dirección postal actual (Ítem 3)'),{no:'3',show:a=>a.mailingSame==='no',sub:ADDR_CUR('P5_Line1b_','P4_Line1_State[1]',null,true)})]},
  {id:5,t:L('Marital history','Historial matrimonial'),fields:[
-  f('marital','select',L('Current marital status','Estado civil actual'),{opts:'marital',req:1}),
-  f('timesMarried','number',L('Times you have been married','Veces que se ha casado'),{show:a=>a.marital&&a.marital!=='single'}),
-  f('spouseGiven','text',L('Spouse given name','Nombre del cónyuge'),{show:isMarried,req:1}),
-  f('spouseFamily','text',L('Spouse family name','Apellido del cónyuge'),{show:isMarried,req:1}),
-  f('spouseDob','date',L('Spouse date of birth','Fecha de nacimiento del cónyuge'),{show:isMarried}),
-  f('marriageDate','date',L('Date of marriage','Fecha de matrimonio'),{show:isMarried}),
-  f('spouseUSC','yesno',L('Is your spouse a U.S. citizen?','¿Su cónyuge es ciudadano(a) de EE. UU.?'),{show:isMarried})]},
+  f('marital','select',L('Current marital status','Estado civil actual'),{no:'1',opts:'marital',req:1,c:{S:'P10_Line1_MaritalStatus[1]',M:'P10_Line1_MaritalStatus[3]',D:'P10_Line1_MaritalStatus[0]',W:'P10_Line1_MaritalStatus[2]',E:'P10_Line1_MaritalStatus[5]',A:'P10_Line1_MaritalStatus[4]'}}),
+  f('spouseForces','yesno',L('If married, is your spouse a current member of the U.S. armed forces?','Si está casado(a), ¿su cónyuge es miembro actual de las fuerzas armadas de EE. UU.?'),{no:'2',show:married,y:'P7_Line2_Forces'}),
+  f('timesMarried','number',L('How many times have you been married?','¿Cuántas veces se ha casado?'),{no:'3',show:notSingle,t:'Part9Line3_TimesMarried[0]',dg:1}),
+  fam('spFamily','Spouse family name','Apellido del cónyuge',{no:'4.a',show:a=>isB(a)&&married(a),req:1,t:'P10_Line4a_FamilyName[0]'}),
+  fam('spGiven','Spouse given name','Nombre del cónyuge',{no:'4.a',show:a=>isB(a)&&married(a),req:1,t:'P10_Line4a_GivenName[0]'}),
+  fam('spMiddle','Spouse middle name','Segundo nombre del cónyuge',{no:'4.a',show:a=>isB(a)&&married(a),t:'P10_Line4a_MiddleName[0]'}),
+  f('spDob','date',L('Spouse date of birth','Fecha de nacimiento del cónyuge'),{no:'4.b',show:a=>isB(a)&&married(a),t:'P10_Line4d_DateofBirth[0]'}),
+  f('spMarriage','date',L('Date you entered into marriage with your current spouse','Fecha en que se casó con su cónyuge actual'),{no:'4.c',show:a=>isB(a)&&married(a),t:'P10_Line4e_DateEnterMarriage[0]'}),
+  f('spAddrSame','yesno',L('Is your spouse\'s physical address the same as yours? (If No, the address goes in Part 14.)','¿La dirección física de su cónyuge es la misma que la suya? (Si es No, la dirección va en la Parte 14.)'),{no:'4.d',show:a=>isB(a)&&married(a),y:'P10_Line5_Citizen'}),
+  f('spAddr','text',L('Spouse\'s address (goes to Part 14)','Dirección del cónyuge (va a la Parte 14)'),{no:'4.d',show:a=>isB(a)&&married(a)&&a.spAddrSame==='no',p14:{part:5,item:'4.d',page:4}}),
+  f('spCitHow','select',L('When did your spouse become a U.S. citizen?','¿Cuándo se hizo ciudadano(a) su cónyuge?'),{no:'5.a',show:a=>isB(a)&&married(a),opts:'spouseCit',c:{B:'P10_Line5a_When[0]',O:'P10_Line5a_When[1]'}}),
+  f('spCitDate','date',L('Date your spouse became a U.S. citizen','Fecha en que su cónyuge se hizo ciudadano(a)'),{no:'5.b',show:a=>isB(a)&&married(a)&&a.spCitHow==='O',t:'P10_Line5b_DateBecame[0]'}),
+  fam('spA','Spouse A-Number (if any)','Número A del cónyuge (si tiene)',{no:'6',show:a=>isB(a)&&married(a),t:'P7_Line6_ANumber[0]',dg:1}),
+  f('spTimes','number',L('How many times has your spouse been married?','¿Cuántas veces se ha casado su cónyuge?'),{no:'7',show:a=>isB(a)&&married(a),t:'P10_Line4g_Employer[0]',dg:1}),
+  fam('spEmployer','Spouse\'s current employer (only if filing under D)','Empleador actual del cónyuge (solo si solicita bajo D)',{no:'8',show:a=>a.reason==='D'&&married(a),t:'TextField1[0]'})]},
  {id:6,t:L('Children','Hijos'),fields:[
-  f('hasChildren','yesno',L('Do you have children (any age)?','¿Tiene hijos (de cualquier edad)?'),{req:1}),
-  f('children','list',L('Children','Hijos'),{show:a=>a.hasChildren==='yes',min:1,item:[f('given','text',L('Given name','Nombre')),f('family','text',L('Family name','Apellido')),f('dob','date',L('Date of birth','Fecha de nacimiento')),f('country','text',L('Country of birth','País de nacimiento')),f('livesWith','yesno',L('Lives with you?','¿Vive con usted?'))]})]},
+  f('childCount','number',L('Total number of children under 18','Número total de hijos menores de 18 años'),{no:'1',req:1,t:'P11_Line1_TotalChildren[0]',dg:1}),
+  f('children','list',L('Your children (any age, name and details)','Sus hijos (cualquier edad, nombre y detalles)'),{no:'2',cap:3,part:6,page:5,show:a=>+a.childCount>0,item:[
+    f('name','text',L('First and family name','Nombre y apellido'),{t:rows('P7_EmployerName',3)}),
+    f('dob','date',L('Date of birth','Fecha de nacimiento'),{t:rows('P7_From',3)}),
+    f('resides','select',L('Residence','Residencia'),{opts:'resides',t:['P7_OccupationFieldStudy1[0]','P7_OccupationFieldStudy2[0]','P7_OccupationFieldStudy3[0]']}),
+    f('relation','select',L('Relationship','Relación'),{opts:'relation',t:['P7_OccupationFieldStudy1[1]','P7_OccupationFieldStudy2[1]','P7_OccupationFieldStudy3[1]']}),
+    f('support','yesno',L('Are you providing support?','¿Le da manutención?'),{y:['P9_Line5a','P6_ChildTwo','P6_ChildThree']})]})]},
  {id:7,t:L('Employment and schools','Empleo y escuelas'),fields:[
-  f('employment','list',L('Employers and schools for the required period (most recent first)','Empleadores y escuelas del período requerido (el más reciente primero)'),{min:1,help:L('Include periods of unemployment. Use "Unemployed" as the employer.','Incluya períodos sin empleo. Use "Desempleado" como empleador.'),item:[f('employer','text',L('Employer or school','Empleador o escuela'),{req:1}),f('occupation','text',L('Occupation / field of study','Ocupación / campo de estudio')),f('city','text',L('City','Ciudad')),f('state','text',L('State / country','Estado / país')),f('from','date',L('From','Desde')),f('to','date',L('To (blank if current)','Hasta (vacío si actual)'))]})]},
- {id:8,t:L('Time outside the U.S.','Tiempo fuera de EE. UU.'),fields:[
-  f('anyTrips','yesno',L('Have you traveled outside the U.S. during the required period?','¿Ha viajado fuera de EE. UU. durante el período requerido?'),{req:1}),
-  f('trips','list',L('Trips (24 hours or longer)','Viajes (24 horas o más)'),{show:a=>a.anyTrips==='yes',min:1,item:[f('out','date',L('Date left','Fecha de salida'),{req:1}),f('back','date',L('Date returned','Fecha de regreso'),{req:1}),f('countries','text',L('Countries visited','Países visitados'))]})]},
- {id:9,t:L('Additional questions','Preguntas adicionales'),risk:1,fields:[]},
- {id:11,t:L('Contact and preparer','Contacto y preparador'),fields:[
-  f('phone','text',L('Daytime phone','Teléfono de día'),{req:1,pdf:['DaytimePhone','Phone']}),
-  f('email','text',L('Email','Correo electrónico'),{pdf:['Email']}),
-  f('needsInterpreter','yesno',L('Does the applicant need an interpreter to read the form?','¿El solicitante necesita intérprete para leer el formulario?')),
-  f('preparedBy','yesno',L('Was this prepared by someone other than the applicant?','¿Fue preparado por alguien que no es el solicitante?')),
-  f('preparerName','text',L('Preparer full name','Nombre completo del preparador'),{show:a=>a.preparedBy==='yes'}),
-  f('preparerOrg','text',L('Preparer organization (if any)','Organización del preparador (si hay)'),{show:a=>a.preparedBy==='yes'}),
-  f('preparerPhone','text',L('Preparer phone','Teléfono del preparador'),{show:a=>a.preparedBy==='yes'})]},
+  f('employment','list',L('Employment and schools for the required period (row 1 = current or most recent)','Empleo y escuelas del período requerido (fila 1 = actual o más reciente)'),{no:'1',min:1,cap:3,part:7,page:5,help:L('Include unemployment ("unemployed"), self-employment ("self-employed"), retirement ("retired"). Row 1 prints "PRESENT" as the end date.','Incluya desempleo ("unemployed"), trabajo por cuenta propia ("self-employed"), jubilación ("retired"). La fila 1 imprime "PRESENT" como fecha final.'),item:[
+    f('name','text',L('Employer or school name','Nombre del empleador o escuela'),{req:1,t:rows('P5_EmployerName',3)}),
+    f('city','text',L('City or town','Ciudad o pueblo'),{t:rows('P7_City',3)}),
+    f('state','text',L('State / province','Estado / provincia'),{t:rows('P7_State',3)}),
+    f('zip','text',L('ZIP / postal code','Código ZIP / postal'),{t:rows('P7_ZipCode',3)}),
+    f('country','text',L('Country','País'),{t:rows('P7_Country',3)}),
+    f('from','date',L('From','Desde'),{t:['P7_From1[1]','P7_From2[1]','P7_From3[1]']}),
+    f('to','date',L('To (blank for row 1)','Hasta (vacío en la fila 1)'),{t:[null,'P7_To2[0]','P7_To3[0]']}),
+    f('occ','text',L('Occupation / field of study','Ocupación / campo de estudio'),{t:['P7_OccupationFieldStudy1[2]','P7_OccupationFieldStudy2[2]','P7_OccupationFieldStudy3[2]']})]})]},
+ {id:8,t:L('Time outside the United States','Tiempo fuera de EE. UU.'),fields:[
+  f('anyTrips','yesno',L('Have you taken trips outside the U.S. of 24 hours or more during the required period?','¿Ha hecho viajes fuera de EE. UU. de 24 horas o más durante el período requerido?'),{no:'1',req:1}),
+  f('trips','list',L('Trips (most recent first)','Viajes (el más reciente primero)'),{no:'1',show:a=>a.anyTrips==='yes',min:1,cap:6,part:8,page:6,item:[
+    f('out','date',L('Date you left','Fecha de salida'),{req:1,t:rows('P8_Line1_DateLeft',6)}),
+    f('back','date',L('Date you returned','Fecha de regreso'),{req:1,t:rows('P8_Line1_DateReturn',6)}),
+    f('countries','text',L('Countries traveled to','Países visitados'),{t:['P9_Line1_Countries1[0]'].concat(rows('P8_Line1_Countries',6).slice(1))})]})]},
+ {id:9,t:L('Additional information about you','Información adicional sobre usted'),risk:1,fields:[]},
+ {id:10,t:L('Fee reduction','Reducción de tarifa'),fields:[
+  f('feeReduce','yesno',L('Is your household income 400% of the Federal Poverty Guidelines or less?','¿Su ingreso familiar es igual o menor al 400% de las Guías Federales de Pobreza?'),{no:'1',y:'P10_Line1_Citizen'}),
+  f('feeIncome','text',L('Total household income','Ingreso total del hogar'),{no:'2',show:a=>a.feeReduce==='yes',t:'P10_Line2_TotalHouseholdIn[0]',dg:1}),
+  f('feeSize','number',L('Household size','Tamaño del hogar'),{no:'3',show:a=>a.feeReduce==='yes',t:'P10_Line3_HouseHoldSize[0]',dg:1}),
+  f('feeEarners','number',L('Household members earning income (including you)','Miembros del hogar con ingresos (incluyéndolo)'),{no:'4',show:a=>a.feeReduce==='yes',t:'P11_Line1_TotalChildren[1]',dg:1}),
+  f('feeHead','yesno',L('Are you the head of household?','¿Es usted el jefe(a) del hogar?'),{no:'5.a',show:a=>a.feeReduce==='yes',y:'P10_Line5a'}),
+  fam('feeHeadName','Name of head of household','Nombre del jefe(a) del hogar',{no:'5.b',show:a=>a.feeReduce==='yes'&&a.feeHead==='no',t:'P10_Line5b_NameOfHousehold[0]'})]},
+ {id:11,t:L('Your contact information','Su información de contacto'),fields:[
+  fam('phone','Daytime telephone','Teléfono de día',{no:'1',req:1,t:'P12_Line3_Telephone[0]',dg:1}),
+  fam('mobile','Mobile telephone (if any)','Teléfono móvil (si tiene)',{no:'2',t:'P12_Line3_Mobile[0]',dg:1}),
+  fam('email','Email (if any)','Correo electrónico (si tiene)',{no:'3',t:'P12_Line5_Email[0]'})]},
+ {id:12,t:L('Interpreter','Intérprete'),fields:[
+  f('needsInterpreter','yesno',L('Did an interpreter help you read the form in a language you are fluent in?','¿Un intérprete le ayudó a leer el formulario en un idioma en que usted es fluido(a)?'),{}),
+  fam('inFamily','Interpreter family name','Apellido del intérprete',{show:a=>a.needsInterpreter==='yes',t:'P14_Line1_nterpreterFamilyName[0]'}),
+  fam('inGiven','Interpreter given name','Nombre del intérprete',{show:a=>a.needsInterpreter==='yes',t:'P14_Line1_nterpreterGivenName[0]'}),
+  fam('inOrg','Interpreter business or organization','Negocio u organización del intérprete',{show:a=>a.needsInterpreter==='yes',t:'P14_Line2_NameofBusinessorOrgName[0]'}),
+  fam('inPhone','Interpreter daytime telephone','Teléfono de día del intérprete',{show:a=>a.needsInterpreter==='yes',t:'P14_Line4_Telephone[0]',dg:1}),
+  fam('inMobile','Interpreter mobile telephone','Teléfono móvil del intérprete',{show:a=>a.needsInterpreter==='yes',t:'P14_Line5_Mobile[0]',dg:1}),
+  fam('inEmail','Interpreter email','Correo del intérprete',{show:a=>a.needsInterpreter==='yes',t:'P14_Line5_EmailAddress[0]'}),
+  fam('inLang','Language the interpreter used','Idioma que usó el intérprete',{show:a=>a.needsInterpreter==='yes',t:'P14_NameOfLanguage[0]'})]},
+ {id:13,t:L('Preparer (if not the applicant)','Preparador (si no es el solicitante)'),fields:[
+  f('preparedBy','yesno',L('Was this application prepared by someone other than the applicant?','¿Esta solicitud fue preparada por alguien que no es el solicitante?'),{}),
+  fam('prFamily','Preparer family name','Apellido del preparador',{show:a=>a.preparedBy==='yes',t:'P15_Line1_PreparerFamilyName[0]'}),
+  fam('prGiven','Preparer given name','Nombre del preparador',{show:a=>a.preparedBy==='yes',t:'P15_Line1_PreparerGivenName[0]'}),
+  fam('prOrg','Preparer business or organization','Negocio u organización del preparador',{show:a=>a.preparedBy==='yes',t:'P15_Line2_NameofBusinessorOrgName[0]'}),
+  fam('prPhone','Preparer daytime telephone','Teléfono de día del preparador',{show:a=>a.preparedBy==='yes',t:'P15_Line4_Telephone[0]',dg:1}),
+  fam('prMobile','Preparer mobile telephone','Teléfono móvil del preparador',{show:a=>a.preparedBy==='yes',t:'P15_Line5_Mobile[0]',dg:1}),
+  fam('prEmail','Preparer email','Correo del preparador',{show:a=>a.preparedBy==='yes',t:'P15_Line6_Email[0]'})]},
  {id:14,t:L('Additional information','Información adicional'),fields:[
-  f('additionalInfo','textarea',L('Anything that did not fit elsewhere (reference the Part and Item)','Cualquier cosa que no cupo en otra parte (indique la Parte y el Ítem)'))]}
+  f('additionalInfo','textarea',L('Anything else for Part 14 (explanations from your answers are added automatically)','Algo más para la Parte 14 (las explicaciones de sus respuestas se agregan automáticamente)'),{p14:{part:14,item:'',page:13}})]}
 ];
 
+const R=(id,base,adv,w,en,es,o={})=>({id,base,adv,w,en,es,page:o.page,show:o.show,expl:o.expl!==false});
+const P=(a,k)=>a['q_'+k];
+const RISK=[
+ R('1','P9_Line1','yes',35,'Have you EVER claimed to be a U.S. citizen (in writing or any other way)?','¿Alguna vez ha afirmado ser ciudadano(a) de EE. UU. (por escrito o de otra forma)?',{page:6}),
+ R('2','P9_Line2','yes',30,'Have you EVER registered to vote or voted in any federal, state or local election in the U.S.? (If you voted only in a local election where noncitizens may lawfully vote, you may answer No.)','¿Alguna vez se registró para votar o votó en alguna elección federal, estatal o local en EE. UU.? (Si votó solo en una elección local donde los no ciudadanos pueden votar legalmente, puede responder No.)',{page:6}),
+ R('3','P9_Line3','yes',15,'Do you currently owe any overdue federal, state or local taxes in the U.S.?','¿Actualmente debe impuestos federales, estatales o locales vencidos en EE. UU.?',{page:6}),
+ R('4','P9_Line4','yes',20,'Since becoming a permanent resident, have you called yourself a "nonresident alien" on a tax return, or decided not to file because you considered yourself a nonresident?','Desde que es residente permanente, ¿se ha declarado "extranjero no residente" en una declaración de impuestos o decidió no presentarla por considerarse no residente?',{page:6}),
+ R('5a','P9_5a','yes',30,'EVER a member of, involved in, or in any way associated with any Communist or totalitarian party anywhere in the world?','¿Alguna vez fue miembro, participó o estuvo asociado de cualquier forma con algún partido comunista o totalitario en cualquier parte del mundo?',{page:6}),
+ R('5b','P9_5b','yes',30,'EVER advocated, or been a member of / involved with / associated with a group anywhere that advocated: opposition to all organized government; world communism; a totalitarian dictatorship in the U.S.; overthrow of the U.S. government by force or unconstitutional means; unlawful assault or killing of government officers; unlawful damage or destruction of property; or sabotage?','¿Alguna vez promovió, o fue miembro / participó / estuvo asociado con un grupo en cualquier lugar que promoviera: oposición a todo gobierno organizado; comunismo mundial; una dictadura totalitaria en EE. UU.; derrocar al gobierno de EE. UU. por la fuerza o medios inconstitucionales; agresión o asesinato ilegal de funcionarios; daño o destrucción ilegal de propiedad; o sabotaje?',{page:6}),
+ R('6a','P12_6a','yes',80,'EVER a member of, involved with, or associated with — or given money, things of value, services, labor or other help to — a group that used a weapon or explosive to harm a person or damage property?','¿Alguna vez fue miembro, participó o estuvo asociado — o dio dinero, cosas de valor, servicios, trabajo u otra ayuda — a un grupo que usó un arma o explosivo para dañar a una persona o propiedad?',{page:7}),
+ R('6b','P12_6b','yes',80,'…a group that took part in kidnapping, assassination, hijacking or sabotage of an airplane, ship, vehicle or other transport?','…un grupo que participó en secuestro, asesinato, desvío o sabotaje de un avión, barco, vehículo u otro transporte?',{page:7}),
+ R('6c','P12_6c','yes',80,'…a group that threatened, attempted, conspired, prepared, planned, advocated or incited others to commit the acts in 6.a or 6.b?','…un grupo que amenazó, intentó, conspiró, preparó, planificó, promovió o incitó a otros a cometer los actos de 6.a o 6.b?',{page:7}),
+ R('7a','P9_Line7a','yes',90,'EVER ordered, incited, called for, committed, assisted or participated in: torture?','¿Alguna vez ordenó, incitó, pidió, cometió, ayudó o participó en: tortura?',{page:7}),
+ R('7b','P9_Line7.b.','yes',90,'…genocide?','…genocidio?',{page:7}),
+ R('7c','P9_Line7.c','yes',90,'…killing or trying to kill any person?','…matar o intentar matar a alguna persona?',{page:7}),
+ R('7d','P11_7d','yes',60,'…intentionally and severely injuring or trying to injure any person?','…lesionar intencional y gravemente o intentar lesionar a alguna persona?',{page:7}),
+ R('7e','P9_Line7.e','yes',70,'…any sexual contact or activity with a person who did not consent or could not consent, or was forced or threatened by you or someone else?','…cualquier contacto o actividad sexual con una persona que no consintió o no podía consentir, o fue forzada o amenazada por usted o por otra persona?',{page:7}),
+ R('7f','P9_Line7.f','yes',60,'…not letting someone practice his or her religion?','…no permitir que alguien practique su religión?',{page:7}),
+ R('7g','P9_Line7.g','yes',60,'…causing harm or suffering to any person because of race, religion, national origin, membership in a social group or political opinion?','…causar daño o sufrimiento a una persona por su raza, religión, origen nacional, pertenencia a un grupo social u opinión política?',{page:7}),
+ R('8a','P9_Line8a','yes',35,'EVER served in, been a member of, assisted or participated in any military or police unit?','¿Alguna vez sirvió, fue miembro, ayudó o participó en alguna unidad militar o policial?',{page:7}),
+ R('8b','P9_Line8b','yes',40,'EVER served in, been a member of, assisted or participated in any armed group (paramilitary, self-defense, vigilante, rebel, guerrilla)?','¿Alguna vez sirvió, fue miembro, ayudó o participó en algún grupo armado (paramilitar, de autodefensa, vigilante, rebelde, guerrillero)?',{page:7}),
+ R('9','P9_Line9','yes',40,'EVER worked, volunteered or served where people were detained (prison, jail, prison camp, detention facility, labor camp), or directed or took part in detaining people?','¿Alguna vez trabajó, fue voluntario(a) o sirvió donde se detenía a personas (prisión, cárcel, campo de prisioneros, centro de detención, campo de trabajo), o dirigió o participó en detener personas?',{page:7}),
+ R('10a','P9_Line10a','yes',40,'EVER part of, or helped, any group, unit or organization that used a weapon against any person or threatened to do so?','¿Alguna vez fue parte de, o ayudó a, algún grupo, unidad u organización que usó un arma contra alguna persona o amenazó con hacerlo?',{page:7}),
+ R('10b','P9_Line10b','yes',60,'If 10.a is Yes: did you ever use a weapon against another person?','Si 10.a es Sí: ¿alguna vez usó un arma contra otra persona?',{page:7,show:a=>P(a,'10a')==='yes'}),
+ R('10c','P9_Line10c','yes',50,'If 10.a is Yes: did you ever threaten another person that you would use a weapon against them?','Si 10.a es Sí: ¿alguna vez amenazó a otra persona con usar un arma contra ella?',{page:7,show:a=>P(a,'10a')==='yes'}),
+ R('11','P9_Line11','yes',60,'EVER sold, provided or transported weapons, or helped anyone do so, knowing or believing they would be used against another person?','¿Alguna vez vendió, proporcionó o transportó armas, o ayudó a alguien a hacerlo, sabiendo o creyendo que se usarían contra otra persona?',{page:7}),
+ R('12','P9_Line12','yes',25,'EVER received weapons training, paramilitary training or other military-type training?','¿Alguna vez recibió entrenamiento con armas, paramilitar u otro tipo de entrenamiento militar?',{page:7}),
+ R('13','P9_Line13','yes',80,'EVER recruited, enlisted, conscripted or used any person under 15 to serve in or help an armed group, or tried to or worked with others to do so?','¿Alguna vez reclutó, alistó, reclutó a la fuerza o usó a una persona menor de 15 años para servir o ayudar a un grupo armado, o intentó o trabajó con otros para hacerlo?',{page:7}),
+ R('14','P9_Line14','yes',80,'EVER used any person under 15 to take part in hostilities (including combat support such as messenger or transporting supplies), or tried to or worked with others to do so?','¿Alguna vez usó a una persona menor de 15 años para participar en hostilidades (incluso apoyo al combate como mensajero o transporte de suministros), o intentó o trabajó con otros para hacerlo?',{page:7}),
+ R('15a','P9_Line15a','yes',30,'EVER committed, agreed to commit, asked someone else to commit, helped commit, or tried to commit a crime or offense for which you were NOT arrested?','¿Alguna vez cometió, acordó cometer, pidió a otro cometer, ayudó a cometer o intentó cometer un delito o infracción por el cual NO fue arrestado(a)?',{page:8,expl:false}),
+ R('15b','P9_Line15b','yes',35,'EVER arrested, cited, detained or confined by any law enforcement, military or immigration official for any reason, or charged with a crime or offense? (Include sealed, expunged or cleared records, offenses under 18, DUI and domestic violence.)','¿Alguna vez fue arrestado(a), citado(a), detenido(a) o confinado(a) por cualquier autoridad policial, militar o de inmigración por cualquier motivo, o acusado(a) de un delito o infracción? (Incluya registros sellados, borrados o aclarados, ofensas antes de los 18 años, DUI y violencia doméstica.)',{page:8,expl:false}),
+ R('16','P12_Line16','no',30,'If you received a suspended sentence, probation or parole: have you completed it?','Si recibió una sentencia suspendida, libertad condicional o libertad bajo palabra: ¿la ha cumplido?',{page:8,show:a=>P(a,'15a')==='yes'||P(a,'15b')==='yes'}),
+ R('17a','P11_Line17A','yes',25,'EVER engaged in prostitution, tried to procure prostitutes, or received money from prostitution?','¿Alguna vez se dedicó a la prostitución, intentó conseguir prostitutas o recibió dinero de la prostitución?',{page:9}),
+ R('17b','P11_Line17B','yes',35,'EVER manufactured, produced, distributed, sold or smuggled controlled substances, illegal drugs, narcotics or drug paraphernalia in violation of any law?','¿Alguna vez fabricó, produjo, distribuyó, vendió o contrabandeó sustancias controladas, drogas ilegales, narcóticos o parafernalia de drogas violando alguna ley?',{page:9}),
+ R('17c','P11_Line17C','yes',25,'EVER been married to more than one person at the same time?','¿Alguna vez estuvo casado(a) con más de una persona al mismo tiempo?',{page:9}),
+ R('17d','P12_Line17d','yes',45,'EVER married someone to obtain an immigration benefit?','¿Alguna vez se casó con alguien para obtener un beneficio migratorio?',{page:9}),
+ R('17e','P12_Line17e','yes',45,'EVER helped anyone enter, or try to enter, the U.S. illegally?','¿Alguna vez ayudó a alguien a entrar, o intentar entrar, ilegalmente a EE. UU.?',{page:9}),
+ R('17f','P12_Line17f','yes',20,'EVER gambled illegally or received income from illegal gambling?','¿Alguna vez apostó ilegalmente o recibió ingresos de apuestas ilegales?',{page:9}),
+ R('17g','P12_Line17g','yes',20,'EVER failed to support your dependents (child support) or to pay court-ordered alimony?','¿Alguna vez dejó de mantener a sus dependientes (manutención de hijos) o de pagar la pensión alimenticia ordenada por un tribunal?',{page:9}),
+ R('17h','P12_Line17h','yes',30,'EVER made any misrepresentation to obtain any public benefit in the U.S.?','¿Alguna vez hizo alguna tergiversación para obtener un beneficio público en EE. UU.?',{page:9}),
+ R('18','P12_Line18','yes',40,'EVER given any U.S. government official any information or documentation that was false, fraudulent or misleading?','¿Alguna vez dio a algún funcionario del gobierno de EE. UU. información o documentación falsa, fraudulenta o engañosa?',{page:9}),
+ R('19','P12_Line19','yes',40,'EVER lied to any U.S. government official to gain entry or admission into the U.S. or to gain immigration benefits while in the U.S.?','¿Alguna vez mintió a algún funcionario del gobierno de EE. UU. para obtener entrada o admisión a EE. UU. o beneficios migratorios mientras estaba en EE. UU.?',{page:9}),
+ R('20','P12_Line20','yes',55,'EVER been placed in removal, rescission or deportation proceedings?','¿Alguna vez estuvo en procedimientos de remoción, rescisión o deportación?',{page:9}),
+ R('21','P12_Line21','yes',60,'EVER been removed or deported from the U.S.?','¿Alguna vez fue removido(a) o deportado(a) de EE. UU.?',{page:9}),
+ R('22a','P9_Line22a','yes',0,'Are you a male who lived in the U.S. at any time between your 18th and 26th birthdays? (Do not select Yes if you were a lawful nonimmigrant that whole time.)','¿Es usted hombre y vivió en EE. UU. en algún momento entre sus 18 y 26 años? (No marque Sí si fue no inmigrante legal todo ese tiempo.)',{page:9,expl:false}),
+ R('22b','Pt9_Line22b','no',30,'If 22.a is Yes: did you register for the Selective Service?','Si 22.a es Sí: ¿se registró en el Servicio Selectivo?',{page:9,show:a=>P(a,'22a')==='yes'}),
+ R('23','P12_Line23','yes',25,'EVER left the U.S. to avoid being drafted into the U.S. armed forces?','¿Alguna vez salió de EE. UU. para evitar ser reclutado(a) en las fuerzas armadas de EE. UU.?',{page:9}),
+ R('24','P12_Line24','yes',30,'EVER applied for any kind of exemption from military service in the U.S. armed forces?','¿Alguna vez solicitó algún tipo de exención del servicio militar en las fuerzas armadas de EE. UU.?',{page:9}),
+ R('25','P12_Line25','yes',0,'EVER served in the U.S. armed forces?','¿Alguna vez sirvió en las fuerzas armadas de EE. UU.?',{page:9,expl:false}),
+ R('26a','P12_Line26a','yes',0,'Are you currently a member of the U.S. armed forces?','¿Es actualmente miembro de las fuerzas armadas de EE. UU.?',{page:10,expl:false,show:a=>P(a,'25')==='yes'}),
+ R('26b','P12_Line26b','yes',0,'If 26.a is Yes: are you scheduled to deploy outside the U.S. within the next 3 months?','Si 26.a es Sí: ¿está programado(a) para desplegarse fuera de EE. UU. en los próximos 3 meses?',{page:10,expl:false,show:a=>P(a,'26a')==='yes'}),
+ R('26c','P12_Line26c','yes',0,'If 26.a is Yes: are you currently stationed outside the U.S.?','Si 26.a es Sí: ¿está actualmente destacado(a) fuera de EE. UU.?',{page:10,expl:false,show:a=>P(a,'26a')==='yes'}),
+ R('26d','P11_Line26d','yes',0,'If 26.a is No: are you a former U.S. service member currently residing outside the U.S.?','Si 26.a es No: ¿es un ex miembro del servicio militar de EE. UU. que reside actualmente fuera de EE. UU.?',{page:10,expl:false,show:a=>P(a,'25')==='yes'&&P(a,'26a')==='no'}),
+ R('27','P12_Line27','yes',30,'EVER court-martialed, or received a discharge other than honorable (bad conduct or dishonorable) in the U.S. armed forces?','¿Alguna vez fue sometido(a) a consejo de guerra, o recibió una baja que no fue honorable (mala conducta o deshonrosa) en las fuerzas armadas de EE. UU.?',{page:10,show:a=>P(a,'25')==='yes'}),
+ R('28','P12_Line28','yes',10,'EVER discharged from training or service in the U.S. armed forces because you were an alien?','¿Alguna vez fue dado(a) de baja del entrenamiento o servicio en las fuerzas armadas de EE. UU. por ser extranjero(a)?',{page:10,show:a=>P(a,'25')==='yes'}),
+ R('29','P9_Line29','yes',40,'EVER deserted from the U.S. armed forces?','¿Alguna vez desertó de las fuerzas armadas de EE. UU.?',{page:10,show:a=>P(a,'25')==='yes'}),
+ R('30a','P12_Line30a','yes',0,'Do you now have, or did you EVER have, a hereditary title or an order of nobility in any foreign country?','¿Tiene ahora, o tuvo ALGUNA VEZ, un título hereditario o una orden de nobleza en algún país extranjero?',{page:10,expl:false}),
+ R('30b','P12_Line30b','no',30,'If 30.a is Yes: are you willing to give up these titles at your naturalization ceremony?','Si 30.a es Sí: ¿está dispuesto(a) a renunciar a estos títulos en su ceremonia de naturalización?',{page:10,expl:false,show:a=>P(a,'30a')==='yes'}),
+ R('31','P12_Line31','no',40,'Do you support the Constitution and form of government of the United States?','¿Apoya la Constitución y la forma de gobierno de Estados Unidos?',{page:10}),
+ R('32','P12_Line32','no',25,'Do you understand the full Oath of Allegiance to the United States (Part 16)?','¿Entiende el Juramento de Lealtad completo a Estados Unidos (Parte 16)?',{page:10}),
+ R('33','P12_Line33','yes',0,'Are you unable to take the Oath of Allegiance because of a physical or developmental disability or mental impairment? (If Yes, skip 34–37 and see the instructions on legal guardians or designated representatives.)','¿No puede prestar el Juramento de Lealtad por una discapacidad física o del desarrollo o impedimento mental? (Si es Sí, omita 34–37 y vea las instrucciones sobre tutores legales o representantes designados.)',{page:10,expl:false}),
+ R('34','P12_Line34','no',40,'Are you willing to take the full Oath of Allegiance to the United States?','¿Está dispuesto(a) a prestar el Juramento de Lealtad completo a Estados Unidos?',{page:10,show:a=>P(a,'33')!=='yes'}),
+ R('35','P12_Line35','no',15,'If the law requires it, are you willing to bear arms (carry weapons) on behalf of the United States?','Si la ley lo exige, ¿está dispuesto(a) a portar armas en nombre de Estados Unidos?',{page:10,show:a=>P(a,'33')!=='yes'}),
+ R('36','P12_Line36','no',15,'If the law requires it, are you willing to perform noncombatant services in the U.S. armed forces?','Si la ley lo exige, ¿está dispuesto(a) a realizar servicios no combatientes en las fuerzas armadas de EE. UU.?',{page:10,show:a=>P(a,'33')!=='yes'}),
+ R('37','P12_Line37','no',15,'If the law requires it, are you willing to perform work of national importance under civilian direction?','Si la ley lo exige, ¿está dispuesto(a) a realizar trabajo de importancia nacional bajo dirección civil?',{page:10,show:a=>P(a,'33')!=='yes'})
+];
+const RISK_INDEX={};RISK.forEach(r=>RISK_INDEX[r.id]=r);
+const CRIME=f('crimes','list',L('Crimes and offenses (Item 15 table)','Delitos e infracciones (tabla del Ítem 15)'),{no:'15',show:a=>P(a,'15a')==='yes'||P(a,'15b')==='yes',min:1,cap:5,part:9,page:8,help:L('List every incident, even if records are sealed, expunged or cleared. Attach certified court dispositions.','Liste cada incidente, aunque los registros estén sellados, borrados o aclarados. Adjunte las resoluciones certificadas del tribunal.'),item:[
+ f('what','text',L('Crime or offense','Delito o infracción'),{t:rows('P12_Line29_why',5)}),
+ f('date','date',L('Date of crime or offense','Fecha del delito o infracción'),{t:rows('P12_Line29_Date',5)}),
+ f('conv','date',L('Date of conviction or guilty plea (if any)','Fecha de condena o declaración de culpabilidad (si hay)'),{t:rows('P12_Line29_DateOfConv',5)}),
+ f('place','text',L('Place (city, state, country)','Lugar (ciudad, estado, país)'),{t:rows('P12_Line29_Outcome',5,'[1]')}),
+ f('result','text',L('Result (convicted, dismissed, etc.)','Resultado (condenado, desestimado, etc.)'),{t:rows('P12_Line29_Outcome',5,'[0]')}),
+ f('sentence','text',L('Sentence (if any)','Sentencia (si hay)'),{t:rows('P12_Line29_Outcome',5,'[2]')})]});
 function riskFields(){
  const out=[];
- RISK.forEach(([id,w,l])=>{out.push(f('q_'+id,'yesno',l,{req:1,w}));out.push(f('x_'+id,'textarea',UI.explain,{show:a=>a['q_'+id]==='yes',req:1,sub:1}));});
- OATH.forEach(([id,l])=>out.push(f('q_'+id,'yesno',l,{req:1,oath:1})));
+ RISK.forEach(r=>{
+  const q=f('q_'+r.id,'yesno',L(r.en,r.es),{no:r.id.replace(/([0-9]+)([a-z])/,'$1.$2'),req:1,y:r.base,show:r.show,w:r.w,adv:r.adv});
+  out.push(q);
+  if(r.id==='15b')out.push(CRIME);
+  if(r.expl&&r.w>0)out.push(f('x_'+r.id,'textarea',UI.explain,{no:q.no,show:a=>a['q_'+r.id]===r.adv&&(!r.show||r.show(a)),req:1,sub:1,p14:{part:9,item:q.no,page:r.page,from:'x'}}));
+  if(r.id==='22b')out.push(f('ss_date','date',L('Date registered for Selective Service','Fecha de registro en el Servicio Selectivo'),{no:'22.c',show:a=>P(a,'22b')==='yes',t:'P9_Line22c_Date[0]'}),f('ss_num','text',L('Selective Service number','Número del Servicio Selectivo'),{no:'22.c',show:a=>P(a,'22b')==='yes',t:'P9_Line22c_SSNumber[0]',dg:1}));
+  if(r.id==='30b')out.push(f('titles','text',L('List the titles you hold','Liste los títulos que posee'),{no:'30.b',show:a=>P(a,'30a')==='yes',t:'P9_NobilityTitles[0]'}));
+ });
  return out;
 }
 PARTS.find(p=>p.risk).fields=riskFields();
 
-let S={lang:'en',db:{cases:[],lang:'en'},key:null,salt:null,mode:'boot',caseId:null,partIdx:0,pdf:{doc:null,name:'',fields:[],map:{}},ack:{}};
+let S={lang:'en',db:{cases:[],lang:'en'},key:null,salt:null,mode:'boot',caseId:null,partIdx:0,ack:{}};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
@@ -282,7 +411,7 @@ async function persist(){
  }catch(e){console.error(e)}
 }
 let flashT;
-function flash(){const m=$('#mid');if(!m||S.mode!=='wizard')return;m.dataset.s=m.textContent;m.textContent=T(UI.saved);clearTimeout(flashT);flashT=setTimeout(updateMid,900)}
+function flash(){const m=$('#mid');if(!m||S.mode!=='wizard')return;m.textContent=T(UI.saved);clearTimeout(flashT);flashT=setTimeout(updateMid,900)}
 let saveT;
 function saveSoon(){clearTimeout(saveT);saveT=setTimeout(persist,400)}
 
@@ -334,8 +463,10 @@ function viewHome(){
 const viewDisclaimer=()=>`<div class="banner gold"><h3>${T(UI.disclaimerTitle)}</h3><p>${T(UI.disclaimer)}</p><button class="btn warn" data-act="ackdisc">${T(UI.ack)}</button></div>`;
 
 function cur(){return S.db.cases.find(c=>c.id===S.caseId)}
-function visible(fl,a){return fl.filter(x=>!x.show||x.show(a))}
+function isShown(x,a){return !x.show||x.show(a)}
+function visible(fl,a){return fl.filter(x=>isShown(x,a))}
 function isEmpty(v){return v===undefined||v===null||v===''||(Array.isArray(v)&&v.length===0)}
+const lbl=(x)=>x.l;
 function missingFor(c){
  const out=[];const a=c.answers;
  PARTS.forEach(p=>{
@@ -344,41 +475,49 @@ function missingFor(c){
     const arr=a[x.k]||[];
     if(x.min&&arr.length<x.min)out.push([p.id,x.l]);
     arr.forEach((it,i)=>x.item.forEach(s=>{if(s.req&&isEmpty(it[s.k]))out.push([p.id,L(`${x.l.en} #${i+1}: ${s.l.en}`,`${x.l.es} #${i+1}: ${s.l.es}`)])}));
+   }else if(x.type==='group'){
+    const g=a[x.k]||{};
+    x.sub.forEach(s=>{if(s.req&&isEmpty(g[s.k]))out.push([p.id,L(`${x.l.en}: ${s.l.en}`,`${x.l.es}: ${s.l.es}`)])});
    }else if(x.req&&isEmpty(a[x.k]))out.push([p.id,x.l]);
   });
  });
  return out;
 }
 function pctDone(c){
- let total=0,done=0;const a=c.answers;
- PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{if(x.req||(x.type==='list'&&x.min)){total++;if(x.type==='list'?(a[x.k]||[]).length>=(x.min||1):!isEmpty(a[x.k]))done++}}));
- return total?Math.round(done/total*100):0;
+ const m=missingFor(c).length;let total=0;const a=c.answers;
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{if(x.req||(x.type==='list'&&x.min))total++;if(x.type==='group')x.sub.forEach(s=>{if(s.req)total++})}));
+ return total?Math.max(0,Math.round((total-m)/total*100)):0;
 }
 
-function inputHtml(x,val,path,scope){
+function inputHtml(x,val,path){
  const id=path;
- const ph=x.req?' data-req="1"':'';
- if(x.type==='yesno'){
-  return `<div class="yn" role="radiogroup"><label><input type="radio" name="${id}" value="yes" data-path="${id}" data-t="yesno" ${val==='yes'?'checked':''}><span>${T(UI.yes)}</span></label><label class="no"><input type="radio" name="${id}" value="no" data-path="${id}" data-t="yesno" ${val==='no'?'checked':''}><span>${T(UI.no)}</span></label></div>`;
- }
+ if(x.type==='yesno')return `<div class="yn" role="radiogroup"><label><input type="radio" name="${id}" value="yes" data-path="${id}" data-t="yesno" ${val==='yes'?'checked':''}><span>${T(UI.yes)}</span></label><label class="no"><input type="radio" name="${id}" value="no" data-path="${id}" data-t="yesno" ${val==='no'?'checked':''}><span>${T(UI.no)}</span></label></div>`;
  if(x.type==='select'){
-  const opts=(typeof x.opts==='string'?OPT[x.opts]:x.opts)||[];
-  return `<select data-path="${id}" data-t="select"><option value="">${T(UI.select)}</option>${opts.map(([v,l])=>`<option value="${v}" ${val===v?'selected':''}>${esc(T(l))}</option>`).join('')}</select>`;
+  const opts=OPT[x.opts]||[];
+  return `<select data-path="${id}" data-t="select"><option value="">${T(UI.select)}</option>${opts.map(([v,l])=>`<option value="${esc(v)}" ${val===v?'selected':''}>${esc(T(l))}</option>`).join('')}</select>`;
+ }
+ if(x.type==='multi'){
+  const opts=OPT[x.opts]||[];const cur=Array.isArray(val)?val:[];
+  return `<div>${opts.map(([v,l])=>`<label style="font-weight:400;display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" style="width:auto;min-height:0" data-path="${id}" data-t="multi" value="${esc(v)}" ${cur.includes(v)?'checked':''}> ${esc(T(l))}</label>`).join('')}</div>`;
  }
  if(x.type==='textarea')return `<textarea data-path="${id}" data-t="text">${esc(val||'')}</textarea>`;
  const type=x.type==='date'?'date':x.type==='number'?'number':'text';
- return `<input type="${type}" ${type==='number'?'inputmode="numeric" min="0"':''} value="${esc(val||'')}" data-path="${id}" data-t="text" ${x.k==='ssn'?'autocomplete="off"':''}>`;
+ return `<input type="${type}" ${type==='number'?'inputmode="numeric" min="0"':''} value="${esc(val||'')}" data-path="${id}" data-t="text" autocomplete="off">`;
 }
+const noTag=x=>x.no?`<span class="mono" style="color:var(--mute)">${T(UI.item)} ${esc(x.no)}</span> `:'';
 function fieldHtml(x,a){
  if(x.type==='list'){
   const arr=a[x.k]||[];
   const max=x.max||99;
-  return `<div class="card" style="padding:12px"><label style="margin-top:0">${T(x.l)}${x.min?' *':''}</label>${x.help?`<div class="help">${T(x.help)}</div>`:''}
-  ${arr.map((it,i)=>`<div class="item"><div class="row"><strong class="grow">#${i+1}</strong><button class="btn sm sec" data-act="rmitem" data-k="${x.k}" data-i="${i}">${T(UI.remove)}</button></div><div class="grid">${x.item.map(s=>`<div><label>${T(s.l)}${s.req?' *':''}</label>${inputHtml(s,it[s.k],`${x.k}.${i}.${s.k}`)}</div>`).join('')}</div></div>`).join('')}
+  return `<div class="card" style="padding:12px"><label style="margin-top:0">${noTag(x)}${T(x.l)}${x.min?' *':''}</label>${x.help?`<div class="help">${T(x.help)}</div>`:''}${x.cap?`<div class="help mono">${x.cap} ${T(UI.cap)}</div>`:''}
+  ${arr.map((it,i)=>`<div class="item"><div class="row"><strong class="grow">#${i+1}</strong><button class="btn sm sec" data-act="rmitem" data-k="${x.k}" data-i="${i}">${T(UI.remove)}</button></div><div class="grid">${x.item.filter(s=>!s.show||s.show(a)).map(s=>`<div><label>${T(s.l)}${s.req?' *':''}</label>${inputHtml(s,it[s.k],`${x.k}.${i}.${s.k}`)}</div>`).join('')}</div></div>`).join('')}
   ${arr.length<max?`<button class="btn sm sec" data-act="additem" data-k="${x.k}">+ ${T(UI.add)}</button>`:''}</div>`;
  }
- const cls=x.sub?'help':'';
- return `<div><label>${T(x.l)}${x.req?' *':''}</label>${x.help?`<div class="help">${T(x.help)}</div>`:''}${inputHtml(x,a[x.k],x.k)}</div>`;
+ if(x.type==='group'){
+  const g=a[x.k]||{};
+  return `<div class="card" style="padding:12px"><label style="margin-top:0">${noTag(x)}${T(x.l)}</label><div class="grid">${x.sub.map(s=>`<div><label>${T(s.l)}${s.req?' *':''}</label>${inputHtml(s,g[s.k],`${x.k}.${s.k}`)}</div>`).join('')}</div></div>`;
+ }
+ return `<div><label>${noTag(x)}${T(x.l)}${x.req?' *':''}</label>${x.help?`<div class="help">${T(x.help)}</div>`:''}${inputHtml(x,a[x.k],x.k)}</div>`;
 }
 function viewWizard(){
  const c=cur();const p=PARTS[S.partIdx];const a=c.answers;
@@ -386,10 +525,10 @@ function viewWizard(){
  const fl=visible(p.fields,a);
  let body='';
  if(p.risk){
-  body=`<div class="banner sage help">${T(L('Answer each question honestly. A "Yes" does not automatically disqualify; it helps decide whether you need an attorney. Details matter.','Responda cada pregunta con honestidad. Un "Sí" no descalifica automáticamente; ayuda a decidir si necesita un abogado. Los detalles importan.'))}</div>`+fl.map(x=>x.sub?`<div class="item">${fieldHtml(x,a)}</div>`:fieldHtml(x,a)).join('');
+  body=`<div class="banner sage help">${T(UI.part9intro)}</div>`+fl.map(x=>x.sub?`<div class="item">${fieldHtml(x,a)}</div>`:x.type==='list'?fieldHtml(x,a):`<div class="item">${fieldHtml(x,a)}</div>`).join('');
  }else{
   const grouped=[];let buf=[];
-  fl.forEach(x=>{if(x.type==='list'||x.type==='textarea'||x.type==='yesno'){if(buf.length){grouped.push(`<div class="grid">${buf.join('')}</div>`);buf=[]}grouped.push(fieldHtml(x,a))}else buf.push(fieldHtml(x,a))});
+  fl.forEach(x=>{if(['list','group','textarea','yesno','multi'].includes(x.type)||x.type==='select'&&(OPT[x.opts]||[]).some(o=>T(o[1]).length>26)){if(buf.length){grouped.push(`<div class="grid">${buf.join('')}</div>`);buf=[]}grouped.push(fieldHtml(x,a))}else buf.push(fieldHtml(x,a))});
   if(buf.length)grouped.push(`<div class="grid">${buf.join('')}</div>`);
   body=grouped.join('');
  }
@@ -401,14 +540,18 @@ function updateMid(){const m=$('#mid');if(!m)return;m.textContent=`${S.partIdx+1
 function setPath(c,path,val){
  const seg=path.split('.');
  if(seg.length===1){c.answers[seg[0]]=val}
+ else if(seg.length===2){const g=c.answers[seg[0]]=c.answers[seg[0]]||{};g[seg[1]]=val}
  else{const arr=c.answers[seg[0]]=c.answers[seg[0]]||[];const it=arr[+seg[1]]=arr[+seg[1]]||{};it[seg[2]]=val}
  c.updated=new Date().toISOString();
 }
 
 function riskCalc(c){
  const a=c.answers;let score=0;const hits=[];
- RISK.forEach(([id,w,l])=>{if(a['q_'+id]==='yes'){score+=w;hits.push({id,w,l,x:a['x_'+id]})}});
- OATH.forEach(([id,l])=>{if(a['q_'+id]==='no'){score+=25;hits.push({id,w:25,l,x:''})}});
+ RISK.forEach(r=>{
+  if(r.w<=0)return;
+  if(r.show&&!r.show(a))return;
+  if(a['q_'+r.id]===r.adv){score+=r.w;hits.push({id:r.id,w:r.w,l:L(r.en,r.es),x:a['x_'+r.id],no:r.id.replace(/([0-9]+)([a-z])/,'$1.$2')})}
+ });
  score=Math.min(100,score);
  const tier=score<=30?0:score<=50?1:score<=65?2:score<=80?3:4;
  return{score,hits,tier};
@@ -416,7 +559,7 @@ function riskCalc(c){
 const DAY=86400000;
 function eligCalc(c){
  const a=c.answers;const r={items:[],ok:true};
- const years=a.basis==='spouse'?3:5;
+ const years=a.reason==='B'?3:5;
  if(a.dob){const age=(Date.now()-new Date(a.dob))/DAY/365.25;r.items.push({ok:age>=18,t:UI.ageOk})}
  if(!a.lprDate){r.noLpr=true;return r}
  const start=new Date(a.lprDate);const earliest=new Date(start);earliest.setFullYear(earliest.getFullYear()+years);earliest.setDate(earliest.getDate()-90);
@@ -435,10 +578,24 @@ function eligCalc(c){
  return r;
 }
 
+function part14(c){
+ const a=c.answers;const E=[];
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{
+  if(x.type==='list'&&x.cap){
+   const arr=a[x.k]||[];
+   if(arr.length>x.cap)E.push({page:x.page,part:x.part,item:x.no||'',text:arr.slice(x.cap).map(it=>x.item.map(s=>it[s.k]).filter(v=>!isEmpty(v)).join(', ')).join('; ')});
+  }else if(x.p14&&x.p14.from!=='x'&&!isEmpty(a[x.k]))E.push({page:x.p14.page,part:x.p14.part,item:x.p14.item,text:String(a[x.k])});
+  else if(x.p14&&x.p14.from==='x'&&!isEmpty(a[x.k]))E.push({page:x.p14.page,part:9,item:x.p14.item,text:String(a[x.k])});
+ }));
+ const ord=E.filter(e=>e.part!==14);const extra=E.filter(e=>e.part===14);
+ ord.sort((x,y)=>(x.part-y.part)||String(x.item).localeCompare(String(y.item),undefined,{numeric:true}));
+ return ord.concat(extra);
+}
+
 function viewReview(){
  const c=cur();const a=c.answers;const miss=missingFor(c);const rk=riskCalc(c);const el=eligCalc(c);
  const tcls=['l','w','w','r','r'][rk.tier];
- const ackKey=c.id;const ak=S.ack[ackKey]||{};
+ const ak=S.ack[c.id]||{};
  let unlocked=true,gate='';
  if(rk.tier===4){unlocked=false;gate=`<div class="banner rose"><strong>${T(UI.tier4)}</strong><div>${T(UI.blockedMsg)}</div></div>`}
  else if(rk.tier===3){
@@ -457,101 +614,153 @@ function viewReview(){
   ${el.broke.map(t=>`<tr><td colspan="2"><span class="pill r">1+ yr</span> ${esc(t.out)} → ${esc(t.back)}: ${T(UI.breakTrip)}</td></tr>`).join('')}
  </table>`;
  return `<div class="noprint"><div class="row"><button class="btn sec sm" data-act="backwiz">${T(UI.prev)}</button><h2 class="grow" style="margin:0">${T(UI.reviewTitle)}: ${esc(c.name)}</h2></div></div>
- <div class="card"><h3>${T(UI.missing)}</h3>${miss.length?`<ul>${miss.map(([pid,l])=>`<li><a href="#" data-act="gotopart" data-pid="${pid}">${T(UI.part)} ${pid}</a>: ${T(l)}</li>`).join('')}</ul>`:`<p>${T(UI.allComplete)}</p>`}</div>
- <div class="card"><h3>${T(UI.risk)} <span class="pill ${tcls}">${T(UI.score)} ${rk.score}</span></h3><p>${T([UI.tier0,UI.tier1,UI.tier2,UI.tier3,UI.tier4][rk.tier])}</p>
-  ${rk.hits.length?`<div class="help">${T(UI.flagged)}</div><ul>${rk.hits.map(h=>`<li>${T(h.l)} <span class="pill w">+${h.w}</span>${h.x?`<div class="help">${esc(h.x)}</div>`:''}</li>`).join('')}</ul>`:''}
+ <div class="card noprint"><h3>${T(UI.missing)}</h3>${miss.length?`<ul>${miss.map(([pid,l])=>`<li><a href="#" data-act="gotopart" data-pid="${pid}">${T(UI.part)} ${pid}</a>: ${T(l)}</li>`).join('')}</ul>`:`<p>${T(UI.allComplete)}</p>`}</div>
+ <div class="card noprint"><h3>${T(UI.risk)} <span class="pill ${tcls}">${T(UI.score)} ${rk.score}</span></h3><p>${T([UI.tier0,UI.tier1,UI.tier2,UI.tier3,UI.tier4][rk.tier])}</p>
+  ${rk.hits.length?`<div class="help">${T(UI.flagged)}</div><ul>${rk.hits.map(h=>`<li><span class="mono">${h.no}</span> ${T(h.l)} <span class="pill w">+${h.w}</span>${h.x?`<div class="help">${esc(h.x)}</div>`:''}</li>`).join('')}</ul>`:''}
   <div class="banner gold help">${T(UI.disclaimer)}</div>${gate}</div>
- <div class="card"><h3>${T(UI.elig)}</h3><p class="help">${T(UI.eligNote)}</p>${eli}</div>
+ <div class="card noprint"><h3>${T(UI.elig)}</h3><p class="help">${T(UI.eligNote)}</p>${eli}</div>
  <div class="card noprint"><h3>${T(UI.outputs)}</h3><div class="row">
   <button class="btn" data-act="print" ${unlocked?'':'disabled'}>${T(UI.print)}</button>
   <button class="btn sec" data-act="exportcase" ${unlocked?'':'disabled'}>${T(UI.exportCase)}</button></div>
   <div style="margin-top:16px"><h3>${T(UI.fillPdf)}</h3><p class="help">${T(UI.pdfNote)}</p>
-  <label class="btn sec" style="display:inline-block;margin:0;${unlocked?'':'opacity:.45'}">${T(UI.uploadPdf)}<input type="file" accept="application/pdf" data-act="pdfload" class="hide" ${unlocked?'':'disabled'}></label>
-  <div id="pdfmsg" class="help" role="status"></div><div id="pdfzone">${S.pdf.doc?viewPdfMap(c):''}</div></div></div>
+  <button class="btn" data-act="fillpdf" ${unlocked?'':'disabled'}>${T(UI.download)}</button>
+  <div id="pdfmsg" class="help" role="status" style="margin-top:8px"></div></div></div>
  <div id="worksheet" class="card">${viewWorksheet(c)}</div>`;
 }
 function fmt(v){return v===undefined||v===null||v===''?'—':esc(v)}
-function labelOpt(x,v){const o=(typeof x.opts==='string'?OPT[x.opts]:x.opts)||[];const m=o.find(([k])=>k===v);return m?T(m[1]):v}
+function labelOpt(x,v){const m=(OPT[x.opts]||[]).find(([k])=>k===v);return m?T(m[1]):v}
+function showVal(x,v){
+ if(x.type==='yesno')return v?T(v==='yes'?UI.yes:UI.no):'';
+ if(x.type==='select')return v?labelOpt(x,v):'';
+ if(x.type==='multi')return (Array.isArray(v)?v:[]).map(k=>labelOpt(x,k)).join(', ');
+ return v;
+}
 function viewWorksheet(c){
  const a=c.answers;
- return `<h2>${esc(c.name)} — N-400 ${T(L('answers worksheet','hoja de respuestas'))}</h2><div class="help">ImmiVault ${VER} · ${new Date().toISOString().slice(0,10)}</div>`+
- PARTS.map(p=>{
-  const rows=visible(p.fields,a).filter(x=>!x.sub).map(x=>{
-   if(x.type==='list'){const arr=a[x.k]||[];return `<tr><td>${T(x.l)}</td><td>${arr.length?arr.map((it,i)=>`<div>#${i+1} ${x.item.map(s=>fmt(s.type==='yesno'?(it[s.k]?T(it[s.k]==='yes'?UI.yes:UI.no):''):it[s.k])).join(' · ')}</div>`).join(''):'—'}</td></tr>`}
-   let v=a[x.k];if(x.type==='yesno')v=v?T(v==='yes'?UI.yes:UI.no):'';else if(x.type==='select')v=labelOpt(x,v);
-   const ex=a['x_'+x.k.slice(2)];
-   return `<tr><td>${T(x.l)}</td><td>${fmt(v)}${x.k.startsWith('q_')&&a[x.k]==='yes'&&ex?`<div class="help">${esc(ex)}</div>`:''}</td></tr>`;
+ const head=`<h2>${esc(c.name)} — N-400 ${T(L('answers worksheet','hoja de respuestas'))}</h2><div class="help">ImmiVault ${VER} · ${new Date().toISOString().slice(0,10)} · ${T(L('form edition','edición del formulario'))} ${FORM_EDITION}</div>`;
+ const parts=PARTS.map(p=>{
+  const rowsH=visible(p.fields,a).filter(x=>!x.sub).map(x=>{
+   if(x.type==='list'){const arr=a[x.k]||[];return `<tr><td>${noTag(x)}${T(x.l)}</td><td>${arr.length?arr.map((it,i)=>`<div>#${i+1} ${x.item.map(s=>fmt(showVal(s,it[s.k]))).join(' · ')}</div>`).join(''):'—'}</td></tr>`}
+   if(x.type==='group'){const g=a[x.k]||{};return `<tr><td>${noTag(x)}${T(x.l)}</td><td>${x.sub.map(s=>`<div>${T(s.l)}: ${fmt(showVal(s,g[s.k]))}</div>`).join('')}</td></tr>`}
+   const ex=x.k.startsWith('q_')?a['x_'+x.k.slice(2)]:'';
+   return `<tr><td>${noTag(x)}${T(x.l)}</td><td>${fmt(showVal(x,a[x.k]))}${ex&&a[x.k]===(RISK_INDEX[x.k.slice(2)]||{}).adv?`<div class="help">${esc(ex)}</div>`:''}</td></tr>`;
   }).join('');
-  return `<h3 style="margin-top:16px">${T(UI.part)} ${p.id}: ${T(p.t)}</h3><table>${rows}</table>`;
+  return `<h3 style="margin-top:16px">${T(UI.part)} ${p.id}: ${T(p.t)}</h3><table>${rowsH}</table>`;
  }).join('');
+ const e14=part14(c);
+ const sheet=e14.length?`<div style="page-break-before:always"><h2>${T(UI.p14sheet)}</h2><p class="help">${T(UI.p14note)}</p><p><strong>${esc(c.name)}</strong> · A-${esc(a.aNumber||'')}</p>${e14.map(e=>`<div class="item"><div class="mono">${T(UI.part)} ${e.part}${e.item?`, ${T(UI.item)} ${esc(e.item)}`:''}${e.page?` · p. ${e.page}`:''}</div><div>${esc(e.text)}</div></div>`).join('')}</div>`:'';
+ return head+parts+sheet;
 }
 
-function pdfKeys(c){
- const a=c.answers;const keys=[];
- PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{
-  if(x.sub)return;
-  if(x.type==='list'){(a[x.k]||[]).forEach((it,i)=>x.item.forEach(s=>keys.push({key:`${x.k}.${i}.${s.k}`,label:`${T(x.l)} #${i+1} · ${T(s.l)}`,val:it[s.k],type:s.type,hint:[]})))}
-  else keys.push({key:x.k,label:T(x.l),val:a[x.k],type:x.type,hint:x.pdf||[],opts:x.opts});
- }));
- return keys;
-}
-function displayVal(k){
- if(k.type==='yesno')return k.val==='yes'?'Yes':k.val==='no'?'No':'';
- if(k.type==='select'){const o=(typeof k.opts==='string'?OPT[k.opts]:[])||[];const m=o.find(([v])=>v===k.val);return m?m[1].en:(k.val||'')}
- return k.val==null?'':String(k.val);
-}
-function viewPdfMap(c){
- const keys=pdfKeys(c);const opts=['<option value="">'+T(UI.none)+'</option>'].concat(S.pdf.fields.map(fl=>`<option value="${esc(fl.name)}">${esc(fl.name)} (${fl.kind})</option>`)).join('');
- const sel=(key,cur)=>opts.replace(`value="${esc(cur||'')}"`,`value="${esc(cur||'')}" selected`);
- return `<p class="mono help">${esc(S.pdf.name)} · ${T(UI.pdfFields)}: ${S.pdf.fields.length}</p>
- <div class="row"><button class="btn sm sec" data-act="automatch">${T(UI.autoMatch)}</button><button class="btn sm sec" data-act="exportmap">${T(UI.exportMap)}</button><label class="btn sm sec" style="margin:0">${T(UI.importMap)}<input type="file" accept="application/json" data-act="importmap" class="hide"></label><button class="btn sm" data-act="fillpdf">${T(UI.download)}</button></div>
- <div style="overflow-x:auto"><table><tr><th>${T(UI.answer)}</th><th>${T(UI.pdfField)}</th></tr>
- ${keys.map(k=>{const m=S.pdf.map[k.key]||{};return `<tr><td>${esc(k.label)}<div class="help mono">${esc(displayVal(k)||'—')}</div></td><td><select data-pmap="${esc(k.key)}" data-slot="yes">${sel(k.key,m.yes)}</select>${k.type==='yesno'?`<div class="help">${T(UI.pdfFieldNo)}</div><select data-pmap="${esc(k.key)}" data-slot="no">${sel(k.key,m.no)}</select>`:''}</td></tr>`}).join('')}</table></div>`;
-}
 function loadPdfLib(){
  if(window.PDFLib)return Promise.resolve();
  return new Promise((res,rej)=>{const s=document.createElement('script');s.src=PDFLIB_URL;s.onload=res;s.onerror=()=>rej(new Error('pdf-lib'));document.head.appendChild(s)});
 }
 function pdfMsg(t,bad){const m=document.getElementById('pdfmsg');if(!m)return;m.textContent=t||'';m.style.color=bad?'var(--rose)':'var(--mute)'}
-function mapStoreKey(){return 'immivault.pdfmap.'+S.pdf.name}
-function loadMap(){try{S.pdf.map=JSON.parse(localStorage.getItem(mapStoreKey())||'{}')}catch(e){S.pdf.map={}}}
-function saveMap(){try{localStorage.setItem(mapStoreKey(),JSON.stringify(S.pdf.map))}catch(e){}}
-function norm(s){return String(s).replace(/\[\d+\]/g,'').replace(/[^A-Za-z]/g,'').toLowerCase()}
-function autoMatch(){
- const c=cur();const keys=pdfKeys(c);let n=0;
- keys.forEach(k=>{
-  if(!k.hint.length||S.pdf.map[k.key]?.yes)return;
-  const hit=S.pdf.fields.find(fl=>fl.kind==='text'&&k.hint.some(h=>norm(fl.name).includes(norm(h))));
-  if(hit){S.pdf.map[k.key]={yes:hit.name};n++}
+function usDate(v){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');return m?`${m[2]}/${m[3]}/${m[1]}`:String(v||'')}
+
+function collectOps(c){
+ const a=c.answers;const ops=[];
+ const txt=(n,v,x)=>{if(!n||isEmpty(v))return;let s=String(v).trim();if(!s)return;if(x&&x.type==='date')s=usDate(s);if(x&&x.dg)s=s.replace(/\D/g,'');if(x&&x.up)s=s.toUpperCase();ops.push({k:'t',n,v:s,d:x&&x.d,fuzzy:x&&x.fuzzy})};
+ const pick=(spec,i)=>Array.isArray(spec)?spec[i]:spec;
+ const emit=(x,val,i,p14ctx)=>{
+  if(isEmpty(val))return;
+  if(x.tf){x.tf(val,a).forEach(([n,v])=>txt(n,v));return}
+  if(x.type==='yesno'){const b=pick(x.y,i);if(b)ops.push({k:'y',base:b,v:val});return}
+  if(x.type==='select'&&x.c){const n=x.c[val];if(n)ops.push({k:'c',n,on:true});return}
+  if(x.type==='multi'&&x.c){(Array.isArray(val)?val:[]).forEach(v=>{if(x.c[v])ops.push({k:'c',n:x.c[v],on:true})});return}
+  if(x.d){ops.push({k:'d',n:x.d,v:String(val).toUpperCase(),fuzzy:x.fuzzy,raw:String(val)});return}
+  const n=pick(x.t,i);if(n)txt(n,val,x);
+  if(x.tf2)x.tf2.forEach(m=>txt(m,val,x));
+ };
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{
+  if(x.type==='list'&&x.cap){(a[x.k]||[]).slice(0,x.cap).forEach((it,i)=>x.item.forEach(s=>{if(!s.show||s.show(a))emit(s,it[s.k],i)}))}
+  else if(x.type==='group'){const g=a[x.k]||{};x.sub.forEach(s=>emit(s,g[s.k]))}
+  else if(x.type==='list'){}
+  else emit(x,a[x.k]);
+ }));
+ RISK.forEach(r=>{const v=a['q_'+r.id];if(v&&(!r.show||r.show(a)))ops.push({k:'y',base:r.base,v})});
+ const e14=part14(c);
+ const blocks=[['P11_Line3A[0]','P11_Line3B[0]','P11_Line3C[0]','P11_Line3D[0]'],['P11_Line4A[0]','P11_Line4B[0]','P11_Line4C[0]','P11_Line4D[0]'],['P11_Line5A[0]','P11_Line5B[0]','P11_Line5C[0]','P11_Line5D[0]'],['P11_Line6A[0]','P11_Line6B[0]','P11_Line6C[0]','P11_Line6D[0]']];
+ if(e14.length){
+  txt('P2_Line1_FamilyName[1]',a.familyName);txt('P2_Line1_GivenName[1]',a.givenName);txt('P2_Line1_MiddleName[1]',a.middleName);
+  const take=e14.slice(0,4);
+  take.forEach((e,i)=>{
+   const last=i===3&&e14.length>4;
+   const rest=last?e14.slice(3):[e];
+   const text=rest.map(r=>(last?`P${r.part} I${r.item}: `:'')+r.text).join(' | ');
+   const clipped=text.length>420||last?text.slice(0,400)+' … '+T(L('(see attached sheet)','(vea la hoja adjunta)')):text;
+   const [pg,pt,it,tx]=blocks[i];
+   txt(pg,String(e.page||''));txt(pt,String(e.part||''));txt(it,String(e.item||''));txt(tx,clipped);
+  });
+ }
+ return ops;
+}
+function resolveFields(form){
+ const m={};
+ form.getFields().forEach(fl=>{const k=fl.getName().replace(/^form1\[0\]\.#subform\[\d+\]\./,'').replace(/^#area\[\d+\]\./,'').replace(/\\/g,'');m[k]=fl});
+ return m;
+}
+function applyOps(form,ops){
+ const P=window.PDFLib;const map=resolveFields(form);const res={done:0,trunc:0,miss:[]};
+ const ckOn=(fl)=>{try{return String(fl.acroField.getOnValue()).replace('/','')}catch(e){return ''}};
+ ops.forEach(o=>{
+  try{
+   if(o.k==='t'){
+    const fl=map[o.n];
+    if(!fl){res.miss.push(o.n);return}
+    if(fl instanceof P.PDFTextField){
+     let v=o.v;const max=fl.getMaxLength();
+     if(max&&v.length>max){v=v.slice(0,max);res.trunc++}
+     fl.setText(v);res.done++;
+    }else if(fl instanceof P.PDFDropdown){
+     const opt=fl.getOptions().find(x=>x.trim().toUpperCase()===o.v.toUpperCase());
+     if(opt){fl.select(opt);res.done++}else res.miss.push(o.n);
+    }
+   }else if(o.k==='d'){
+    const fl=map[o.n];
+    if(!fl||!(fl instanceof P.PDFDropdown)){res.miss.push(o.n);return}
+    const opts=fl.getOptions();
+    let opt=opts.find(x=>x.trim().toUpperCase()===o.v.trim());
+    if(!opt&&o.fuzzy)opt=opts.find(x=>x.toUpperCase().includes(o.v.trim()));
+    if(opt){fl.select(opt);res.done++}else res.miss.push(o.n);
+   }else if(o.k==='c'){
+    const fl=map[o.n];
+    if(!fl||!(fl instanceof P.PDFCheckBox)){res.miss.push(o.n);return}
+    o.on?fl.check():fl.uncheck();res.done++;
+   }else if(o.k==='y'){
+    const f0=map[o.base+'[0]'],f1=map[o.base+'[1]'];
+    if(!f0||!f1){res.miss.push(o.base);return}
+    const want=o.v==='yes'?'Y':'N';
+    [f0,f1].forEach(fl=>{if(ckOn(fl)===want)fl.check();else fl.uncheck()});
+    res.done++;
+   }
+  }catch(err){res.miss.push(o.n||o.base)}
  });
- saveMap();return n;
+ return res;
 }
 async function fillPdf(){
  const c=cur();
- try{await loadPdfLib()}catch(e){alert(T(UI.pdfLibFail));return}
- const {PDFDocument}=window.PDFLib;
- let doc,form;try{doc=await PDFDocument.load(S.pdf.bytes,{ignoreEncryption:true,updateMetadata:false});form=doc.getForm()}catch(err){pdfMsg(T(UI.pdfErr)+' ('+err.message+')',true);return}
- let n=0;
- const setText=(name,val)=>{try{form.getTextField(name).setText(String(val));n++}catch(e){try{form.getDropdown(name).select(String(val));n++}catch(e2){}}};
- const setCheck=(name,on)=>{try{const cb=form.getCheckBox(name);on?cb.check():cb.uncheck();n++}catch(e){}};
- pdfKeys(c).forEach(k=>{
-  const m=S.pdf.map[k.key];if(!m)return;
-  if(k.type==='yesno'){
-   if(m.yes)setCheck(m.yes,k.val==='yes');
-   if(m.no)setCheck(m.no,k.val==='no');
-  }else if(m.yes){const v=displayVal(k);if(v!=='')setText(m.yes,v)}
- });
- let bytes;try{bytes=await doc.save()}catch(err){pdfMsg(T(UI.pdfErr)+' ('+err.message+')',true);return}
- const blob=new Blob([bytes],{type:'application/pdf'});
- dl(blob,`${c.name.replace(/\W+/g,'_')}_N-400_filled.pdf`);
- pdfMsg(`${n} ${T(UI.filledN)}`);
+ pdfMsg(T(UI.pdfLoading));
+ try{await loadPdfLib()}catch(e){pdfMsg(T(UI.pdfLibFail),true);return}
+ let bytes;
+ try{const r=await fetch(BLANK_PDF);if(!r.ok)throw new Error(r.status);bytes=await r.arrayBuffer()}catch(e){pdfMsg(T(UI.pdfBlankFail),true);return}
+ try{
+  const doc=await window.PDFLib.PDFDocument.load(bytes,{updateMetadata:false});
+  const form=doc.getForm();
+  const res=applyOps(form,collectOps(c));
+  const out=await doc.save();
+  dl(new Blob([out],{type:'application/pdf'}),`${c.name.replace(/\W+/g,'_')}_N-400_${FORM_EDITION.replace(/\//g,'-')}.pdf`);
+  pdfMsg(`${res.done} ${T(UI.pdfDone)}`+(res.trunc?` · ${res.trunc} ${T(UI.pdfTrunc)}`:'')+(res.miss.length?` · ${res.miss.length} ${T(UI.pdfMiss)}`:''));
+  window.__lastFill=res;
+ }catch(err){console.error(err);pdfMsg(T(UI.pdfErr)+' ('+(err&&err.message||err)+')',true)}
 }
 function dl(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},500)}
 
 document.addEventListener('click',async e=>{
  const el=e.target.closest('[data-act]');if(!el)return;
  const act=el.dataset.act;
- if(el.tagName==='INPUT'&&el.type==='file')return;
+ if(el.tagName==='INPUT'&&(el.type==='file'||el.type==='checkbox'))return;
  if(el.tagName==='A')e.preventDefault();
  const c=S.caseId?cur():null;
  switch(act){
@@ -586,9 +795,6 @@ document.addEventListener('click',async e=>{
   case 'exportall':dl(new Blob([JSON.stringify(S.db)],{type:'application/json'}),`ImmiVault-${VER}-backup.json`);break;
   case 'exportcase':dl(new Blob([JSON.stringify(c)],{type:'application/json'}),`${c.name.replace(/\W+/g,'_')}.json`);break;
   case 'print':window.print();break;
-  case 'goack':S.ack[c.id]={go:el.checked};render(true);break;
-  case 'automatch':{const n=autoMatch();$('#pdfzone').innerHTML=viewPdfMap(c);break}
-  case 'exportmap':dl(new Blob([JSON.stringify(S.pdf.map)],{type:'application/json'}),'n400-mapping.json');break;
   case 'fillpdf':await fillPdf();break;
  }
 });
@@ -598,27 +804,11 @@ document.addEventListener('change',async e=>{
  if(el.dataset.act==='importall'){
   const txt=await el.files[0].text();try{const d=JSON.parse(txt);if(!Array.isArray(d.cases))throw 0;d.cases.forEach(cs=>{if(!S.db.cases.find(x=>x.id===cs.id))S.db.cases.push(cs)});await persist();render()}catch(err){alert('Invalid file')}
   return}
- if(el.dataset.act==='pdfload'){
-  const file=el.files&&el.files[0];if(!file)return;
-  pdfMsg(T(UI.pdfLoading));
-  try{
-   await loadPdfLib();
-   const buf=await file.arrayBuffer();S.pdf.bytes=buf.slice(0);S.pdf.name=file.name;
-   const doc=await window.PDFLib.PDFDocument.load(buf,{ignoreEncryption:true,updateMetadata:false});
-   const P=window.PDFLib;
-   S.pdf.fields=doc.getForm().getFields().map(fl=>({name:fl.getName(),kind:fl instanceof P.PDFTextField?'text':fl instanceof P.PDFCheckBox?'checkbox':fl instanceof P.PDFDropdown?'dropdown':'other'}));
-   S.pdf.doc=true;
-   if(!S.pdf.fields.length){pdfMsg(T(UI.pdfNoFields),true);return}
-   loadMap();pdfMsg('');$('#pdfzone').innerHTML=viewPdfMap(cur());
-  }catch(err){
-   console.error(err);
-   pdfMsg(String(err&&err.message||'').includes('pdf-lib')?T(UI.pdfLibFail):T(UI.pdfErr)+' ('+(err&&err.message||err)+')',true);
-  }
-  el.value='';return}
- if(el.dataset.act==='importmap'){
-  try{S.pdf.map=JSON.parse(await el.files[0].text());saveMap();$('#pdfzone').innerHTML=viewPdfMap(cur())}catch(err){alert('Invalid file')}return}
- if(el.dataset.pmap){
-  const k=el.dataset.pmap;S.pdf.map[k]=S.pdf.map[k]||{};if(el.value)S.pdf.map[k][el.dataset.slot]=el.value;else delete S.pdf.map[k][el.dataset.slot];saveMap();return}
+ if(el.dataset.act==='goack'){S.ack[S.caseId]={go:el.checked};render(true);return}
+ if(el.dataset.path&&el.dataset.t==='multi'){
+  const c=cur();const k=el.dataset.path;const arr=Array.isArray(c.answers[k])?c.answers[k].slice():[];
+  const i=arr.indexOf(el.value);if(el.checked&&i<0)arr.push(el.value);if(!el.checked&&i>=0)arr.splice(i,1);
+  setPath(c,k,arr);await persist();render(true);return}
  if(el.dataset.path&&(el.dataset.t==='yesno'||el.dataset.t==='select')){
   setPath(cur(),el.dataset.path,el.value);await persist();render(true);return}
  if(el.dataset.path&&S.mode==='review'){setPath(cur(),el.dataset.path,el.value);await persist();render(true)}
@@ -629,6 +819,4 @@ document.addEventListener('input',e=>{
 });
 
 boot();
-</script>
-</body>
-</html>
+</script></body></html>
