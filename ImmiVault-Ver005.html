@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ImmiVault Ver005</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#3A6B5C;--sage-d:#2C5246;--sage-l:#E6EFEB;--gold:#B8892B;--gold-l:#FBF3DF;--rose:#B23A48;--rose-l:#FBE9EB;--ink:#1D2A26;--mute:#5B6A65;--line:#D8E0DC;--bg:#F6F8F7;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;margin:0 0 .5rem}
+header{background:var(--sage);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+header .brand{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:700}
+.ver{font-family:'DM Mono',monospace;background:#fff;color:var(--sage-d);border-radius:6px;padding:2px 8px;font-size:.85rem;font-weight:500}
+header .sp{flex:1}
+main{max-width:860px;margin:0 auto;padding:16px 16px 96px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0}
+.btn{font:inherit;font-weight:500;border:1px solid var(--sage);background:var(--sage);color:#fff;border-radius:8px;padding:10px 16px;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--sage-d)}
+.btn.sec{background:#fff;color:var(--sage-d)}
+.btn.warn{background:var(--gold);border-color:var(--gold)}
+.btn.sm{padding:6px 10px;min-height:36px;font-size:.9rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+header .btn{background:transparent;border-color:#fff;min-height:36px;padding:4px 10px}
+label{display:block;font-weight:500;margin:12px 0 4px}
+input,select,textarea{width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;min-height:44px}
+input:focus,select:focus,textarea:focus,.btn:focus{outline:3px solid #9CC3B5;outline-offset:1px}
+textarea{min-height:90px}
+.help{color:var(--mute);font-size:.88rem;margin-top:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.yn{display:flex;gap:8px}
+.yn label{flex:1;margin:0;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-weight:500;background:#fff}
+.yn input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}
+.yn label{position:relative}
+.yn label:has(input:focus-visible){outline:3px solid #9CC3B5;outline-offset:1px}
+.yn input:checked+span{color:#fff}
+.yn label:has(input:checked){background:var(--sage);color:#fff;border-color:var(--sage)}
+.yn label.no:has(input:checked){background:var(--ink);border-color:var(--ink)}
+.banner{border-radius:10px;padding:12px 14px;margin:12px 0;border:1px solid}
+.banner.gold{background:var(--gold-l);border-color:var(--gold)}
+.banner.rose{background:var(--rose-l);border-color:var(--rose)}
+.banner.sage{background:var(--sage-l);border-color:var(--sage)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;justify-content:space-between;align-items:center;z-index:5}
+.nav .mid{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--mute);text-align:center;flex:1}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0 16px}
+.bar i{display:block;height:100%;background:var(--sage)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row .grow{flex:1}
+.item{border:1px dashed var(--line);border-radius:10px;padding:12px;margin:10px 0;background:#FAFCFB}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700;font-family:'DM Mono',monospace}
+.pill.l{background:var(--sage-l);color:var(--sage-d)}.pill.w{background:var(--gold-l);color:#7A5A12}.pill.r{background:var(--rose-l);color:var(--rose)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+.mono{font-family:'DM Mono',monospace}
+.hide{display:none!important}
+.case{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.partnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.partnav button{font:inherit;font-size:.82rem;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px;cursor:pointer}
+.partnav button.on{background:var(--sage);color:#fff;border-color:var(--sage)}
+.partnav button.done{border-color:var(--sage)}
+@media print{header,.nav,.noprint{display:none!important}body{background:#fff}.card{border:0;padding:0}main{padding:0}}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">ImmiVault</span><span class="ver" id="ver"></span>
+  <span class="sp"></span>
+  <button class="btn" id="home" data-act="home"></button>
+  <button class="btn" id="lang" data-act="lang"></button>
+  <button class="btn" id="lock" data-act="lock"></button>
+</header>
+<main id="app"></main>
+<div class="nav hide" id="nav">
+  <button class="btn sec" data-act="prev" id="prev"></button>
+  <div class="mid" id="mid"></div>
+  <button class="btn" data-act="next" id="next"></button>
+</div>
+
+<script>
+const VER='Ver005';
+const KEY_ENC='immivault.enc.v1';
+const KEY_PLAIN='immivault.plain.v1';
+const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+const L=(en,es)=>({en,es});
+
+const UI={
+ home:L('Cases','Casos'),lock:L('Lock','Bloquear'),lang:L('Español','English'),
+ newCase:L('New case','Nuevo caso'),caseName:L('Person / case name','Nombre de la persona / caso'),
+ open:L('Open','Abrir'),del:L('Delete','Borrar'),confirmDel:L('Delete this case permanently?','¿Borrar este caso permanentemente?'),
+ noCases:L('No cases yet.','Aún no hay casos.'),
+ backup:L('Backup','Respaldo'),exportAll:L('Export all (JSON)','Exportar todo (JSON)'),importAll:L('Import backup','Importar respaldo'),
+ backupNote:L('Data lives only in this browser. Export a backup regularly.','Los datos viven solo en este navegador. Exporte un respaldo con regularidad.'),
+ setPass:L('Protect with a passphrase','Proteger con una contraseña'),passNote:L('Everything is encrypted in this browser with your passphrase. If you forget it, the data cannot be recovered.','Todo se cifra en este navegador con su contraseña. Si la olvida, los datos no se pueden recuperar.'),
+ passphrase:L('Passphrase','Contraseña'),unlock:L('Unlock','Desbloquear'),skipPass:L('Continue without a passphrase (not recommended)','Continuar sin contraseña (no recomendado)'),
+ setBtn:L('Set passphrase','Crear contraseña'),wrongPass:L('Wrong passphrase.','Contraseña incorrecta.'),minPass:L('Use at least 8 characters.','Use al menos 8 caracteres.'),
+ disclaimerTitle:L('Before you start','Antes de empezar'),
+ disclaimer:L('This tool helps organize information for Form N-400 (edition 01/20/25). It is not legal advice and does not replace an attorney or accredited representative. Verify every answer against the official USCIS form and instructions before filing.','Esta herramienta ayuda a organizar información para el Formulario N-400 (edición 01/20/25). No es asesoría legal y no reemplaza a un abogado o representante acreditado. Verifique cada respuesta con el formulario e instrucciones oficiales de USCIS antes de presentar.'),
+ ack:L('I understand','Entiendo'),
+ prev:L('Back','Atrás'),next:L('Next','Siguiente'),review:L('Review','Revisión'),
+ add:L('Add','Agregar'),remove:L('Remove','Quitar'),yes:L('Yes','Sí'),no:L('No','No'),select:L('Select…','Seleccione…'),
+ saved:L('Saved','Guardado'),item:L('Item','Ítem'),
+ reviewTitle:L('Review','Revisión'),missing:L('Missing required answers','Respuestas obligatorias faltantes'),allComplete:L('All required answers are complete.','Todas las respuestas obligatorias están completas.'),
+ risk:L('Risk screen','Evaluación de riesgo'),score:L('Score','Puntuación'),
+ tier0:L('Log only','Solo registro'),tier1:L('Warning: review these answers carefully','Aviso: revise estas respuestas con cuidado'),tier2:L('Flagged: strongly consider an attorney before filing','Marcado: considere seriamente un abogado antes de presentar'),tier3:L('Attorney review required before filing','Se requiere revisión de un abogado antes de presentar'),tier4:L('Blocked: do not file without an attorney','Bloqueado: no presente sin un abogado'),
+ flagged:L('Answers that raised the score','Respuestas que aumentaron la puntuación'),
+ continueAnyway:L('I have read this and want to continue anyway','He leído esto y deseo continuar de todos modos'),
+ attorneyName:L('Reviewing attorney / representative','Abogado / representante que revisó'),attorneyDate:L('Review date','Fecha de revisión'),
+ elig:L('Eligibility screen','Evaluación de elegibilidad'),
+ eligNote:L('Screening only. Rules have exceptions; confirm with the official instructions or an attorney.','Solo orientativo. Las reglas tienen excepciones; confirme con las instrucciones oficiales o un abogado.'),
+ ageOk:L('Age 18 or older','Edad de 18 años o más'),earliest:L('Earliest filing date (90 days early rule)','Fecha más temprana para presentar (regla de 90 días)'),
+ daysIn:L('Days in the U.S. during the period (estimate)','Días en EE. UU. durante el período (estimado)'),needDays:L('Physical presence needed (half of period)','Presencia física requerida (mitad del período)'),
+ longTrip:L('Trip of 6+ months: continuous residence may be questioned','Viaje de 6+ meses: la residencia continua puede cuestionarse'),
+ breakTrip:L('Trip of 1+ year: continuous residence likely broken','Viaje de 1+ año: la residencia continua probablemente se interrumpió'),
+ noLpr:L('Enter the permanent resident date (Part 2, Item 7) to compute dates.','Ingrese la fecha de residencia permanente (Parte 2, Ítem 7) para calcular fechas.'),
+ outputs:L('Outputs','Salidas'),print:L('Print answers worksheet','Imprimir hoja de respuestas'),exportCase:L('Export this case (JSON)','Exportar este caso (JSON)'),
+ fillPdf:L('Fill the official N-400 PDF','Llenar el PDF oficial del N-400'),
+ pdfNote:L('Fills the official fillable N-400, edition 01/20/25 (expires 02/28/2027). Check uscis.gov/n-400 to confirm this is still the current edition. Signatures and dates are left blank for you to sign by hand.','Llena el N-400 oficial, edición 01/20/25 (vence 02/28/2027). Verifique en uscis.gov/n-400 que siga siendo la edición vigente. Las firmas y fechas quedan en blanco para firmarlas a mano.'),
+ download:L('Fill and download the PDF','Llenar y descargar el PDF'),
+ pdfLoading:L('Preparing the PDF…','Preparando el PDF…'),pdfLibFail:L('Could not load the PDF library (internet needed once).','No se pudo cargar la biblioteca PDF (se necesita internet).'),
+ pdfBlankFail:L('Could not load the blank N-400. Open ImmiVault from its web address (not a downloaded file).','No se pudo cargar el N-400 en blanco. Abra ImmiVault desde su dirección web (no desde un archivo descargado).'),
+ pdfErr:L('Could not fill the PDF.','No se pudo llenar el PDF.'),
+ pdfDone:L('fields filled','campos llenados'),pdfTrunc:L('values were too long and were shortened','valores eran demasiado largos y se acortaron'),pdfMiss:L('values could not be placed (see Part 14 sheet)','valores no se pudieron colocar (vea la hoja de la Parte 14)'),
+ p14sheet:L('Part 14 continuation sheet','Hoja de continuación de la Parte 14'),
+ p14note:L('Print this sheet, add your name and A-Number at the top, sign and date it, and attach it to the form.','Imprima esta hoja, agregue su nombre y Número A arriba, fírmela y féchela, y adjúntela al formulario.'),
+ blockedMsg:L('Output is blocked at this risk level.','La salida está bloqueada en este nivel de riesgo.'),
+ unlockNeeds:L('Complete the acknowledgement below to unlock outputs.','Complete la confirmación abajo para habilitar las salidas.'),
+ translateNote:L('Spanish text is a working translation; official form language is English.','El texto en español es una traducción de trabajo; el idioma oficial del formulario es inglés.'),
+ caseOf:L('Case','Caso'),formLbl:L('Form','Formulario'),part:L('Part','Parte'),of:L('of','de'),
+ cap:L('rows fit on the form; extra rows go to Part 14','filas caben en el formulario; las demás van a la Parte 14'),
+ explain:L('Explain (what, when, where, outcome) — goes to Part 14','Explique (qué, cuándo, dónde, resultado) — va a la Parte 14'),
+ part9intro:L('When a question says EVER, include conduct anywhere in the world, at any time. A "Yes" does not automatically disqualify; it helps decide whether you need an attorney. Details matter.','Cuando una pregunta dice ALGUNA VEZ (EVER), incluya conducta en cualquier lugar del mundo y en cualquier momento. Un "Sí" no descalifica automáticamente; ayuda a decidir si necesita un abogado. Los detalles importan.')
+};
+const T=(o)=>{const lg=S.lang;return (o&&(o[lg]||o.en))||''};
+
+const f=(k,type,l,o={})=>Object.assign({k,type,l},o);
+const rows=(prefix,n,suffix='[0]')=>Array.from({length:n},(_,i)=>`${prefix}${i+1}${suffix}`);
+
+
+let PARTS=[],OPT={},RISK=[],RISK_INDEX={},FD=null;const FORMS={};
+function registerForm(d){FORMS[d.id]=d}
+function setForm(id){FD=FORMS[id]||FORMS.n400||Object.values(FORMS)[0];PARTS=FD.PARTS;OPT=FD.OPT;RISK=FD.RISK||[];RISK_INDEX=FD.RISK_INDEX||{};Object.assign(UI,FD.ui||{})}
+let S={lang:'en',db:{cases:[],lang:'en'},key:null,salt:null,mode:'boot',caseId:null,partIdx:0,ack:{}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+
+async function deriveKey(pass,salt){
+ const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
+ return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function persist(){
+ try{
+  if(S.key){
+   const iv=crypto.getRandomValues(new Uint8Array(12));
+   const data=await crypto.subtle.encrypt({name:'AES-GCM',iv},S.key,new TextEncoder().encode(JSON.stringify(S.db)));
+   localStorage.setItem(KEY_ENC,JSON.stringify({salt:b64(S.salt),iv:b64(iv),data:b64(data)}));
+   localStorage.removeItem(KEY_PLAIN);
+  }else{
+   localStorage.setItem(KEY_PLAIN,JSON.stringify(S.db));
+  }
+  flash();
+ }catch(e){console.error(e)}
+}
+let flashT;
+function flash(){const m=$('#mid');if(!m||S.mode!=='wizard')return;m.textContent=T(UI.saved);clearTimeout(flashT);flashT=setTimeout(updateMid,900)}
+let saveT;
+function saveSoon(){clearTimeout(saveT);saveT=setTimeout(persist,400)}
+
+function boot(){
+ setForm('n400');
+ let enc=null,plain=null;
+ try{enc=localStorage.getItem(KEY_ENC);plain=localStorage.getItem(KEY_PLAIN)}catch(e){}
+ if(enc){S.mode='unlock'}
+ else if(plain){try{S.db=JSON.parse(plain)}catch(e){}S.lang=S.db.lang||'en';S.mode='home'}
+ else{S.mode='setpass'}
+ render();
+}
+
+function chrome(){
+ $('#ver').textContent=VER;
+ $('#home').textContent=T(UI.home);$('#lang').textContent=T(UI.lang);$('#lock').textContent=T(UI.lock);
+ const open=S.mode!=='unlock'&&S.mode!=='setpass';
+ $('#home').classList.toggle('hide',!open);$('#lock').classList.toggle('hide',!open||!S.key);
+ $('#nav').classList.toggle('hide',S.mode!=='wizard');
+ $('#prev').textContent=T(UI.prev);
+ document.documentElement.lang=S.lang;
+}
+
+function render(keep){
+ const y0=window.scrollY;
+ chrome();
+ const a=$('#app');
+ if(S.mode==='setpass')a.innerHTML=viewSetPass();
+ else if(S.mode==='unlock')a.innerHTML=viewUnlock();
+ else if(S.mode==='home')a.innerHTML=viewHome();
+ else if(S.mode==='disclaimer')a.innerHTML=viewDisclaimer();
+ else if(S.mode==='wizard'){a.innerHTML=viewWizard();updateMid();}
+ else if(S.mode==='review'){a.innerHTML=viewReview();$('#nav').classList.add('hide')}
+ window.scrollTo(0,keep?y0:0);
+}
+
+const viewSetPass=()=>`<div class="card"><h2>${T(UI.setPass)}</h2><p class="help">${T(UI.passNote)}</p>
+<label>${T(UI.passphrase)}</label><input type="password" id="pp" autocomplete="new-password"><div id="err" class="help" style="color:var(--rose)"></div>
+<div class="row" style="margin-top:12px"><button class="btn" data-act="setpass">${T(UI.setBtn)}</button><button class="btn sec" data-act="skippass">${T(UI.skipPass)}</button></div></div>`;
+const viewUnlock=()=>`<div class="card"><h2>${T(UI.unlock)}</h2><label>${T(UI.passphrase)}</label><input type="password" id="pp" autocomplete="current-password"><div id="err" class="help" style="color:var(--rose)"></div>
+<div class="row" style="margin-top:12px"><button class="btn" data-act="unlock">${T(UI.unlock)}</button></div></div>`;
+
+function viewHome(){
+ const rows=S.db.cases.map(c=>`<div class="card case"><div><strong>${esc(c.name)}</strong><div class="help mono">${esc((FORMS[c.form||'n400']||{}).short||'')} · ${esc((c.updated||'').slice(0,10))} · ${pctDone(c)}%</div></div><div class="row"><button class="btn sm" data-act="open" data-id="${c.id}">${T(UI.open)}</button><button class="btn sm sec" data-act="delcase" data-id="${c.id}">${T(UI.del)}</button></div></div>`).join('')||`<p class="help">${T(UI.noCases)}</p>`;
+ return `<h2>${T(UI.caseOf)}s</h2>${rows}
+<div class="card"><h3>${T(UI.newCase)}</h3><label>${T(UI.formLbl)}</label><select id="cform">${Object.values(FORMS).map(d=>`<option value="${d.id}">${esc(d.name)} (${d.edition})</option>`).join('')}</select><label>${T(UI.caseName)}</label><input id="cname"><div class="row" style="margin-top:12px"><button class="btn" data-act="newcase">${T(UI.newCase)}</button></div></div>
+<div class="card"><h3>${T(UI.backup)}</h3><p class="help">${T(UI.backupNote)}</p><div class="row"><button class="btn sec" data-act="exportall">${T(UI.exportAll)}</button><label class="btn sec" style="margin:0">${T(UI.importAll)}<input type="file" accept="application/json" data-act="importall" class="hide"></label></div></div>
+<p class="help">${T(UI.translateNote)}</p>`;
+}
+const viewDisclaimer=()=>`<div class="banner gold"><h3>${T(UI.disclaimerTitle)}</h3><p>${T(UI.disclaimer)}</p><button class="btn warn" data-act="ackdisc">${T(UI.ack)}</button></div>`;
+
+function cur(){return S.db.cases.find(c=>c.id===S.caseId)}
+function isShown(x,a){return !x.show||x.show(a)}
+function visible(fl,a){return fl.filter(x=>isShown(x,a))}
+function isEmpty(v){return v===undefined||v===null||v===''||(Array.isArray(v)&&v.length===0)}
+const lbl=(x)=>x.l;
+function missingFor(c){
+ const out=[];const a=c.answers;
+ PARTS.forEach(p=>{
+  visible(p.fields,a).forEach(x=>{
+   if(x.type==='list'){
+    const arr=a[x.k]||[];
+    if(x.min&&arr.length<x.min)out.push([p.id,x.l]);
+    arr.forEach((it,i)=>x.item.forEach(s=>{if(s.req&&isEmpty(it[s.k]))out.push([p.id,L(`${x.l.en} #${i+1}: ${s.l.en}`,`${x.l.es} #${i+1}: ${s.l.es}`)])}));
+   }else if(x.type==='group'){
+    const g=a[x.k]||{};
+    x.sub.forEach(s=>{if(s.req&&isEmpty(g[s.k]))out.push([p.id,L(`${x.l.en}: ${s.l.en}`,`${x.l.es}: ${s.l.es}`)])});
+   }else if(x.req&&isEmpty(a[x.k]))out.push([p.id,x.l]);
+  });
+ });
+ return out;
+}
+function pctDone(c){
+ const m=missingFor(c).length;let total=0;const a=c.answers;
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{if(x.req||(x.type==='list'&&x.min))total++;if(x.type==='group')x.sub.forEach(s=>{if(s.req)total++})}));
+ return total?Math.max(0,Math.round((total-m)/total*100)):0;
+}
+
+function inputHtml(x,val,path){
+ const id=path;
+ if(x.type==='yesno')return `<div class="yn" role="radiogroup"><label><input type="radio" name="${id}" value="yes" data-path="${id}" data-t="yesno" ${val==='yes'?'checked':''}><span>${T(UI.yes)}</span></label><label class="no"><input type="radio" name="${id}" value="no" data-path="${id}" data-t="yesno" ${val==='no'?'checked':''}><span>${T(UI.no)}</span></label></div>`;
+ if(x.type==='select'){
+  const opts=OPT[x.opts]||[];
+  return `<select data-path="${id}" data-t="select"><option value="">${T(UI.select)}</option>${opts.map(([v,l])=>`<option value="${esc(v)}" ${val===v?'selected':''}>${esc(T(l))}</option>`).join('')}</select>`;
+ }
+ if(x.type==='multi'){
+  const opts=OPT[x.opts]||[];const cur=Array.isArray(val)?val:[];
+  return `<div>${opts.map(([v,l])=>`<label style="font-weight:400;display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" style="width:auto;min-height:0" data-path="${id}" data-t="multi" value="${esc(v)}" ${cur.includes(v)?'checked':''}> ${esc(T(l))}</label>`).join('')}</div>`;
+ }
+ if(x.type==='textarea')return `<textarea data-path="${id}" data-t="text">${esc(val||'')}</textarea>`;
+ const type=x.type==='date'?'date':x.type==='number'?'number':'text';
+ return `<input type="${type}" ${type==='number'?'inputmode="numeric" min="0"':''} value="${esc(val||'')}" data-path="${id}" data-t="text" autocomplete="off">`;
+}
+const noTag=x=>x.no?`<span class="mono" style="display:block;color:var(--mute);font-weight:600">${T(UI.item)} ${esc(x.no)}</span>`:'';
+function fieldHtml(x,a){
+ if(x.type==='list'){
+  const arr=a[x.k]||[];
+  const max=x.max||99;
+  return `<div class="card" style="padding:12px"><label style="margin-top:0">${noTag(x)}${T(x.l)}${x.min?' *':''}</label>${x.help?`<div class="help">${T(x.help)}</div>`:''}${x.cap?`<div class="help mono">${x.cap} ${T(UI.cap)}</div>`:''}
+  ${arr.map((it,i)=>`<div class="item"><div class="row"><strong class="grow">#${i+1}</strong><button class="btn sm sec" data-act="rmitem" data-k="${x.k}" data-i="${i}">${T(UI.remove)}</button></div><div class="grid">${x.item.filter(s=>!s.show||s.show(a)).map(s=>`<div><label>${T(s.l)}${s.req?' *':''}</label>${inputHtml(s,it[s.k],`${x.k}.${i}.${s.k}`)}</div>`).join('')}</div></div>`).join('')}
+  ${arr.length<max?`<button class="btn sm sec" data-act="additem" data-k="${x.k}">+ ${T(UI.add)}</button>`:''}</div>`;
+ }
+ if(x.type==='group'){
+  const g=a[x.k]||{};
+  return `<div class="card" style="padding:12px"><label style="margin-top:0">${noTag(x)}${T(x.l)}</label><div class="grid">${x.sub.map(s=>`<div><label>${T(s.l)}${s.req?' *':''}</label>${inputHtml(s,g[s.k],`${x.k}.${s.k}`)}</div>`).join('')}</div></div>`;
+ }
+ return `<div><label>${noTag(x)}${T(x.l)}${x.req?' *':''}</label>${x.help?`<div class="help">${T(x.help)}</div>`:''}${inputHtml(x,a[x.k],x.k)}</div>`;
+}
+function viewWizard(){
+ const c=cur();const p=PARTS[S.partIdx];const a=c.answers;
+ const nav=PARTS.map((q,i)=>`<button class="${i===S.partIdx?'on':''}" data-act="goto" data-i="${i}">${q.id}</button>`).join('');
+ const fl=visible(p.fields,a);
+ let body='';
+ if(p.risk){
+  body=`<div class="banner sage help">${T(UI.part9intro)}</div>`+fl.map(x=>x.sub?`<div class="item">${fieldHtml(x,a)}</div>`:x.type==='list'?fieldHtml(x,a):`<div class="item">${fieldHtml(x,a)}</div>`).join('');
+ }else{
+  const grouped=[];let buf=[];
+  fl.forEach(x=>{if(['list','group','textarea','yesno','multi'].includes(x.type)||x.type==='select'&&(OPT[x.opts]||[]).some(o=>T(o[1]).length>26)){if(buf.length){grouped.push(`<div class="grid">${buf.join('')}</div>`);buf=[]}grouped.push(fieldHtml(x,a))}else buf.push(fieldHtml(x,a))});
+  if(buf.length)grouped.push(`<div class="grid">${buf.join('')}</div>`);
+  body=grouped.join('');
+ }
+ return `<div class="partnav noprint">${nav}</div><div class="bar"><i style="width:${Math.round((S.partIdx+1)/PARTS.length*100)}%"></i></div>
+ <div class="card"><h2>${T(UI.part)} ${p.id}: ${T(p.t)}</h2>${body}</div>`;
+}
+function updateMid(){const m=$('#mid');if(!m)return;m.textContent=`${S.partIdx+1} ${T(UI.of)} ${PARTS.length}`;$('#next').textContent=S.partIdx===PARTS.length-1?T(UI.review):T(UI.next);$('#prev').textContent=T(UI.prev)}
+
+function setPath(c,path,val){
+ const seg=path.split('.');
+ if(seg.length===1){c.answers[seg[0]]=val}
+ else if(seg.length===2){const g=c.answers[seg[0]]=c.answers[seg[0]]||{};g[seg[1]]=val}
+ else{const arr=c.answers[seg[0]]=c.answers[seg[0]]||[];const it=arr[+seg[1]]=arr[+seg[1]]||{};it[seg[2]]=val}
+ c.updated=new Date().toISOString();
+}
+
+function riskCalc(c){
+ const a=c.answers;let score=0;const hits=[];
+ RISK.forEach(r=>{
+  if(r.w<=0)return;
+  if(r.show&&!r.show(a))return;
+  if(a['q_'+r.id]===r.adv){score+=r.w;hits.push({id:r.id,w:r.w,l:L(r.en,r.es),x:a['x_'+r.id],no:r.id.replace(/([0-9]+)([a-z])/,'$1.$2')})}
+ });
+ score=Math.min(100,score);
+ const tier=score<=30?0:score<=50?1:score<=65?2:score<=80?3:4;
+ return{score,hits,tier};
+}
+function part14(c){
+ const a=c.answers;const E=[];
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{
+  if(x.type==='list'&&x.cap){
+   const arr=a[x.k]||[];
+   if(arr.length>x.cap)E.push({page:x.page,part:x.part,item:x.no||'',text:arr.slice(x.cap).map(it=>x.item.map(s=>it[s.k]).filter(v=>!isEmpty(v)).join(', ')).join('; ')});
+  }else if(x.p14&&x.p14.from!=='x'&&!isEmpty(a[x.k]))E.push({page:x.p14.page,part:x.p14.part,item:x.p14.item,text:String(a[x.k])});
+  else if(x.p14&&x.p14.from==='x'&&!isEmpty(a[x.k]))E.push({page:x.p14.page,part:9,item:x.p14.item,text:String(a[x.k])});
+ }));
+ const ord=E.filter(e=>e.part!==14);const extra=E.filter(e=>e.part===14);
+ ord.sort((x,y)=>(x.part-y.part)||String(x.item).localeCompare(String(y.item),undefined,{numeric:true}));
+ return ord.concat(extra);
+}
+
+function viewReview(){
+ const c=cur();const a=c.answers;const miss=missingFor(c);const rk=riskCalc(c);
+ const tcls=['l','w','w','r','r'][rk.tier];
+ const ak=S.ack[c.id]||{};
+ let unlocked=true,gate='';
+ if(rk.tier===4){unlocked=false;gate=`<div class="banner rose"><strong>${T(UI.tier4)}</strong><div>${T(UI.blockedMsg)}</div></div>`}
+ else if(rk.tier===3){
+  const okAtt=(a.attorneyName||'').trim()&&a.attorneyDate;unlocked=!!okAtt;
+  gate=`<div class="banner rose"><strong>${T(UI.tier3)}</strong><div class="grid"><div><label>${T(UI.attorneyName)}</label><input data-path="attorneyName" data-t="text" value="${esc(a.attorneyName||'')}"></div><div><label>${T(UI.attorneyDate)}</label><input type="date" data-path="attorneyDate" data-t="text" value="${esc(a.attorneyDate||'')}"></div></div>${okAtt?'':`<div class="help">${T(UI.unlockNeeds)}</div>`}</div>`;
+ }else if(rk.tier>=1){
+  unlocked=!!ak.go;
+  gate=`<div class="banner ${rk.tier===2?'rose':'gold'}"><strong>${T(rk.tier===2?UI.tier2:UI.tier1)}</strong><label style="font-weight:400"><input type="checkbox" style="width:auto;min-height:0" data-act="goack" ${ak.go?'checked':''}> ${T(UI.continueAnyway)}</label></div>`;
+ }
+ return `<div class="noprint"><div class="row"><button class="btn sec sm" data-act="backwiz">${T(UI.prev)}</button><h2 class="grow" style="margin:0">${T(UI.reviewTitle)}: ${esc(c.name)}</h2></div></div>
+ <div class="card noprint"><h3>${T(UI.missing)}</h3>${miss.length?`<ul>${miss.map(([pid,l])=>`<li><a href="#" data-act="gotopart" data-pid="${pid}">${T(UI.part)} ${pid}</a>: ${T(l)}</li>`).join('')}</ul>`:`<p>${T(UI.allComplete)}</p>`}</div>
+ ${RISK.length?`<div class="card noprint"><h3>${T(UI.risk)} <span class="pill ${tcls}">${T(UI.score)} ${rk.score}</span></h3><p>${T([UI.tier0,UI.tier1,UI.tier2,UI.tier3,UI.tier4][rk.tier])}</p>
+  ${rk.hits.length?`<div class="help">${T(UI.flagged)}</div><ul>${rk.hits.map(h=>`<li><span class="mono">${h.no}</span> ${T(h.l)} <span class="pill w">+${h.w}</span>${h.x?`<div class="help">${esc(h.x)}</div>`:''}</li>`).join('')}</ul>`:''}
+  <div class="banner gold help">${T(UI.disclaimer)}</div>${gate}</div>`:`<div class="card noprint"><div class="banner gold help">${T(UI.disclaimer)}</div></div>`}
+ ${FD.elig?`<div class="card noprint"><h3>${T(UI.elig)}</h3><p class="help">${T(UI.eligNote)}</p>${FD.elig(c)}</div>`:''}
+ <div class="card noprint"><h3>${T(UI.outputs)}</h3><div class="row">
+  <button class="btn" data-act="print" ${unlocked?'':'disabled'}>${T(UI.print)}</button>
+  <button class="btn sec" data-act="exportcase" ${unlocked?'':'disabled'}>${T(UI.exportCase)}</button></div>
+  <div style="margin-top:16px"><h3>${T(UI.fillPdf)}</h3><p class="help">${T(UI.pdfNote)}</p>
+  <button class="btn" data-act="fillpdf" ${unlocked?'':'disabled'}>${T(UI.download)}</button>
+  <div id="pdfmsg" class="help" role="status" style="margin-top:8px"></div></div></div>
+ <div id="worksheet" class="card">${viewWorksheet(c)}</div>`;
+}
+function fmt(v){return v===undefined||v===null||v===''?'—':esc(v)}
+function labelOpt(x,v){const m=(OPT[x.opts]||[]).find(([k])=>k===v);return m?T(m[1]):v}
+function showVal(x,v){
+ if(x.type==='yesno')return v?T(v==='yes'?UI.yes:UI.no):'';
+ if(x.type==='select')return v?labelOpt(x,v):'';
+ if(x.type==='multi')return (Array.isArray(v)?v:[]).map(k=>labelOpt(x,k)).join(', ');
+ return v;
+}
+function viewWorksheet(c){
+ const a=c.answers;
+ const head=`<h2>${esc(c.name)} — ${FD.short} ${T(L('answers worksheet','hoja de respuestas'))}</h2><div class="help">ImmiVault ${VER} · ${new Date().toISOString().slice(0,10)} · ${T(L('form edition','edición del formulario'))} ${FD.edition}</div>`;
+ const parts=PARTS.map(p=>{
+  const rowsH=visible(p.fields,a).filter(x=>!x.sub).map(x=>{
+   if(x.type==='list'){const arr=a[x.k]||[];return `<tr><td>${noTag(x)}${T(x.l)}</td><td>${arr.length?arr.map((it,i)=>`<div>#${i+1} ${x.item.map(s=>fmt(showVal(s,it[s.k]))).join(' · ')}</div>`).join(''):'—'}</td></tr>`}
+   if(x.type==='group'){const g=a[x.k]||{};return `<tr><td>${noTag(x)}${T(x.l)}</td><td>${x.sub.map(s=>`<div>${T(s.l)}: ${fmt(showVal(s,g[s.k]))}</div>`).join('')}</td></tr>`}
+   const ex=x.k.startsWith('q_')?a['x_'+x.k.slice(2)]:'';
+   return `<tr><td>${noTag(x)}${T(x.l)}</td><td>${fmt(showVal(x,a[x.k]))}${ex&&a[x.k]===(RISK_INDEX[x.k.slice(2)]||{}).adv?`<div class="help">${esc(ex)}</div>`:''}</td></tr>`;
+  }).join('');
+  return `<h3 style="margin-top:16px">${T(UI.part)} ${p.id}: ${T(p.t)}</h3><table>${rowsH}</table>`;
+ }).join('');
+ const e14=part14(c);
+ const sheet=e14.length?`<div style="page-break-before:always"><h2>${T(UI.p14sheet)}</h2><p class="help">${T(UI.p14note)}</p><p><strong>${esc(c.name)}</strong> · A-${esc(a.aNumber||'')}</p>${e14.map(e=>`<div class="item"><div class="mono">${T(UI.part)} ${e.part}${e.item?`, ${T(UI.item)} ${esc(e.item)}`:''}${e.page?` · p. ${e.page}`:''}</div><div>${esc(e.text)}</div></div>`).join('')}</div>`:'';
+ return head+parts+sheet;
+}
+
+function loadPdfLib(){
+ if(window.PDFLib)return Promise.resolve();
+ return new Promise((res,rej)=>{const s=document.createElement('script');s.src=PDFLIB_URL;s.onload=res;s.onerror=()=>rej(new Error('pdf-lib'));document.head.appendChild(s)});
+}
+function pdfMsg(t,bad){const m=document.getElementById('pdfmsg');if(!m)return;m.textContent=t||'';m.style.color=bad?'var(--rose)':'var(--mute)'}
+function usDate(v){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');return m?`${m[2]}/${m[3]}/${m[1]}`:String(v||'')}
+
+function collectOps(c){
+ const a=c.answers;const ops=[];
+ const txt=(n,v,x)=>{if(!n||isEmpty(v))return;let s=String(v).trim();if(!s)return;if(x&&x.type==='date')s=usDate(s);if(x&&x.dg)s=s.replace(/\D/g,'');if(x&&x.up)s=s.toUpperCase();ops.push({k:'t',n,v:s,d:x&&x.d,fuzzy:x&&x.fuzzy})};
+ const pick=(spec,i)=>Array.isArray(spec)?spec[i]:spec;
+ const emit=(x,val,i,p14ctx)=>{
+  if(isEmpty(val))return;
+  if(x.tf){x.tf(val,a).forEach(([n,v])=>txt(n,v));return}
+  if(x.type==='yesno'){const b=pick(x.y,i);if(b)ops.push({k:'y',base:b,v:val});return}
+  if(x.type==='select'&&x.c){const n=x.c[val];if(n)ops.push({k:'c',n,on:true});return}
+  if(x.type==='multi'&&x.c){(Array.isArray(val)?val:[]).forEach(v=>{if(x.c[v])ops.push({k:'c',n:x.c[v],on:true})});return}
+  if(x.d){ops.push({k:'d',n:x.d,v:String(val).toUpperCase(),fuzzy:x.fuzzy,raw:String(val)});return}
+  const n=pick(x.t,i);if(n)txt(n,val,x);
+  if(x.tf2)x.tf2.forEach(m=>txt(m,val,x));
+ };
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{
+  if(x.type==='list'&&x.cap){(a[x.k]||[]).slice(0,x.cap).forEach((it,i)=>x.item.forEach(s=>{if(!s.show||s.show(a))emit(s,it[s.k],i)}))}
+  else if(x.type==='group'){const g=a[x.k]||{};x.sub.forEach(s=>emit(s,g[s.k]))}
+  else if(x.type==='list'){}
+  else emit(x,a[x.k]);
+ }));
+ RISK.forEach(r=>{const v=a['q_'+r.id];if(v&&(!r.show||r.show(a)))ops.push({k:'y',base:r.base,v})});
+ const e14=part14(c);
+ if(e14.length&&FD.p14){
+  FD.p14.name.forEach(([n,k])=>txt(n,a[k]));
+  const take=e14.slice(0,4);
+  take.forEach((e,i)=>{
+   const last=i===3&&e14.length>4;
+   const rest=last?e14.slice(3):[e];
+   const text=rest.map(r=>(last?`P${r.part} I${r.item}: `:'')+r.text).join(' | ');
+   const clipped=text.length>420||last?text.slice(0,400)+' … '+T(L('(see attached sheet)','(vea la hoja adjunta)')):text;
+   const [pg,pt,it,tx]=FD.p14.blocks[i];
+   txt(pg,String(e.page||''));txt(pt,String(e.part||''));txt(it,String(e.item||''));txt(tx,clipped);
+  });
+ }
+ return ops;
+}
+function resolveFields(form){
+ const m={};
+ form.getFields().forEach(fl=>{const k=fl.getName().replace(/^form1\[0\]\.#subform\[\d+\]\./,'').replace(/^#area\[\d+\]\./,'').replace(/\\/g,'');m[k]=fl});
+ return m;
+}
+function applyOps(form,ops){
+ const P=window.PDFLib;const map=resolveFields(form);const res={done:0,trunc:0,miss:[]};
+ const ckOn=(fl)=>{try{return String(fl.acroField.getOnValue()).replace('/','')}catch(e){return ''}};
+ ops.forEach(o=>{
+  try{
+   if(o.k==='t'){
+    const fl=map[o.n];
+    if(!fl){res.miss.push(o.n);return}
+    if(fl instanceof P.PDFTextField){
+     let v=o.v;const max=fl.getMaxLength();
+     if(max&&v.length>max){v=v.slice(0,max);res.trunc++}
+     fl.setText(v);res.done++;
+    }else if(fl instanceof P.PDFDropdown){
+     const opt=fl.getOptions().find(x=>x.trim().toUpperCase()===o.v.toUpperCase());
+     if(opt){fl.select(opt);res.done++}else res.miss.push(o.n);
+    }
+   }else if(o.k==='d'){
+    const fl=map[o.n];
+    if(!fl||!(fl instanceof P.PDFDropdown)){res.miss.push(o.n);return}
+    const opts=fl.getOptions();
+    let opt=opts.find(x=>x.trim().toUpperCase()===o.v.trim());
+    if(!opt&&o.fuzzy)opt=opts.find(x=>x.toUpperCase().includes(o.v.trim()));
+    if(opt){fl.select(opt);res.done++}else res.miss.push(o.n);
+   }else if(o.k==='c'){
+    const fl=map[o.n];
+    if(!fl||!(fl instanceof P.PDFCheckBox)){res.miss.push(o.n);return}
+    o.on?fl.check():fl.uncheck();res.done++;
+   }else if(o.k==='y'){
+    const f0=map[o.base+'[0]'],f1=map[o.base+'[1]'];
+    if(!f0||!f1){res.miss.push(o.base);return}
+    const want=o.v==='yes'?'Y':'N';
+    [f0,f1].forEach(fl=>{if(ckOn(fl)===want)fl.check();else fl.uncheck()});
+    res.done++;
+   }
+  }catch(err){res.miss.push(o.n||o.base)}
+ });
+ return res;
+}
+async function fillPdf(){
+ const c=cur();
+ pdfMsg(T(UI.pdfLoading));
+ try{await loadPdfLib()}catch(e){pdfMsg(T(UI.pdfLibFail),true);return}
+ let bytes;
+ try{const r=await fetch(FD.pdf);if(!r.ok)throw new Error(r.status);bytes=await r.arrayBuffer()}catch(e){pdfMsg(T(UI.pdfBlankFail),true);return}
+ try{
+  const doc=await window.PDFLib.PDFDocument.load(bytes,{updateMetadata:false});
+  const form=doc.getForm();
+  const res=applyOps(form,collectOps(c));
+  const out=await doc.save();
+  dl(new Blob([out],{type:'application/pdf'}),`${c.name.replace(/\W+/g,'_')}_N-400_${FD.edition.replace(/\//g,'-')}.pdf`);
+  pdfMsg(`${res.done} ${T(UI.pdfDone)}`+(res.trunc?` · ${res.trunc} ${T(UI.pdfTrunc)}`:'')+(res.miss.length?` · ${res.miss.length} ${T(UI.pdfMiss)}`:''));
+  window.__lastFill=res;
+ }catch(err){console.error(err);pdfMsg(T(UI.pdfErr)+' ('+(err&&err.message||err)+')',true)}
+}
+function dl(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},500)}
+
+document.addEventListener('click',async e=>{
+ const el=e.target.closest('[data-act]');if(!el)return;
+ const act=el.dataset.act;
+ if(el.tagName==='INPUT'&&(el.type==='file'||el.type==='checkbox'))return;
+ if(el.tagName==='A')e.preventDefault();
+ const c=S.caseId?cur():null;
+ switch(act){
+  case 'lang':S.lang=S.lang==='en'?'es':'en';S.db.lang=S.lang;persist();render(true);break;
+  case 'home':S.mode='home';S.caseId=null;render();break;
+  case 'lock':S.key=null;S.salt=null;S.db={cases:[],lang:S.lang};S.caseId=null;S.mode='unlock';render();break;
+  case 'setpass':{
+   const p=$('#pp').value;if(p.length<8){$('#err').textContent=T(UI.minPass);break}
+   S.salt=crypto.getRandomValues(new Uint8Array(16));S.key=await deriveKey(p,S.salt);S.mode='home';await persist();render();break}
+  case 'skippass':S.mode='home';await persist();render();break;
+  case 'unlock':{
+   try{
+    const st=JSON.parse(localStorage.getItem(KEY_ENC));const salt=unb64(st.salt);const key=await deriveKey($('#pp').value,salt);
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(st.iv)},key,unb64(st.data));
+    S.db=JSON.parse(new TextDecoder().decode(pt));S.key=key;S.salt=salt;S.lang=S.db.lang||'en';S.mode='home';render();
+   }catch(err){$('#err').textContent=T(UI.wrongPass)}
+   break}
+  case 'newcase':{
+   const name=$('#cname').value.trim();if(!name){$('#cname').focus();break}
+   const nc={id:uid(),form:$('#cform').value,name,answers:{},updated:new Date().toISOString(),disc:false};
+   S.db.cases.unshift(nc);await persist();S.caseId=nc.id;setForm(nc.form);S.partIdx=0;S.mode='disclaimer';render();break}
+  case 'open':S.caseId=el.dataset.id;setForm(cur().form);S.partIdx=0;S.mode=cur().disc?'wizard':'disclaimer';render();break;
+  case 'delcase':if(confirm(T(UI.confirmDel))){S.db.cases=S.db.cases.filter(x=>x.id!==el.dataset.id);await persist();render()}break;
+  case 'ackdisc':cur().disc=true;await persist();S.mode='wizard';render();break;
+  case 'goto':S.partIdx=+el.dataset.i;render();break;
+  case 'gotopart':S.partIdx=PARTS.findIndex(p=>p.id===+el.dataset.pid);S.mode='wizard';render();break;
+  case 'prev':if(S.partIdx>0){S.partIdx--;render()}break;
+  case 'next':if(S.partIdx<PARTS.length-1){S.partIdx++;render()}else{S.mode='review';render()}break;
+  case 'backwiz':S.mode='wizard';render();break;
+  case 'additem':{const arr=c.answers[el.dataset.k]=c.answers[el.dataset.k]||[];arr.push({});await persist();render(true);break}
+  case 'rmitem':{c.answers[el.dataset.k].splice(+el.dataset.i,1);await persist();render(true);break}
+  case 'exportall':dl(new Blob([JSON.stringify(S.db)],{type:'application/json'}),`ImmiVault-${VER}-backup.json`);break;
+  case 'exportcase':dl(new Blob([JSON.stringify(c)],{type:'application/json'}),`${c.name.replace(/\W+/g,'_')}.json`);break;
+  case 'print':window.print();break;
+  case 'fillpdf':await fillPdf();break;
+ }
+});
+
+document.addEventListener('change',async e=>{
+ const el=e.target;
+ if(el.dataset.act==='importall'){
+  const txt=await el.files[0].text();try{const d=JSON.parse(txt);if(!Array.isArray(d.cases))throw 0;d.cases.forEach(cs=>{if(!S.db.cases.find(x=>x.id===cs.id))S.db.cases.push(cs)});await persist();render()}catch(err){alert('Invalid file')}
+  return}
+ if(el.dataset.act==='goack'){S.ack[S.caseId]={go:el.checked};render(true);return}
+ if(el.dataset.path&&el.dataset.t==='multi'){
+  const c=cur();const k=el.dataset.path;const arr=Array.isArray(c.answers[k])?c.answers[k].slice():[];
+  const i=arr.indexOf(el.value);if(el.checked&&i<0)arr.push(el.value);if(!el.checked&&i>=0)arr.splice(i,1);
+  setPath(c,k,arr);await persist();render(true);return}
+ if(el.dataset.path&&(el.dataset.t==='yesno'||el.dataset.t==='select')){
+  setPath(cur(),el.dataset.path,el.value);await persist();render(true);return}
+ if(el.dataset.path&&S.mode==='review'){setPath(cur(),el.dataset.path,el.value);await persist();render(true)}
+});
+document.addEventListener('input',e=>{
+ const el=e.target;
+ if(el.dataset.path&&el.dataset.t==='text'&&S.mode==='wizard'){setPath(cur(),el.dataset.path,el.value);saveSoon()}
+});
+
+</script>
+<script src="forms/n400.js"></script>
+<script>boot();</script></body></html>
