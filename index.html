@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver005</title>
+<title>ImmiVault Ver006</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -80,7 +80,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 </div>
 
 <script>
-const VER='Ver005';
+const VER='Ver006';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -141,7 +141,9 @@ const rows=(prefix,n,suffix='[0]')=>Array.from({length:n},(_,i)=>`${prefix}${i+1
 
 let PARTS=[],OPT={},RISK=[],RISK_INDEX={},FD=null;const FORMS={};
 function registerForm(d){FORMS[d.id]=d}
-function setForm(id){FD=FORMS[id]||FORMS.n400||Object.values(FORMS)[0];PARTS=FD.PARTS;OPT=FD.OPT;RISK=FD.RISK||[];RISK_INDEX=FD.RISK_INDEX||{};Object.assign(UI,FD.ui||{})}
+let UI0=null;
+function setForm(id){FD=FORMS[id]||FORMS.n400||Object.values(FORMS)[0];PARTS=FD.PARTS;OPT=FD.OPT;RISK=FD.RISK||[];RISK_INDEX=FD.RISK_INDEX||{};if(!UI0)UI0=Object.assign({},UI);Object.assign(UI,UI0,FD.ui||{})}
+const shortName=t=>String(t||'').replace(/N-400/g,FD?FD.short:'N-400');
 let S={lang:'en',db:{cases:[],lang:'en'},key:null,salt:null,mode:'boot',caseId:null,partIdx:0,ack:{}};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -349,7 +351,7 @@ function viewReview(){
  <div class="card noprint"><h3>${T(UI.outputs)}</h3><div class="row">
   <button class="btn" data-act="print" ${unlocked?'':'disabled'}>${T(UI.print)}</button>
   <button class="btn sec" data-act="exportcase" ${unlocked?'':'disabled'}>${T(UI.exportCase)}</button></div>
-  <div style="margin-top:16px"><h3>${T(UI.fillPdf)}</h3><p class="help">${T(UI.pdfNote)}</p>
+  <div style="margin-top:16px"><h3>${shortName(T(UI.fillPdf))}</h3><p class="help">${T(UI.pdfNote)}</p>
   <button class="btn" data-act="fillpdf" ${unlocked?'':'disabled'}>${T(UI.download)}</button>
   <div id="pdfmsg" class="help" role="status" style="margin-top:8px"></div></div></div>
  <div id="worksheet" class="card">${viewWorksheet(c)}</div>`;
@@ -393,7 +395,7 @@ function collectOps(c){
  const emit=(x,val,i,p14ctx)=>{
   if(isEmpty(val))return;
   if(x.tf){x.tf(val,a).forEach(([n,v])=>txt(n,v));return}
-  if(x.type==='yesno'){const b=pick(x.y,i);if(b)ops.push({k:'y',base:b,v:val});return}
+  if(x.type==='yesno'){const b=pick(x.y,i);if(b&&typeof b==='object')ops.push({k:'yn',yes:b.yes,no:b.no,v:val});else if(b)ops.push({k:'y',base:b,v:val});return}
   if(x.type==='select'&&x.c){const n=x.c[val];if(n)ops.push({k:'c',n,on:true});return}
   if(x.type==='multi'&&x.c){(Array.isArray(val)?val:[]).forEach(v=>{if(x.c[v])ops.push({k:'c',n:x.c[v],on:true})});return}
   if(x.d){ops.push({k:'d',n:x.d,v:String(val).toUpperCase(),fuzzy:x.fuzzy,raw:String(val)});return}
@@ -406,7 +408,7 @@ function collectOps(c){
   else if(x.type==='list'){}
   else emit(x,a[x.k]);
  }));
- RISK.forEach(r=>{const v=a['q_'+r.id];if(v&&(!r.show||r.show(a)))ops.push({k:'y',base:r.base,v})});
+ RISK.forEach(r=>{const v=a['q_'+r.id];if(v&&(!r.show||r.show(a)))ops.push(typeof r.base==='object'?{k:'yn',yes:r.base.yes,no:r.base.no,v}:{k:'y',base:r.base,v})});
  const e14=part14(c);
  if(e14.length&&FD.p14){
   FD.p14.name.forEach(([n,k])=>txt(n,a[k]));
@@ -448,12 +450,17 @@ function applyOps(form,ops){
     if(!fl||!(fl instanceof P.PDFDropdown)){res.miss.push(o.n);return}
     const opts=fl.getOptions();
     let opt=opts.find(x=>x.trim().toUpperCase()===o.v.trim());
-    if(!opt&&o.fuzzy)opt=opts.find(x=>x.toUpperCase().includes(o.v.trim()));
+    if(!opt&&o.fuzzy)opt=opts.find(x=>x.toUpperCase().startsWith(o.v.trim()+' '))||opts.find(x=>x.toUpperCase().includes(o.v.trim()));
     if(opt){fl.select(opt);res.done++}else res.miss.push(o.n);
    }else if(o.k==='c'){
     const fl=map[o.n];
     if(!fl||!(fl instanceof P.PDFCheckBox)){res.miss.push(o.n);return}
     o.on?fl.check():fl.uncheck();res.done++;
+   }else if(o.k==='yn'){
+    const fy=map[o.yes],fn=map[o.no];
+    if(!fy||!fn){res.miss.push(o.yes||o.no);return}
+    if(o.v==='yes'){fy.check();fn.uncheck()}else{fn.check();fy.uncheck()}
+    res.done++;
    }else if(o.k==='y'){
     const f0=map[o.base+'[0]'],f1=map[o.base+'[1]'];
     if(!f0||!f1){res.miss.push(o.base);return}
@@ -470,13 +477,13 @@ async function fillPdf(){
  pdfMsg(T(UI.pdfLoading));
  try{await loadPdfLib()}catch(e){pdfMsg(T(UI.pdfLibFail),true);return}
  let bytes;
- try{const r=await fetch(FD.pdf);if(!r.ok)throw new Error(r.status);bytes=await r.arrayBuffer()}catch(e){pdfMsg(T(UI.pdfBlankFail),true);return}
+ try{const r=await fetch(FD.pdf);if(!r.ok)throw new Error(r.status);bytes=await r.arrayBuffer()}catch(e){pdfMsg(shortName(T(UI.pdfBlankFail)),true);return}
  try{
   const doc=await window.PDFLib.PDFDocument.load(bytes,{updateMetadata:false});
   const form=doc.getForm();
   const res=applyOps(form,collectOps(c));
   const out=await doc.save();
-  dl(new Blob([out],{type:'application/pdf'}),`${c.name.replace(/\W+/g,'_')}_N-400_${FD.edition.replace(/\//g,'-')}.pdf`);
+  dl(new Blob([out],{type:'application/pdf'}),`${c.name.replace(/\W+/g,'_')}_${FD.short}_${FD.edition.replace(/\//g,'-')}.pdf`);
   pdfMsg(`${res.done} ${T(UI.pdfDone)}`+(res.trunc?` · ${res.trunc} ${T(UI.pdfTrunc)}`:'')+(res.miss.length?` · ${res.miss.length} ${T(UI.pdfMiss)}`:''));
   window.__lastFill=res;
  }catch(err){console.error(err);pdfMsg(T(UI.pdfErr)+' ('+(err&&err.message||err)+')',true)}
@@ -546,4 +553,6 @@ document.addEventListener('input',e=>{
 
 </script>
 <script src="forms/n400.js"></script>
+<script src="forms/i485.js"></script>
+<script src="forms/i130.js"></script>
 <script>boot();</script></body></html>
