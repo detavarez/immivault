@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver009</title>
+<title>ImmiVault Ver010</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -80,7 +80,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 </div>
 
 <script>
-const VER='Ver009';
+const VER='Ver010';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -248,6 +248,7 @@ function pctDone(c){
  return total?Math.max(0,Math.round((total-m)/total*100)):0;
 }
 
+const STATES='AA AE AK AL AP AR AS AZ CA CO CT DC DE FL FM GA GU HI IA ID IL IN KS KY LA MA MD ME MH MI MN MO MP MS MT NC ND NE NH NJ NM NV NY OH OK OR PA PR PW RI SC SD TN TX UT VA VI VT WA WI WV WY'.split(' ');
 function inputHtml(x,val,path){
  const id=path;
  if(x.type==='yesno')return `<div class="yn" role="radiogroup"><label><input type="radio" name="${id}" value="yes" data-path="${id}" data-t="yesno" ${val==='yes'?'checked':''}><span>${T(UI.yes)}</span></label><label class="no"><input type="radio" name="${id}" value="no" data-path="${id}" data-t="yesno" ${val==='no'?'checked':''}><span>${T(UI.no)}</span></label></div>`;
@@ -259,6 +260,7 @@ function inputHtml(x,val,path){
   const opts=OPT[x.opts]||[];const cur=Array.isArray(val)?val:[];
   return `<div>${opts.map(([v,l])=>`<label style="font-weight:400;display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" style="width:auto;min-height:0" data-path="${id}" data-t="multi" value="${esc(v)}" ${cur.includes(v)?'checked':''}> ${esc(T(l))}</label>`).join('')}</div>`;
  }
+ if(x.type==='text'&&x.d&&x.up&&!x.fuzzy){const cv=String(val||'').toUpperCase();return `<select data-path="${id}" data-t="select"><option value="">${T(UI.select)}</option>${STATES.map(v=>`<option value="${v}" ${cv===v?'selected':''}>${v}</option>`).join('')}</select>`}
  if(x.type==='textarea')return `<textarea data-path="${id}" data-t="text">${esc(val||'')}</textarea>`;
  const type=x.type==='date'?'date':x.type==='number'?'number':'text';
  return `<input type="${type}" ${type==='number'?'inputmode="numeric" min="0"':''} value="${esc(val||'')}" data-path="${id}" data-t="text" autocomplete="off">`;
