@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver010</title>
+<title>ImmiVault Ver011</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -80,7 +80,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 </div>
 
 <script>
-const VER='Ver010';
+const VER='Ver011';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -428,7 +428,7 @@ function collectOps(c){
 }
 function resolveFields(form){
  const m={};
- form.getFields().forEach(fl=>{const k=fl.getName().replace(/^form1\[0\]\.#subform\[\d+\]\./,'').replace(/^#area\[\d+\]\./,'').replace(/\\/g,'');m[k]=fl});
+ form.getFields().forEach(fl=>{const k=fl.getName().replace(/^form1\[0\]\.#subform\[\d+\]\./,'').replace(/^#area\[\d+\]\./,'').replace(/^form1\[0\]\./,'').replace(/\\/g,'');m[k]=fl});
  return m;
 }
 function applyOps(form,ops){
@@ -558,4 +558,9 @@ document.addEventListener('input',e=>{
 <script src="forms/n400.js"></script>
 <script src="forms/i485.js"></script>
 <script src="forms/i130.js"></script>
+<script src="forms/g28.js"></script>
+<script src="forms/g639.js"></script>
+<script src="forms/g1145.js"></script>
+<script src="forms/g1450.js"></script>
+<script src="forms/g1650.js"></script>
 <script>boot();</script></body></html>
