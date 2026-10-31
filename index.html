@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver008</title>
+<title>ImmiVault Ver009</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -80,7 +80,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 </div>
 
 <script>
-const VER='Ver008';
+const VER='Ver009';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -485,7 +485,7 @@ async function fillPdf(){
   const res=applyOps(form,collectOps(c));
   const out=await doc.save();
   dl(new Blob([out],{type:'application/pdf'}),`${c.name.replace(/\W+/g,'_')}_${FD.short}_${FD.edition.replace(/\//g,'-')}.pdf`);
-  pdfMsg(`${res.done} ${T(UI.pdfDone)}`+(res.trunc?` · ${res.trunc} ${T(UI.pdfTrunc)}`:'')+(res.miss.length?` · ${res.miss.length} ${T(UI.pdfMiss)}`:''));
+  pdfMsg(`${res.done} ${T(UI.pdfDone)}`+(res.trunc?` · ${res.trunc} ${T(UI.pdfTrunc)}`:'')+(res.miss.length?` · ${res.miss.length} ${T(UI.pdfMiss)}: ${res.miss.slice(0,8).join(', ')}`:''));
   window.__lastFill=res;
  }catch(err){console.error(err);pdfMsg(T(UI.pdfErr)+' ('+(err&&err.message||err)+')',true)}
 }
