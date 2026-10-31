@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver007</title>
+<title>ImmiVault Ver008</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -80,7 +80,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 </div>
 
 <script>
-const VER='Ver007';
+const VER='Ver008';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -410,8 +410,8 @@ function collectOps(c){
  }));
  RISK.forEach(r=>{const v=a['q_'+r.id];if(v&&(!r.show||r.show(a)))ops.push(typeof r.base==='object'?{k:'yn',yes:r.base.yes,no:r.base.no,v}:{k:'y',base:r.base,v})});
  const e14=part14(c);
+ if(FD.p14)FD.p14.name.forEach(([n,k])=>txt(n,a[k]));
  if(e14.length&&FD.p14){
-  FD.p14.name.forEach(([n,k])=>txt(n,a[k]));
   const take=e14.slice(0,4);
   take.forEach((e,i)=>{
    const last=i===3&&e14.length>4;
@@ -481,7 +481,7 @@ async function fillPdf(){
  try{
   const doc=await window.PDFLib.PDFDocument.load(bytes,{updateMetadata:false});
   const form=doc.getForm();
-  form.getFields().forEach(fl=>{try{if(fl instanceof window.PDFLib.PDFTextField&&fl.isRichFormatted())fl.disableRichFormatting();if(!/BarCode/.test(fl.getName()))fl.disableReadOnly()}catch(e){}});
+  form.getFields().forEach(fl=>{try{if(fl instanceof window.PDFLib.PDFTextField&&fl.isRichFormatted())fl.disableRichFormatting();if(!/BarCode/.test(fl.getName())){fl.disableReadOnly();const P=window.PDFLib;fl.acroField.getWidgets().forEach(w=>{const v=w.dict.lookup(P.PDFName.of('F'));const n=v instanceof P.PDFNumber?v.asNumber():0;if(n&64)w.dict.set(P.PDFName.of('F'),P.PDFNumber.of(n&~64))})}}catch(e){}});
   const res=applyOps(form,collectOps(c));
   const out=await doc.save();
   dl(new Blob([out],{type:'application/pdf'}),`${c.name.replace(/\W+/g,'_')}_${FD.short}_${FD.edition.replace(/\//g,'-')}.pdf`);
