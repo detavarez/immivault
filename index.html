@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver011</title>
+<title>ImmiVault Ver012</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -80,7 +80,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 </div>
 
 <script>
-const VER='Ver011';
+const VER='Ver012';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -414,10 +414,11 @@ function collectOps(c){
  const e14=part14(c);
  if(FD.p14)FD.p14.name.forEach(([n,k])=>txt(n,a[k]));
  if(e14.length&&FD.p14){
-  const take=e14.slice(0,4);
+  const nb=FD.p14.blocks.length;
+  const take=e14.slice(0,nb);
   take.forEach((e,i)=>{
-   const last=i===3&&e14.length>4;
-   const rest=last?e14.slice(3):[e];
+   const last=i===nb-1&&e14.length>nb;
+   const rest=last?e14.slice(nb-1):[e];
    const text=rest.map(r=>(last?`P${r.part} I${r.item}: `:'')+r.text).join(' | ');
    const clipped=text.length>420||last?text.slice(0,400)+' … '+T(L('(see attached sheet)','(vea la hoja adjunta)')):text;
    const [pg,pt,it,tx]=FD.p14.blocks[i];
@@ -563,4 +564,33 @@ document.addEventListener('input',e=>{
 <script src="forms/g1145.js"></script>
 <script src="forms/g1450.js"></script>
 <script src="forms/g1650.js"></script>
+<script src="forms/i102.js"></script>
+<script src="forms/i129f.js"></script>
+<script src="forms/i131.js"></script>
+<script src="forms/i134.js"></script>
+<script src="forms/i212.js"></script>
+<script src="forms/i290b.js"></script>
+<script src="forms/i360.js"></script>
+<script src="forms/i539.js"></script>
+<script src="forms/i601.js"></script>
+<script src="forms/i601a.js"></script>
+<script src="forms/i693.js"></script>
+<script src="forms/i751.js"></script>
+<script src="forms/i765.js"></script>
+<script src="forms/i821.js"></script>
+<script src="forms/i821d.js"></script>
+<script src="forms/i824.js"></script>
+<script src="forms/i864.js"></script>
+<script src="forms/i864a.js"></script>
+<script src="forms/i864ez.js"></script>
+<script src="forms/i865.js"></script>
+<script src="forms/i90.js"></script>
+<script src="forms/i907.js"></script>
+<script src="forms/i912.js"></script>
+<script src="forms/i914.js"></script>
+<script src="forms/i918.js"></script>
+<script src="forms/n336.js"></script>
+<script src="forms/n565.js"></script>
+<script src="forms/n600.js"></script>
+<script src="forms/n648.js"></script>
 <script>boot();</script></body></html>
