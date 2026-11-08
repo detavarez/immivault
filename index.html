@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver018</title>
+<title>ImmiVault Ver019</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -58,7 +58,8 @@ textarea{min-height:90px}
 .item{border:1px dashed var(--line);border-radius:14px;padding:12px;margin:10px 0;background:#FAFBFE}
 .pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700;font-family:'DM Mono',monospace}
 .pill.l{background:var(--blue-l);color:var(--blue-d)}.pill.w{background:var(--amber-l);color:#7A5A12}.pill.r{background:var(--red-l);color:var(--red)}
-table{width:100%;border-collapse:collapse;font-size:.92rem}
+table{width:100%;border-collapse:collapse;font-size:.92rem;table-layout:fixed}
+td,th{overflow-wrap:anywhere;word-break:break-word;vertical-align:top}
 td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
 .mono{font-family:'DM Mono',monospace}
 .hide{display:none!important}
@@ -105,14 +106,15 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 .fld.grp:focus-within .box{background:#F3F8FF}
 .fld.grp.ok:focus-within .box{background:var(--ok-l)}
 .fld.grp .ico{top:12px}
-.yn{display:flex;gap:10px}
+.yn{display:flex;gap:10px;flex-wrap:wrap}
+.yn>label{min-width:0;overflow-wrap:anywhere}
 .yn>label{flex:1;margin:0;border:1.5px solid var(--line);border-radius:14px;padding:11px 10px;text-align:center;cursor:pointer;font-weight:500;background:#fff;position:relative;transition:background .25s,color .25s,border-color .25s,transform .2s,box-shadow .25s;box-shadow:0 2px 6px rgba(11,31,75,.06)}
 .yn>label:hover{border-color:var(--focus)}
 .yn input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}
 .yn>label:has(input:focus-visible){outline:3px solid #9DBBF0;outline-offset:1px}
 .yn>label:has(input:checked){background:var(--blue);color:#fff;border-color:var(--blue);transform:scale(1.02);box-shadow:0 6px 14px rgba(11,61,145,.3)}
 .yn>label.no:has(input:checked){background:var(--red);border-color:var(--red);box-shadow:0 6px 14px rgba(200,16,46,.3)}
-.yn.col{flex-direction:column}
+.yn.col{flex-direction:column;flex-wrap:nowrap}
 .opts{display:grid;gap:8px}
 .opts>label.chk{display:flex;gap:10px;align-items:center;margin:0;font-weight:400;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;background:#fff;transition:background .2s,border-color .2s}
 .opts>label.chk:has(input:checked){background:var(--blue-l);border-color:var(--blue)}
@@ -211,6 +213,18 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 @keyframes by{0%{bottom:70px;animation-timing-function:cubic-bezier(.45,0,.95,.55)}50%{bottom:31px;animation-timing-function:cubic-bezier(.05,.45,.55,1)}100%{bottom:70px}}
 @keyframes sh{0%{transform:scale(.55);opacity:.35}50%{transform:scale(1.05);opacity:.9}100%{transform:scale(.55);opacity:.35}}
 @media (prefers-reduced-motion:reduce){.pp *{animation-duration:2.4s!important}html{scroll-behavior:auto}}
+header .menubtn{background:transparent;border:1.5px solid rgba(255,255,255,.7);color:#fff;width:44px;height:40px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+header .menubtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+#menuback{position:fixed;inset:0;background:rgba(11,31,75,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:60}
+#menu{position:fixed;top:0;right:0;bottom:0;width:min(84vw,320px);background:#fff;z-index:61;transform:translateX(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:-8px 0 28px rgba(0,0,0,.25);display:flex;flex-direction:column;padding:14px 12px;overflow-y:auto}
+body.menuopen #menu{transform:none}body.menuopen #menuback{opacity:1;pointer-events:auto}
+#menu .mh{display:flex;align-items:center;justify-content:space-between;padding:4px 6px 12px;border-bottom:1px solid #d9e0ee;margin-bottom:8px;font-family:'Fraunces',serif;font-weight:700;color:var(--navy);font-size:1.15rem}
+#menu .mi{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:none;border:0;border-radius:12px;padding:13px 10px;font:inherit;font-size:1rem;color:var(--navy);cursor:pointer;min-height:48px}
+#menu .mi:hover,#menu .mi:focus-visible{background:#eef3fc}
+#menu .mi.on{background:#e3ecfb;font-weight:700}
+#menu .mi svg{width:22px;height:22px;flex:0 0 22px;fill:none;stroke:var(--blue);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#menu .mi small{margin-left:auto;color:#5a6785;font-size:.8rem}
+#menu hr{border:0;border-top:1px solid #d9e0ee;margin:8px 0}
 #toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:rgba(11,31,75,.94);color:#fff;padding:10px 18px;border-radius:999px;font-size:.92rem;z-index:120;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 6px 18px rgba(0,0,0,.3);white-space:nowrap}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 .ib{display:inline-flex;align-items:center;justify-content:center;gap:6px}
@@ -227,10 +241,10 @@ body.kb .nav{display:none}
 <header>
   <span class="brand">ImmiVault</span><span class="ver" id="ver"></span>
   <span class="sp"></span>
-  <button class="btn" id="home" data-act="home"></button>
-  <button class="btn" id="lang" data-act="lang"></button>
-  <button class="btn" id="lock" data-act="lock"></button>
+  <button class="menubtn" id="menubtn" data-act="menu" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 </header>
+<div id="menuback" data-act="menuclose"></div>
+<nav id="menu" aria-label="Menu"></nav>
 <main id="app"></main>
 <div class="nav hide" id="nav">
   <button class="btn sec ib" data-act="home" id="navhome"></button>
@@ -243,7 +257,7 @@ body.kb .nav{display:none}
 
 
 <script>
-const VER='Ver018';
+const VER='Ver019';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -301,6 +315,8 @@ UI.testNote=L('Tap a scenario to create a case with every field filled with fict
 UI.testEvery=L('One test case for every form','Un caso de prueba por cada formulario');UI.testAll=L('Create all scenarios','Crear todos los escenarios');UI.testDel=L('Delete all test cases','Borrar todos los casos de prueba');UI.reviewDl=L('Review / download','Revisar / descargar');UI.testBadge=L('TEST','PRUEBA');
 UI.startShort=L('Start','Iniciar');
 UI.passTitle=L('Passphrase','Contraseña');UI.cancel=L('Cancel','Cancelar');UI.passOn=L('Passphrase protection is on. Your data is encrypted in this browser.','La protección con contraseña está activada. Sus datos están cifrados en este navegador.');UI.passOff=L('Passphrase protection is off. Anyone using this browser can see your cases.','La protección con contraseña está desactivada. Cualquiera que use este navegador puede ver sus casos.');UI.passSet=L('Set a passphrase','Crear una contraseña');UI.passChange=L('Change passphrase','Cambiar contraseña');
+UI.mStart=L('Start an application','Iniciar una solicitud');UI.on=L('On','Activa');UI.off=L('Off','Apagada');UI.langName=L('Español','English');
+UI.noCases=L('No cases yet. Open the menu and choose Start an application.','Aún no hay casos. Abra el menú y elija Iniciar una solicitud.');
 UI.exitHint=L('Press back again to exit','Presione atrás otra vez para salir');
 const T=(o)=>{const lg=S.lang;return (o&&(o[lg]||o.en))||''};
 
@@ -555,6 +571,7 @@ function navSync(){
 }
 window.addEventListener('popstate',e=>{
  const st=e.state||{};
+ document.body.classList.remove('menuopen');
  if(S.mode==='unlock'||(S.mode==='setpass'&&!S.fromHome)){history.pushState({mode:S.mode},'');return}
  if(st.root){
   if(exitArmed){exitArmed=false;history.back();return}
@@ -576,7 +593,7 @@ function boot(){
  let enc=null,plain=null;
  try{enc=localStorage.getItem(KEY_ENC);plain=localStorage.getItem(KEY_PLAIN)}catch(e){}
  if(enc){S.mode='unlock'}
- else if(plain){try{S.db=JSON.parse(plain)}catch(e){}S.lang=S.db.lang||'en';S.mode='home'}
+ else if(plain){try{S.db=JSON.parse(plain)}catch(e){}S.lang=S.db.lang||'en';S.mode='pick'}
  else{S.mode='setpass'}
  render();
  setTimeout(()=>proc(false),850);
@@ -585,12 +602,22 @@ function boot(){
 const NI={home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>',prev:'<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',next:'<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',rev:'<svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>'};
 function navBtn(id,ic,label){const b=document.getElementById(id);if(!b)return;const k=id+'|'+ic+'|'+label;if(b.dataset.k===k)return;b.dataset.k=k;b.setAttribute('aria-label',label);b.title=label;b.innerHTML=(ic==='next'||ic==='rev')?`<span class="lbl">${label}</span>${NI[ic]}`:`${NI[ic]}<span class="lbl">${label}</span>`}
 function navBtns(){navBtn('navhome','home',T(UI.home));navBtn('prev','prev',T(UI.prev));const last=S.mode==='wizard'&&S.partIdx===PARTS.length-1;navBtn('next',last?'rev':'next',last?T(UI.review):T(UI.next))}
+const MI={pick:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',home:'<svg viewBox="0 0 24 24"><path d="M4 6h16v13H4zM9 6V4h6v2"/></svg>',secure:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>',lang:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',backup:'<svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>',tests:'<svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3"/></svg>',lock:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 017-2"/></svg>',x:'<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>'};
+function buildMenu(){
+ const it=(act,to,ic,label,extra)=>`<button class="mi ${to&&S.mode===to?'on':''}" data-act="${act}" ${to?`data-to="${to}"`:''}>${MI[ic]}<span>${label}</span>${extra||''}</button>`;
+ const n=S.db.cases.length;
+ $('#menu').innerHTML=`<div class="mh"><span>ImmiVault <span class="ver">${VER}</span></span><button class="mi" style="width:44px;min-height:44px;padding:10px" data-act="menuclose" aria-label="${T(UI.cancel)}">${MI.x}</button></div>`+
+  it('go','pick','pick',T(UI.mStart))+it('go','home','home',T(UI.casesLbl),n?`<small>${n}</small>`:'')+'<hr>'+
+  it('go','secure','secure',T(UI.passTitle),`<small>${S.key?T(UI.on):T(UI.off)}</small>`)+it('lang','', 'lang',T(UI.langName))+it('go','backup','backup',T(UI.backup))+it('go','tests','tests',T(UI.testTitle))+
+  (S.key?'<hr>'+it('lock','','lock',T(UI.lock)):'');
+}
 function chrome(){
  $('#ver').textContent=VER;
- $('#home').textContent=T(UI.home);$('#lang').textContent=T(UI.lang);$('#lock').textContent=T(UI.lock);
  $('#procmsg').textContent=T(UI.processing);
- const open=S.mode!=='unlock'&&S.mode!=='setpass';
- $('#home').classList.toggle('hide',!open);$('#lock').classList.toggle('hide',!open||!S.key);
+ const open=S.mode!=='unlock'&&!(S.mode==='setpass'&&!S.fromHome);
+ $('#menubtn').classList.toggle('hide',!open);
+ document.body.classList.remove('menuopen');$('#menubtn').setAttribute('aria-expanded','false');
+ if(open)buildMenu();
  $('#nav').classList.toggle('hide',S.mode!=='wizard');
  navBtns();
  document.querySelector('header').classList.toggle('hide',S.mode==='wizard');
@@ -606,6 +633,9 @@ function render(keep){
  else if(S.mode==='unlock')a.innerHTML=viewUnlock();
  else if(S.mode==='home')a.innerHTML=viewHome();
  else if(S.mode==='pick')a.innerHTML=viewPick();
+ else if(S.mode==='secure')a.innerHTML=viewSecure();
+ else if(S.mode==='backup')a.innerHTML=viewBackup();
+ else if(S.mode==='tests')a.innerHTML=viewTests();
  else if(S.mode==='front')a.innerHTML=viewFront();
  else if(S.mode==='disclaimer')a.innerHTML=viewDisclaimer();
  else if(S.mode==='wizard'){a.innerHTML=viewWizard();updateMid();}
@@ -631,21 +661,23 @@ const IC={
 const aNone=a=>a;
 const plain=s=>String(s||'').replace(/\*/g,'').replace(/\s+/g,' ').trim();
 
+const pageHead=t=>`<div class="rowhead"><h2>${t}</h2></div>`;
+function viewSecure(){return pageHead(T(UI.passTitle))+`<div class="card"><p class="help">${S.key?T(UI.passOn):T(UI.passOff)}</p><button class="btn sec" data-act="gopass">${S.key?T(UI.passChange):T(UI.passSet)}</button></div>`}
+function viewBackup(){return pageHead(T(UI.backup))+`<div class="card"><p class="help">${T(UI.backupNote)}</p><div class="row"><button class="btn sec" data-act="exportall">${T(UI.exportAll)}</button><label class="btn sec" style="margin:0">${T(UI.importAll)}<input type="file" accept="application/json" data-act="importall" class="hide"></label></div></div>`}
+function viewTests(){return pageHead(T(UI.testTitle))+testCard(true)}
 function viewHome(){
  const rows=S.db.cases.map(c=>{
   const fs=formsOf(c);const tags=fs.map(id=>(FORMS[id]||{}).short||id).join(' + ');
   const pct=pctCase(c);const a0=c.pkg?PKG[c.pkg].art:(meta(c.form).art||'papers');
   return `<div class="card case"><div class="cthumb">${art(a0)}</div><div class="cinfo"><strong>${c.test?`<span class="pill r">${T(UI.testBadge)}</span> `:''}${esc(c.name)}</strong><div class="help mono">${esc(tags)} · ${esc((c.updated||'').slice(0,10))} · ${pct}%</div><div class="bar mini"><i style="width:${pct}%"></i></div></div><div class="row">${c.test?`<button class="btn sm" data-act="openrev" data-id="${c.id}">${T(UI.reviewDl)}</button>`:''}<button class="btn sm ${c.test?'sec':''}" data-act="open" data-id="${c.id}">${T(UI.open)}</button><button class="btn sm sec" data-act="delcase" data-id="${c.id}">${T(UI.del)}</button></div></div>`}).join('')||`<p class="help">${T(UI.noCases)}</p>`;
- return `<div class="rowhead"><h2>${T(UI.casesLbl)}</h2><button class="cta sm" data-act="pick">+ ${T(UI.newApp)}</button></div>${rows}
-<div class="card"><h3>${T(UI.passTitle)}</h3><p class="help">${S.key?T(UI.passOn):T(UI.passOff)}</p><button class="btn sec" data-act="gopass">${S.key?T(UI.passChange):T(UI.passSet)}</button></div>
-<div class="card"><h3>${T(UI.backup)}</h3><p class="help">${T(UI.backupNote)}</p><div class="row"><button class="btn sec" data-act="exportall">${T(UI.exportAll)}</button><label class="btn sec" style="margin:0">${T(UI.importAll)}<input type="file" accept="application/json" data-act="importall" class="hide"></label></div></div>
-${testCard()}<p class="help">${T(UI.translateNote)}</p>`;
+ return `<div class="rowhead"><h2>${T(UI.casesLbl)}</h2><button class="cta sm" data-act="pick">+ ${T(UI.newApp)}</button></div>${rows||`<div class="card"><p class="help">${T(UI.noCases)}</p></div>`}
+<p class="help">${T(UI.translateNote)}</p>`;
 }
 function testCard(){
  if(!window.TEST)return '';
  const n=S.db.cases.filter(c=>c.test).length;
  const b=Object.entries(TEST.SCEN).map(([id,sc])=>`<button class="btn sec tbtn" data-act="mktest" data-id="${id}">${esc(sc.n)}</button>`).join('');
- return `<div class="card"><h3>${T(UI.testTitle)}</h3><p class="help">${T(UI.testNote)}</p><div class="tlist">${b}</div><div class="row" style="margin-top:12px"><button class="btn" data-act="mkevery">${T(UI.testEvery)}</button><button class="btn sec" data-act="mkall">${T(UI.testAll)}</button>${n?`<button class="btn sec" data-act="deltests">${T(UI.testDel)} (${n})</button>`:''}</div></div>`;
+ return `<div class="card"><p class="help">${T(UI.testNote)}</p><div class="tlist">${b}</div><div class="row" style="margin-top:12px"><button class="btn" data-act="mkevery">${T(UI.testEvery)}</button><button class="btn sec" data-act="mkall">${T(UI.testAll)}</button>${n?`<button class="btn sec" data-act="deltests">${T(UI.testDel)} (${n})</button>`:''}</div></div>`;
 }
 
 /* ---------- form picker ---------- */
@@ -663,8 +695,7 @@ function viewPick(){
  const okP=k=>PKG[k].base.every(b=>FORMS[b]);
  const solo={};Object.keys(PKG).forEach(k=>{if(PKG[k].base.length===1&&okP(k))solo[PKG[k].base[0]]=k});
  const multi=Object.keys(PKG).filter(k=>PKG[k].base.length>1&&okP(k));
- return `<div class="rowhead"><button class="btn sec sm" data-act="home">‹ ${T(UI.casesLbl)}</button></div>
-<h2>${T(UI.pickTitle)}</h2>
+ return `<h2>${T(UI.pickTitle)}</h2>
 <h3 class="sect">${T(UI.packages)}</h3><p class="help">${T(UI.packagesNote)}</p>
 <div class="tiles">${multi.map(k=>tileHtml('pkg',k)).join('')}</div>
 <h3 class="sect">${T(UI.singles)}</h3>
@@ -680,7 +711,7 @@ function quizForms(){
  return p.build(S.quiz).filter(id=>FORMS[id]);
 }
 function tilesQ(q,val,name,extra){
- const long=q.opts.some(o=>T(o[1]).length>22);
+ const tot=q.opts.reduce((n,o)=>n+T(o[1]).length,0);const long=q.opts.length>3||q.opts.some(o=>T(o[1]).length>16)||tot>30;
  return `<div class="yn ${long?'col':''}" role="radiogroup">${q.opts.map(([v,l],i)=>`<label class="${v==='no'?'no':''}"><input type="radio" name="${name}" value="${esc(v)}" data-q="${esc(q.k)}" ${val===v?'checked':''}><span>${esc(T(l))}</span></label>`).join('')}</div>`;
 }
 function quizHtml(p){
@@ -1231,20 +1262,23 @@ document.addEventListener('click',async e=>{
  if(el.tagName==='A')e.preventDefault();
  const c=S.caseId?cur():null;
  switch(act){
+  case 'menu':{const o=!document.body.classList.contains('menuopen');document.body.classList.toggle('menuopen',o);$('#menubtn').setAttribute('aria-expanded',o);break}
+  case 'menuclose':document.body.classList.remove('menuopen');break;
+  case 'go':S.caseId=null;S.pick=null;S.skipPick=false;S.mode=el.dataset.to;render();break;
   case 'lang':S.lang=S.lang==='en'?'es':'en';S.db.lang=S.lang;persist();render(true);break;
   case 'home':S.mode='home';S.caseId=null;render();break;
   case 'lock':S.key=null;S.salt=null;S.db={cases:[],lang:S.lang};S.caseId=null;S.mode='unlock';render();break;
   case 'setpass':{
    const p=$('#pp').value;if(p.length<8){$('#err').textContent=T(UI.minPass);break}
-   S.salt=crypto.getRandomValues(new Uint8Array(16));S.key=await deriveKey(p,S.salt);S.fromHome=false;S.mode='home';await persist();render();break}
+   S.salt=crypto.getRandomValues(new Uint8Array(16));S.key=await deriveKey(p,S.salt);{const fh=S.fromHome;S.fromHome=false;S.mode=fh?'secure':'pick'}await persist();render();break}
   case 'gopass':S.fromHome=true;S.mode='setpass';render();break;
-  case 'cancelpass':S.fromHome=false;S.mode='home';render();break;
-  case 'skippass':S.mode='home';await persist();render();break;
+  case 'cancelpass':S.fromHome=false;S.mode='secure';render();break;
+  case 'skippass':S.mode='pick';await persist();render();break;
   case 'unlock':{
    try{
     const st=JSON.parse(localStorage.getItem(KEY_ENC));const salt=unb64(st.salt);const key=await deriveKey($('#pp').value,salt);
     const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(st.iv)},key,unb64(st.data));
-    S.db=JSON.parse(new TextDecoder().decode(pt));S.key=key;S.salt=salt;S.lang=S.db.lang||'en';S.mode='home';render();
+    S.db=JSON.parse(new TextDecoder().decode(pt));S.key=key;S.salt=salt;S.lang=S.db.lang||'en';S.mode='pick';render();
    }catch(err){$('#err').textContent=T(UI.wrongPass)}
    break}
   case 'pick':S.skipPick=false;S.mode='pick';S.pick=null;render();break;
