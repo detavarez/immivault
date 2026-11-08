@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver017</title>
+<title>ImmiVault Ver018</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -243,7 +243,7 @@ body.kb .nav{display:none}
 
 
 <script>
-const VER='Ver017';
+const VER='Ver018';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -300,6 +300,7 @@ UI.testTitle=L('Test cases (sample data)','Casos de prueba (datos de ejemplo)');
 UI.testNote=L('Tap a scenario to create a case with every field filled with fictional sample data, then open it and download the PDFs. For testing only.','Toque un escenario para crear un caso con todos los campos llenos con datos ficticios y luego descargue los PDF. Solo para pruebas.');
 UI.testEvery=L('One test case for every form','Un caso de prueba por cada formulario');UI.testAll=L('Create all scenarios','Crear todos los escenarios');UI.testDel=L('Delete all test cases','Borrar todos los casos de prueba');UI.reviewDl=L('Review / download','Revisar / descargar');UI.testBadge=L('TEST','PRUEBA');
 UI.startShort=L('Start','Iniciar');
+UI.passTitle=L('Passphrase','Contraseña');UI.cancel=L('Cancel','Cancelar');UI.passOn=L('Passphrase protection is on. Your data is encrypted in this browser.','La protección con contraseña está activada. Sus datos están cifrados en este navegador.');UI.passOff=L('Passphrase protection is off. Anyone using this browser can see your cases.','La protección con contraseña está desactivada. Cualquiera que use este navegador puede ver sus casos.');UI.passSet=L('Set a passphrase','Crear una contraseña');UI.passChange=L('Change passphrase','Cambiar contraseña');
 UI.exitHint=L('Press back again to exit','Presione atrás otra vez para salir');
 const T=(o)=>{const lg=S.lang;return (o&&(o[lg]||o.en))||''};
 
@@ -547,14 +548,14 @@ function navSync(){
  if(popping){lastMode=S.mode;return}
  if(lastMode===null){try{history.replaceState({root:1},'');history.pushState({mode:S.mode},'')}catch(e){}lastMode=S.mode;return}
  if(S.mode===lastMode)return;
- const rp=['setpass','unlock'].includes(lastMode)||['setpass','unlock'].includes(S.mode)||(lastMode==='front'&&S.mode==='disclaimer')||(lastMode==='disclaimer'&&S.mode==='wizard')||(lastMode==='wizard'&&S.mode==='review')||(lastMode==='review'&&S.mode==='wizard')||S.mode==='home'&&['disclaimer'].includes(lastMode);
+ const rp=['setpass','unlock'].includes(lastMode)||(['setpass','unlock'].includes(S.mode)&&!S.fromHome)||(lastMode==='front'&&S.mode==='disclaimer')||(lastMode==='disclaimer'&&S.mode==='wizard')||(lastMode==='wizard'&&S.mode==='review')||(lastMode==='review'&&S.mode==='wizard')||S.mode==='home'&&['disclaimer'].includes(lastMode);
  const st={mode:S.mode,caseId:S.caseId};
  try{rp?history.replaceState(st,''):history.pushState(st,'')}catch(e){}
  lastMode=S.mode;
 }
 window.addEventListener('popstate',e=>{
  const st=e.state||{};
- if(S.mode==='unlock'||S.mode==='setpass'){history.pushState({mode:S.mode},'');return}
+ if(S.mode==='unlock'||(S.mode==='setpass'&&!S.fromHome)){history.pushState({mode:S.mode},'');return}
  if(st.root){
   if(exitArmed){exitArmed=false;history.back();return}
   exitArmed=true;toast(T(UI.exitHint));history.pushState({mode:S.mode,caseId:S.caseId},'');setTimeout(()=>{exitArmed=false},2500);return}
@@ -615,7 +616,7 @@ function render(keep){
 
 const viewSetPass=()=>`<div class="card"><h2>${T(UI.setPass)}</h2><p class="help">${T(UI.passNote)}</p>
 <label>${T(UI.passphrase)}</label><input type="password" id="pp" autocomplete="new-password"><div id="err" class="help" style="color:var(--rose)"></div>
-<div class="row" style="margin-top:12px"><button class="btn" data-act="setpass">${T(UI.setBtn)}</button><button class="btn sec" data-act="skippass">${T(UI.skipPass)}</button></div></div>`;
+<div class="row" style="margin-top:12px"><button class="btn" data-act="setpass">${T(UI.setBtn)}</button>${S.fromHome?`<button class="btn sec" data-act="cancelpass">${T(UI.cancel)}</button>`:`<button class="btn sec" data-act="skippass">${T(UI.skipPass)}</button>`}</div></div>`;
 const viewUnlock=()=>`<div class="card"><h2>${T(UI.unlock)}</h2><label>${T(UI.passphrase)}</label><input type="password" id="pp" autocomplete="current-password"><div id="err" class="help" style="color:var(--rose)"></div>
 <div class="row" style="margin-top:12px"><button class="btn" data-act="unlock">${T(UI.unlock)}</button></div></div>`;
 const IC={
@@ -636,6 +637,7 @@ function viewHome(){
   const pct=pctCase(c);const a0=c.pkg?PKG[c.pkg].art:(meta(c.form).art||'papers');
   return `<div class="card case"><div class="cthumb">${art(a0)}</div><div class="cinfo"><strong>${c.test?`<span class="pill r">${T(UI.testBadge)}</span> `:''}${esc(c.name)}</strong><div class="help mono">${esc(tags)} · ${esc((c.updated||'').slice(0,10))} · ${pct}%</div><div class="bar mini"><i style="width:${pct}%"></i></div></div><div class="row">${c.test?`<button class="btn sm" data-act="openrev" data-id="${c.id}">${T(UI.reviewDl)}</button>`:''}<button class="btn sm ${c.test?'sec':''}" data-act="open" data-id="${c.id}">${T(UI.open)}</button><button class="btn sm sec" data-act="delcase" data-id="${c.id}">${T(UI.del)}</button></div></div>`}).join('')||`<p class="help">${T(UI.noCases)}</p>`;
  return `<div class="rowhead"><h2>${T(UI.casesLbl)}</h2><button class="cta sm" data-act="pick">+ ${T(UI.newApp)}</button></div>${rows}
+<div class="card"><h3>${T(UI.passTitle)}</h3><p class="help">${S.key?T(UI.passOn):T(UI.passOff)}</p><button class="btn sec" data-act="gopass">${S.key?T(UI.passChange):T(UI.passSet)}</button></div>
 <div class="card"><h3>${T(UI.backup)}</h3><p class="help">${T(UI.backupNote)}</p><div class="row"><button class="btn sec" data-act="exportall">${T(UI.exportAll)}</button><label class="btn sec" style="margin:0">${T(UI.importAll)}<input type="file" accept="application/json" data-act="importall" class="hide"></label></div></div>
 ${testCard()}<p class="help">${T(UI.translateNote)}</p>`;
 }
@@ -1234,7 +1236,9 @@ document.addEventListener('click',async e=>{
   case 'lock':S.key=null;S.salt=null;S.db={cases:[],lang:S.lang};S.caseId=null;S.mode='unlock';render();break;
   case 'setpass':{
    const p=$('#pp').value;if(p.length<8){$('#err').textContent=T(UI.minPass);break}
-   S.salt=crypto.getRandomValues(new Uint8Array(16));S.key=await deriveKey(p,S.salt);S.mode='home';await persist();render();break}
+   S.salt=crypto.getRandomValues(new Uint8Array(16));S.key=await deriveKey(p,S.salt);S.fromHome=false;S.mode='home';await persist();render();break}
+  case 'gopass':S.fromHome=true;S.mode='setpass';render();break;
+  case 'cancelpass':S.fromHome=false;S.mode='home';render();break;
   case 'skippass':S.mode='home';await persist();render();break;
   case 'unlock':{
    try{
