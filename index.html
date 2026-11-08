@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver016</title>
+<title>ImmiVault Ver017</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -168,6 +168,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 .otherlist.open{grid-template-rows:1fr}
 .otherlist>div{overflow:hidden;min-height:0}
 .orow{display:flex;gap:12px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:8px 12px;margin-top:10px;box-shadow:0 3px 10px rgba(11,31,75,.06)}
+.tlist{display:grid;gap:8px}.tbtn{text-align:left;white-space:normal;line-height:1.3}
 .orow .th{flex:0 0 74px;background:linear-gradient(135deg,#0A2A6B,#0B3D91);border-radius:10px;padding:4px}
 .orow .th svg{width:100%;height:auto;display:block}
 .orow .oi{flex:1;min-width:0}
@@ -242,7 +243,7 @@ body.kb .nav{display:none}
 
 
 <script>
-const VER='Ver016';
+const VER='Ver017';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -295,6 +296,9 @@ const UI={
  explain:L('Explain (what, when, where, outcome) — goes to Part 14','Explique (qué, cuándo, dónde, resultado) — va a la Parte 14'),
  part9intro:L('When a question says EVER, include conduct anywhere in the world, at any time. A "Yes" does not automatically disqualify; it helps decide whether you need an attorney. Details matter.','Cuando una pregunta dice ALGUNA VEZ (EVER), incluya conducta en cualquier lugar del mundo y en cualquier momento. Un "Sí" no descalifica automáticamente; ayuda a decidir si necesita un abogado. Los detalles importan.')
 };
+UI.testTitle=L('Test cases (sample data)','Casos de prueba (datos de ejemplo)');
+UI.testNote=L('Tap a scenario to create a case with every field filled with fictional sample data, then open it and download the PDFs. For testing only.','Toque un escenario para crear un caso con todos los campos llenos con datos ficticios y luego descargue los PDF. Solo para pruebas.');
+UI.testEvery=L('One test case for every form','Un caso de prueba por cada formulario');UI.testAll=L('Create all scenarios','Crear todos los escenarios');UI.testDel=L('Delete all test cases','Borrar todos los casos de prueba');UI.reviewDl=L('Review / download','Revisar / descargar');UI.testBadge=L('TEST','PRUEBA');
 UI.startShort=L('Start','Iniciar');
 UI.exitHint=L('Press back again to exit','Presione atrás otra vez para salir');
 const T=(o)=>{const lg=S.lang;return (o&&(o[lg]||o.en))||''};
@@ -630,10 +634,16 @@ function viewHome(){
  const rows=S.db.cases.map(c=>{
   const fs=formsOf(c);const tags=fs.map(id=>(FORMS[id]||{}).short||id).join(' + ');
   const pct=pctCase(c);const a0=c.pkg?PKG[c.pkg].art:(meta(c.form).art||'papers');
-  return `<div class="card case"><div class="cthumb">${art(a0)}</div><div class="cinfo"><strong>${esc(c.name)}</strong><div class="help mono">${esc(tags)} · ${esc((c.updated||'').slice(0,10))} · ${pct}%</div><div class="bar mini"><i style="width:${pct}%"></i></div></div><div class="row"><button class="btn sm" data-act="open" data-id="${c.id}">${T(UI.open)}</button><button class="btn sm sec" data-act="delcase" data-id="${c.id}">${T(UI.del)}</button></div></div>`}).join('')||`<p class="help">${T(UI.noCases)}</p>`;
+  return `<div class="card case"><div class="cthumb">${art(a0)}</div><div class="cinfo"><strong>${c.test?`<span class="pill r">${T(UI.testBadge)}</span> `:''}${esc(c.name)}</strong><div class="help mono">${esc(tags)} · ${esc((c.updated||'').slice(0,10))} · ${pct}%</div><div class="bar mini"><i style="width:${pct}%"></i></div></div><div class="row">${c.test?`<button class="btn sm" data-act="openrev" data-id="${c.id}">${T(UI.reviewDl)}</button>`:''}<button class="btn sm ${c.test?'sec':''}" data-act="open" data-id="${c.id}">${T(UI.open)}</button><button class="btn sm sec" data-act="delcase" data-id="${c.id}">${T(UI.del)}</button></div></div>`}).join('')||`<p class="help">${T(UI.noCases)}</p>`;
  return `<div class="rowhead"><h2>${T(UI.casesLbl)}</h2><button class="cta sm" data-act="pick">+ ${T(UI.newApp)}</button></div>${rows}
 <div class="card"><h3>${T(UI.backup)}</h3><p class="help">${T(UI.backupNote)}</p><div class="row"><button class="btn sec" data-act="exportall">${T(UI.exportAll)}</button><label class="btn sec" style="margin:0">${T(UI.importAll)}<input type="file" accept="application/json" data-act="importall" class="hide"></label></div></div>
-<p class="help">${T(UI.translateNote)}</p>`;
+${testCard()}<p class="help">${T(UI.translateNote)}</p>`;
+}
+function testCard(){
+ if(!window.TEST)return '';
+ const n=S.db.cases.filter(c=>c.test).length;
+ const b=Object.entries(TEST.SCEN).map(([id,sc])=>`<button class="btn sec tbtn" data-act="mktest" data-id="${id}">${esc(sc.n)}</button>`).join('');
+ return `<div class="card"><h3>${T(UI.testTitle)}</h3><p class="help">${T(UI.testNote)}</p><div class="tlist">${b}</div><div class="row" style="margin-top:12px"><button class="btn" data-act="mkevery">${T(UI.testEvery)}</button><button class="btn sec" data-act="mkall">${T(UI.testAll)}</button>${n?`<button class="btn sec" data-act="deltests">${T(UI.testDel)} (${n})</button>`:''}</div></div>`;
 }
 
 /* ---------- form picker ---------- */
@@ -1237,6 +1247,11 @@ document.addEventListener('click',async e=>{
   case 'toggleother':{S.showOther=!S.showOther;const ol=$('#otherlist');if(ol)ol.classList.toggle('open',S.showOther);el.textContent=S.showOther?T(UI.hideOther):T(UI.otherForms);if(S.showOther&&ol)setTimeout(()=>ol.scrollIntoView({behavior:'smooth',block:'nearest'}),200);break}
   case 'selpkg':case 'selform':await withProc(async()=>{S.pick={type:act==='selpkg'?'pkg':'form',id:el.dataset.id,name:''};S.quiz={};S.mode='front';render()},550);break;
   case 'startcase':await startCase();break;
+  case 'mktest':await withProc(()=>TEST.makeTest(el.dataset.id),900);S.mode='home';render();break;
+  case 'mkall':await withProc(()=>TEST.makeAllTests(),900);render();break;
+  case 'mkevery':await withProc(()=>TEST.makeEveryForm(),900);render();break;
+  case 'deltests':if(confirm(T(UI.testDel)+'?')){await TEST.delTests();render()}break;
+  case 'openrev':{const cc=S.db.cases.find(x=>x.id===el.dataset.id);await withProc(async()=>{S.caseId=cc.id;setForm(cc.active||cc.form);if(cc.sets)syncFill(cc);S.partIdx=0;S.openIdx=0;S.touched=new Set();S.attempt=new Set();S.mode='review';render()},700);break}
   case 'open':{
    const cc=S.db.cases.find(x=>x.id===el.dataset.id);
    await withProc(async()=>{
@@ -1357,4 +1372,5 @@ document.addEventListener('keydown',e=>{
 <script src="forms/n565.js"></script>
 <script src="forms/n600.js"></script>
 <script src="forms/n648.js"></script>
+<script src="sample.js"></script>
 <script>boot();</script></body></html>
