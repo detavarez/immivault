@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver019</title>
+<title>ImmiVault Ver020</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -70,12 +70,11 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 
 /* ---------- floating-label fields ---------- */
 .fld{position:relative;margin:16px 0 0}
-.fld .box{position:relative;border:1.5px solid #B9C5DD;border-radius:16px;background:#fff;box-shadow:0 5px 12px rgba(11,31,75,.09);transition:border-color .2s,background .2s,box-shadow .2s}
-.fld .box>input,.fld .box>select,.fld .box>textarea{display:block;width:100%;border:0;background:transparent;box-shadow:none;outline:none;border-radius:16px;padding:25px 46px 8px 16px;min-height:60px;font-size:1rem}
+.fld .box{position:relative;display:flex;flex-direction:column;border:1.5px solid #B9C5DD;border-radius:16px;background:#fff;box-shadow:0 5px 12px rgba(11,31,75,.09);transition:border-color .2s,background .2s,box-shadow .2s}
+.fld .box>input,.fld .box>select,.fld .box>textarea{display:block;width:100%;border:0;background:transparent;box-shadow:none;outline:none;border-radius:16px;padding:3px 46px 11px 16px;min-height:0;font-size:1rem}
 .fld .box>textarea{min-height:110px;resize:vertical}
-.fld .box>select{appearance:none;-webkit-appearance:none;padding-right:70px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%235A6785' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 18px center}
-.fld .box>label{position:absolute;left:17px;top:18px;margin:0;font-weight:400;color:var(--mute);pointer-events:none;transition:top .18s ease,font-size .18s ease,color .18s ease;font-size:1rem;line-height:1.2;max-width:calc(100% - 64px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fld .box>input:not(:placeholder-shown)~label,.fld .box>input:focus~label,.fld .box>textarea:not(:placeholder-shown)~label,.fld .box>textarea:focus~label,.fld.fl .box>label{top:8px;font-size:.74rem;font-weight:500;letter-spacing:.02em}
+.fld .box>select{appearance:none;-webkit-appearance:none;padding-right:70px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%235A6785' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 18px bottom 20px}
+.fld .box>label{order:-1;position:static;display:block;margin:0;padding:12px 52px 0 17px;font-weight:500;color:var(--mute);pointer-events:none;transition:color .18s ease;font-size:.84rem;line-height:1.3;letter-spacing:.01em;white-space:normal;overflow:visible;overflow-wrap:anywhere}
 .fld .box>input:focus,.fld .box>select:focus,.fld .box>textarea:focus{outline:none}
 .fld:focus-within .box{border-color:var(--focus);background:#F3F8FF;box-shadow:0 0 0 4px rgba(29,95,214,.15),0 6px 14px rgba(11,31,75,.1)}
 .fld:focus-within .box>label{color:var(--focus)}
@@ -84,7 +83,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-a
 .fld.ok .box>label{color:var(--ok)}
 .fld.err .box{border-color:var(--red);background:var(--red-l);box-shadow:0 0 0 4px rgba(200,16,46,.13),0 5px 12px rgba(11,31,75,.09)}
 .fld.err .box>label{color:var(--red)}
-.fld .ico{position:absolute;right:14px;top:18px;width:24px;height:24px;pointer-events:none}
+.fld .ico{position:absolute;right:14px;top:12px;width:24px;height:24px;pointer-events:none}
 .fld.sel .ico{right:40px}
 .fld .ico svg{display:none;width:24px;height:24px;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .fld.ok .ico .ck{display:block;stroke:var(--ok);animation:pop .3s ease}
@@ -257,7 +256,7 @@ body.kb .nav{display:none}
 
 
 <script>
-const VER='Ver019';
+const VER='Ver020';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
