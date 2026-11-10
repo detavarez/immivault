@@ -21,7 +21,7 @@ const CHILD=/child|son\b|daughter|kid/i,PARENT=/mother|father|parent/i;
 const SCEN={
  fam_spouse:{n:'Family · U.S. citizen petitions spouse (I-130 + I-485 + I-864 + I-765 + I-131)',pkg:'family',quiz:{rel:'spouse',loc:'us',wk:'yes',tv:'yes',atty:'yes',enot:'yes',pay:'card'},A:'A',B:'SPOUSE',kids:['KID1','KID2'],bias:'yes',selfB:true,sel:{marital:'M'},rel:'Spouse'},
  fam_parent:{n:'Family · U.S. citizen petitions mother (I-130 + I-485 + I-864)',pkg:'family',quiz:{rel:'parent',loc:'us',wk:'no',tv:'no',atty:'no',enot:'yes',pay:'ach'},A:'A',B:'MOTHER',kids:['KID1','KID2'],bias:'mix',selfB:true,sel:{marital:'W'},rel:'Mother'},
- fam_sib:{n:'Family · U.S. citizen petitions sibling abroad (I-130 + I-864)',pkg:'family',quiz:{rel:'sibling',loc:'abroad',atty:'yes',enot:'no',pay:'card'},A:'A',B:'SIB',kids:['KID1'],bias:'mix',selfB:true,sel:{marital:'S'},rel:'Brother'},
+ fam_sib:{n:'Family · U.S. citizen petitions sibling abroad (I-130 + I-864)',pkg:'family',quiz:{rel:'sibling',loc:'abroad',atty:'yes',enot:'no',pay:'paper'},A:'A',B:'SIB',kids:['KID1'],bias:'mix',selfB:true,sel:{marital:'S'},rel:'Brother'},
  nat_5:{n:'Naturalization · 5-year permanent resident (N-400 + G-28 + G-1145 + G-1450)',pkg:'citizen',quiz:{atty:'yes',enot:'yes',pay:'card'},A:'LPR',B:'LPRW',kids:['KID1','KID2'],bias:'yes',sel:{reason:'A',marital:'M'},rel:'Spouse'},
  nat_sp:{n:'Naturalization · 3-year, married to U.S. citizen (N-400 + G-1145 + G-1650)',pkg:'citizen',quiz:{atty:'no',enot:'yes',pay:'ach'},A:'SPOUSE',B:'A',kids:['KID1'],bias:'mix',sel:{reason:'B',marital:'M'},rel:'Spouse'},
  k1:{n:'Fiancé(e) K-1 · U.S. citizen petitions fiancée (I-129F + G-28 + G-1145)',pkg:'fiance',quiz:{atty:'yes',enot:'yes',pay:'none'},A:'A',B:'FIANCEE',kids:['KID1'],bias:'mix',rel:'Fiancée'},
@@ -33,7 +33,7 @@ const SCEN={
  s_i130:{n:'Single · Petition for alien relative (I-130)',form:'i130',A:'A',B:'SPOUSE',kids:['KID1','KID2'],bias:'yes',sel:{marital:'M'},rel:'Spouse'},
  s_i485:{n:'Single · Adjustment of status (I-485)',form:'i485',A:'SPOUSE',B:'A',kids:['KID1'],bias:'mix',sel:{marital:'M'},rel:'Spouse'}
 };
-const FAM_SELF={i130:'A',i864:'A',g28:'A',g1145:'A',g1450:'A',g1650:'A'};
+const FAM_SELF={i130:'A',i864:'A',g28:'A',g1145:'A',g1450:'A',g1650:'A',g1651:'A'};
 
 function ctxFor(scn,fid){
  const A=mk(PEOPLE[scn.A],1),B=mk(PEOPLE[scn.B],2);
