@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ImmiVault Ver024</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0B3D91;--blue-d:#082B66;--navy:#0B1F4B;--blue-l:#E8F0FD;--focus:#1D5FD6;--red:#C8102E;--red-d:#9E0C24;--red-l:#FDECEF;--ok:#1E8E3E;--ok-l:#EEF8F1;--ink:#14213D;--mute:#5A6785;--line:#D5DDEC;--bg:#F3F6FC;--card:#fff;--amber:#B7791F;--amber-l:#FFF6E0;
+--sage:var(--blue);--sage-d:var(--blue-d);--sage-l:var(--blue-l);--gold:var(--amber);--gold-l:var(--amber-l);--rose:var(--red);--rose-l:var(--red-l)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;margin:0 0 .5rem}
+header{background:linear-gradient(90deg,var(--navy),var(--blue));color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:30;border-bottom:3px solid var(--red)}
+header .brand{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;letter-spacing:.01em}
+.ver{font-family:'DM Mono',monospace;background:var(--red);color:#fff;border-radius:8px;padding:3px 10px;font-size:.95rem;font-weight:500;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+header .sp{flex:1}
+main{max-width:900px;margin:0 auto;padding:16px 16px 110px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 4px 14px rgba(11,31,75,.06)}
+.btn{font:inherit;font-weight:500;border:1.5px solid var(--blue);background:var(--blue);color:#fff;border-radius:12px;padding:10px 18px;cursor:pointer;min-height:44px;transition:background .15s,transform .15s,box-shadow .15s}
+.btn:hover{background:var(--blue-d)}
+.btn:active{transform:scale(.98)}
+.btn.sec{background:#fff;color:var(--blue)}
+.btn.sec:hover{background:var(--blue-l)}
+.btn.warn{background:var(--amber);border-color:var(--amber)}
+.btn.sm{padding:6px 12px;min-height:36px;font-size:.9rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+header .btn{background:transparent;border-color:rgba(255,255,255,.7);min-height:36px;padding:4px 12px}
+header .btn:hover{background:rgba(255,255,255,.14)}
+.cta{font:inherit;font-weight:700;font-size:1.05rem;color:#fff;border:3px solid #fff;outline:2px solid var(--red-d);background:linear-gradient(180deg,#D8142F,var(--red-d));border-radius:999px;padding:12px 24px;cursor:pointer;width:100%;min-height:54px;box-shadow:0 6px 16px rgba(158,12,36,.35);transition:transform .15s,box-shadow .15s}
+.cta:hover{transform:translateY(-1px);box-shadow:0 9px 20px rgba(158,12,36,.4)}
+.cta:active{transform:scale(.98)}
+.cta.sm{width:auto;min-height:44px;font-size:.95rem;padding:8px 20px}
+.cta.blue{background:linear-gradient(180deg,#1553BD,var(--blue-d));outline-color:var(--blue-d);box-shadow:0 6px 16px rgba(8,43,102,.35)}
+label{display:block;font-weight:500;margin:12px 0 4px}
+input,select,textarea{width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;min-height:44px;color:var(--ink)}
+input:focus,select:focus,textarea:focus,.btn:focus-visible,.cta:focus-visible{outline:3px solid #9DBBF0;outline-offset:1px}
+textarea{min-height:90px}
+.help{color:var(--mute);font-size:.88rem;margin-top:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.grid>.full,.grid>.itemrow{grid-column:1/-1}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.banner{border-radius:14px;padding:12px 14px;margin:12px 0;border:1px solid}
+.banner.gold{background:var(--amber-l);border-color:var(--amber)}
+.banner.rose{background:var(--red-l);border-color:var(--red)}
+.banner.sage{background:var(--blue-l);border-color:var(--blue)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:3px solid var(--blue);padding:10px 16px;display:flex;gap:8px;justify-content:space-between;align-items:center;z-index:20;box-shadow:0 -6px 18px rgba(11,31,75,.1)}
+.nav .mid{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--mute);text-align:center;flex:1}
+.nav .btn.next{background:var(--red);border-color:var(--red)}
+.nav .btn.next:hover{background:var(--red-d)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0 16px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--focus));transition:width .5s ease}
+.bar.mini{height:6px;margin:6px 0 0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row .grow{flex:1}
+.item{border:1px dashed var(--line);border-radius:14px;padding:12px;margin:10px 0;background:#FAFBFE}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700;font-family:'DM Mono',monospace}
+.pill.l{background:var(--blue-l);color:var(--blue-d)}.pill.w{background:var(--amber-l);color:#7A5A12}.pill.r{background:var(--red-l);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:.92rem;table-layout:fixed}
+td,th{overflow-wrap:anywhere;word-break:break-word;vertical-align:top}
+td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+.mono{font-family:'DM Mono',monospace}
+.hide{display:none!important}
+.rowhead{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-bottom:6px}
+.rowhead h2{margin:0}
+.itemrow{font-family:'DM Mono',monospace;font-size:.78rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--red);margin:18px 0 -6px 4px}
+.sect{margin:22px 0 4px;color:var(--navy)}
+
+/* ---------- floating-label fields ---------- */
+.fld{position:relative;margin:16px 0 0}
+.fld .box{position:relative;display:flex;flex-direction:column;border:1.5px solid #B9C5DD;border-radius:16px;background:#fff;box-shadow:0 5px 12px rgba(11,31,75,.09);transition:border-color .2s,background .2s,box-shadow .2s}
+.fld .box>input,.fld .box>select,.fld .box>textarea{display:block;width:100%;border:0;background:transparent;box-shadow:none;outline:none;border-radius:16px;padding:3px 46px 11px 16px;min-height:0;font-size:1rem}
+.fld .box>textarea{min-height:110px;resize:vertical}
+.fld .box>select{appearance:none;-webkit-appearance:none;padding-right:70px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%235A6785' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 18px bottom 20px}
+.fld .box>label{order:-1;position:static;display:block;margin:0;padding:12px 52px 0 17px;font-weight:500;color:var(--mute);pointer-events:none;transition:color .18s ease;font-size:.84rem;line-height:1.3;letter-spacing:.01em;white-space:normal;overflow:visible;overflow-wrap:anywhere}
+.fld .box>input:focus,.fld .box>select:focus,.fld .box>textarea:focus{outline:none}
+.fld:focus-within .box{border-color:var(--focus);background:#F3F8FF;box-shadow:0 0 0 4px rgba(29,95,214,.15),0 6px 14px rgba(11,31,75,.1)}
+.fld:focus-within .box>label{color:var(--focus)}
+.fld.ok .box{border-color:var(--ok);background:var(--ok-l)}
+.fld.ok:focus-within .box{box-shadow:0 0 0 4px rgba(30,142,62,.16),0 6px 14px rgba(11,31,75,.1)}
+.fld.ok .box>label{color:var(--ok)}
+.fld.err .box{border-color:var(--red);background:var(--red-l);box-shadow:0 0 0 4px rgba(200,16,46,.13),0 5px 12px rgba(11,31,75,.09)}
+.fld.err .box>label{color:var(--red)}
+.fld .ico{position:absolute;right:14px;top:12px;width:24px;height:24px;pointer-events:none}
+.fld.sel .ico{right:40px}
+.fld .ico svg{display:none;width:24px;height:24px;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.fld.ok .ico .ck{display:block;stroke:var(--ok);animation:pop .3s ease}
+.fld.err .ico .ex{display:block;stroke:var(--red);animation:pop .3s ease}
+.fld .msg{min-height:0;font-size:.86rem;margin:5px 6px 0;font-weight:500}
+.fld .msg:empty{display:none}
+.fld.ok .msg{color:var(--ok)}
+.fld.err .msg{color:var(--red)}
+.fld>.help{margin:4px 6px 0}
+@keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+.fld.pulse .box{animation:pulse .9s ease}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(29,95,214,.45)}70%{box-shadow:0 0 0 12px rgba(29,95,214,0)}100%{box-shadow:0 5px 12px rgba(11,31,75,.09)}}
+.fld .nm{display:flex;align-items:center;gap:10px;font-weight:400;margin:8px 6px 0;cursor:pointer;font-size:.95rem}
+.fld .nm input{width:22px;height:22px;min-height:0;accent-color:var(--blue);margin:0}
+.fld.dis .box>input{color:var(--mute)}
+/* grouped (tiles) */
+.fld.grp .box{padding:14px 16px 14px;}
+.fld.grp .glabel{font-weight:500;margin:0 40px 10px 0;line-height:1.35}
+.fld.grp:focus-within .box{background:#F3F8FF}
+.fld.grp.ok:focus-within .box{background:var(--ok-l)}
+.fld.grp .ico{top:12px}
+.yn{display:flex;gap:10px;flex-wrap:wrap}
+.yn>label{min-width:0;overflow-wrap:anywhere}
+.yn>label{flex:1;margin:0;border:1.5px solid var(--line);border-radius:14px;padding:11px 10px;text-align:center;cursor:pointer;font-weight:500;background:#fff;position:relative;transition:background .25s,color .25s,border-color .25s,transform .2s,box-shadow .25s;box-shadow:0 2px 6px rgba(11,31,75,.06)}
+.yn>label:hover{border-color:var(--focus)}
+.yn input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}
+.yn>label:has(input:focus-visible){outline:3px solid #9DBBF0;outline-offset:1px}
+.yn>label:has(input:checked){background:var(--blue);color:#fff;border-color:var(--blue);transform:scale(1.02);box-shadow:0 6px 14px rgba(11,61,145,.3)}
+.yn>label.no:has(input:checked){background:var(--red);border-color:var(--red);box-shadow:0 6px 14px rgba(200,16,46,.3)}
+.yn.col{flex-direction:column;flex-wrap:nowrap}
+.opts{display:grid;gap:8px}
+.opts>label.chk{display:flex;gap:10px;align-items:center;margin:0;font-weight:400;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;background:#fff;transition:background .2s,border-color .2s}
+.opts>label.chk:has(input:checked){background:var(--blue-l);border-color:var(--blue)}
+.opts input{width:20px;height:20px;min-height:0;accent-color:var(--blue)}
+/* sub cards for lists / groups */
+.sub{border:1.5px solid var(--line);border-radius:18px;padding:12px 14px 14px;margin:16px 0 0;background:#fff;box-shadow:0 5px 12px rgba(11,31,75,.06)}
+.sub>.subh{font-weight:500;margin-bottom:2px}
+.sub .itemrow{margin:4px 0 4px}
+
+/* ---------- collapsible sections ---------- */
+.formtabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 6px}
+.formtabs button{font:inherit;font-size:.9rem;font-weight:500;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;transition:all .2s}
+.formtabs button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.formtabs button small{opacity:.75;margin-left:4px;font-family:'DM Mono',monospace}
+.acc{display:flex;flex-direction:column;gap:12px}
+.part{background:#FBFBFD;border:1.5px solid var(--line);border-radius:26px;box-shadow:0 5px 16px rgba(11,31,75,.07);scroll-margin-top:84px;transition:border-color .3s,box-shadow .3s}
+.part.open{border-color:#B7C5E3;background:#fff;box-shadow:0 10px 26px rgba(11,31,75,.12)}
+.phead{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;background:transparent;border:0;padding:14px 16px;cursor:pointer;min-height:64px;border-radius:26px;color:var(--ink)}
+.phead:focus-visible{outline:3px solid #9DBBF0}
+.pic{flex:0 0 38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#E6E9F7;color:var(--blue)}
+.pic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ptitle{flex:1;font-weight:700;font-size:1.02rem;line-height:1.25}
+.ptitle small{display:block;font-weight:500;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);font-family:'DM Mono',monospace}
+.pst{font-size:.84rem;color:var(--mute);white-space:nowrap}
+.chev{width:18px;height:18px;fill:none;stroke:var(--mute);stroke-width:2.2;stroke-linecap:round;transition:transform .3s}
+.part.open .chev{transform:rotate(180deg)}
+.part.done .pic{background:#DDF3E5;color:var(--ok)}
+.part.done .pst{color:var(--ok)}
+.part.prog .pic{background:var(--blue-l);color:var(--blue)}
+.part.prog .pst{color:var(--blue);font-weight:500}
+.part.need .pic{background:var(--red-l);color:var(--red)}
+.part.need .pst{color:var(--red)}
+.pwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
+.part.open .pwrap{grid-template-rows:1fr}
+.pin{overflow:hidden;min-height:0}
+.pbody{padding:2px 16px 22px;border-top:1.5px solid var(--line);margin:0 4px}
+.pbody>.banner:first-child{margin-top:14px}
+
+/* ---------- picker / tiles / hero ---------- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:10px}
+.tile{background:#fff;border:1.5px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 6px 16px rgba(11,31,75,.08);display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.tile:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(11,31,75,.15)}
+.tile .art{background:linear-gradient(135deg,#0A2A6B,#0B3D91 60%,#1A56B8);padding:10px 10px 6px;text-align:center}
+.tile .art svg{width:100%;max-width:260px;height:auto;display:inline-block}
+.tile .tb{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.tile .tt{font-weight:700;color:var(--blue);font-size:1.1rem;line-height:1.25}
+.tile .tf{color:var(--red);font-weight:500;font-size:.95rem}
+.tile .ts{color:var(--mute);font-size:.88rem;flex:1}
+.tile .cta{margin-top:8px;font-size:.98rem;min-height:48px}
+.otherbtn{display:block;width:100%;margin:22px 0 0;font:inherit;font-weight:500;background:#fff;border:1.5px dashed var(--blue);color:var(--blue);border-radius:16px;padding:14px;cursor:pointer;text-align:center}
+.otherbtn:hover{background:var(--blue-l)}
+.otherlist{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
+.otherlist.open{grid-template-rows:1fr}
+.otherlist>div{overflow:hidden;min-height:0}
+.orow{display:flex;gap:12px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:8px 12px;margin-top:10px;box-shadow:0 3px 10px rgba(11,31,75,.06)}
+.tlist{display:grid;gap:8px}.tbtn{text-align:left;white-space:normal;line-height:1.3}
+.orow .th{flex:0 0 74px;background:linear-gradient(135deg,#0A2A6B,#0B3D91);border-radius:10px;padding:4px}
+.orow .th svg{width:100%;height:auto;display:block}
+.orow .oi{flex:1;min-width:0}
+.orow .btn{flex:0 0 92px;width:92px;padding:6px 4px;white-space:nowrap;text-align:center}
+.orow .oi b{display:block;color:var(--blue)}
+.orow .oi span{font-size:.85rem;color:var(--mute)}
+.hero{position:relative;overflow:hidden;border-radius:24px;padding:24px 16px 20px;text-align:center;color:#fff;background:linear-gradient(160deg,#0A2257,#0B3D91 62%,#1650B5);box-shadow:0 10px 26px rgba(11,31,75,.25)}
+.hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.05) 0 2px,transparent 2px 46px);pointer-events:none}
+.hero .kick{position:relative;font-family:'Fraunces',serif;font-style:italic;color:#9EC4FF;font-size:1.1rem}
+.hero h1{position:relative;font-size:clamp(1.6rem,6vw,2.5rem);line-height:1.1;margin:6px 0 4px;letter-spacing:.02em;text-transform:uppercase}
+.hero .sub2{position:relative;font-style:italic;color:#D6E4FF;margin:0 0 8px}
+.hero svg{position:relative;width:min(92%,430px);height:auto}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.chip{display:inline-block;font-family:'DM Mono',monospace;font-size:.85rem;border-radius:999px;padding:3px 12px;background:var(--blue-l);color:var(--blue-d);border:1px solid #BCD0F2}
+.chip.opt{background:#fff;color:var(--mute);border-style:dashed}
+.chip.red{background:var(--red-l);color:var(--red);border-color:#F2B8C1}
+.cthumb{flex:0 0 84px;background:linear-gradient(135deg,#0A2A6B,#0B3D91);border-radius:12px;padding:5px}
+.cthumb svg{width:100%;height:auto;display:block}
+.case{display:flex;gap:12px;align-items:center}
+.case .cinfo{flex:1;min-width:0}
+@media(max-width:520px){.case{flex-wrap:wrap}.case .row{width:100%}}
+
+/* ---------- processing (ping pong) ---------- */
+#proc{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:linear-gradient(160deg,#0A2257 0%,#0B3D91 55%,#8F1428 120%);color:#fff;opacity:0;pointer-events:none;transition:opacity .3s ease}
+#proc.on{opacity:1;pointer-events:auto}
+#proc .pt{font-weight:300;font-size:2.3rem;letter-spacing:.03em;margin:0}
+.pp{position:relative;width:270px;height:130px}
+.pp .tbl{position:absolute;left:0;right:0;bottom:22px;height:9px;border-radius:5px;background:#fff;box-shadow:0 12px 0 -2px rgba(255,255,255,.18)}
+.pp .net{position:absolute;left:50%;bottom:31px;width:3px;height:24px;margin-left:-1.5px;background:rgba(255,255,255,.85);border-radius:2px}
+.pp .pad{position:absolute;bottom:31px;width:12px;height:40px;border-radius:7px 7px 6px 6px}
+.pp .pad::after{content:"";position:absolute;left:50%;top:100%;width:4px;height:12px;margin-left:-2px;background:#E8C9A0;border-radius:0 0 3px 3px}
+.pp .pad.l{left:4px;background:#E5253F;animation:padl .9s ease-in-out infinite alternate}
+.pp .pad.r{right:4px;background:#5C98FF;animation:padr .9s ease-in-out infinite alternate}
+@keyframes padl{from{transform:rotate(-10deg) translateY(2px)}to{transform:rotate(8deg) translateY(-3px)}}
+@keyframes padr{from{transform:rotate(10deg) translateY(-3px)}to{transform:rotate(-8deg) translateY(2px)}}
+.pp .bx{position:absolute;left:0;top:0;width:100%;height:100%;animation:bx .9s linear infinite alternate}
+.pp .ball{position:absolute;left:24px;bottom:68px;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#F4F4F4 55%,#CFCFCF);box-shadow:0 2px 5px rgba(0,0,0,.35);animation:by .45s infinite}
+.pp .sh{position:absolute;left:23px;bottom:23px;width:17px;height:4px;border-radius:50%;background:rgba(0,0,0,.35);animation:sh .45s infinite}
+@keyframes bx{from{transform:translateX(0)}to{transform:translateX(206px)}}
+@keyframes by{0%{bottom:70px;animation-timing-function:cubic-bezier(.45,0,.95,.55)}50%{bottom:31px;animation-timing-function:cubic-bezier(.05,.45,.55,1)}100%{bottom:70px}}
+@keyframes sh{0%{transform:scale(.55);opacity:.35}50%{transform:scale(1.05);opacity:.9}100%{transform:scale(.55);opacity:.35}}
+@media (prefers-reduced-motion:reduce){.pp *{animation-duration:2.4s!important}html{scroll-behavior:auto}}
+header .menubtn{background:transparent;border:1.5px solid rgba(255,255,255,.7);color:#fff;width:44px;height:40px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+header .menubtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+#menuback{position:fixed;inset:0;background:rgba(11,31,75,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:60}
+#menu{position:fixed;top:0;right:0;bottom:0;width:min(84vw,320px);background:#fff;z-index:61;transform:translateX(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:-8px 0 28px rgba(0,0,0,.25);display:flex;flex-direction:column;padding:14px 12px;overflow-y:auto}
+body.menuopen #menu{transform:none}body.menuopen #menuback{opacity:1;pointer-events:auto}
+#menu .mh{display:flex;align-items:center;justify-content:space-between;padding:4px 6px 12px;border-bottom:1px solid #d9e0ee;margin-bottom:8px;font-family:'Fraunces',serif;font-weight:700;color:var(--navy);font-size:1.15rem}
+#menu .mi{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:none;border:0;border-radius:12px;padding:13px 10px;font:inherit;font-size:1rem;color:var(--navy);cursor:pointer;min-height:48px}
+#menu .mi:hover,#menu .mi:focus-visible{background:#eef3fc}
+#menu .mi.on{background:#e3ecfb;font-weight:700}
+#menu .mi svg{width:22px;height:22px;flex:0 0 22px;fill:none;stroke:var(--blue);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#menu .mi small{margin-left:auto;color:#5a6785;font-size:.8rem}
+#menu hr{border:0;border-top:1px solid #d9e0ee;margin:8px 0}
+#toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:rgba(11,31,75,.94);color:#fff;padding:10px 18px;border-radius:999px;font-size:.92rem;z-index:120;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 6px 18px rgba(0,0,0,.3);white-space:nowrap}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.ib{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.ib svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;flex:0 0 20px}
+.nav .mid small{display:block;font-size:.72rem;opacity:.8}
+body.kb .nav{display:none}
+@media(max-width:480px){header{flex-wrap:nowrap;gap:6px;padding:8px 10px}header .brand{font-size:1.1rem}.ver{padding:2px 7px;font-size:.8rem}header .btn{padding:3px 8px;font-size:.85rem;white-space:nowrap}}
+@media(max-width:600px){.ib .lbl{display:none}.nav .ib{width:52px;padding:0;flex:0 0 52px}.nav{gap:6px}}
+@media print{header,.nav,.noprint,#proc{display:none!important}body{background:#fff}.card{border:0;padding:0;box-shadow:none}main{padding:0}}
+@keyframes ivIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+header{animation:ivIn .9s ease-out both}
+#nav{animation:ivIn .9s .4s ease-out both}
+#app.ivgo>*{animation:ivIn .9s ease-out both}
+#app.ivgo>*:nth-child(2){animation-delay:.12s}#app.ivgo>*:nth-child(3){animation-delay:.24s}#app.ivgo>*:nth-child(4){animation-delay:.36s}#app.ivgo>*:nth-child(n+5){animation-delay:.48s}
+@media (prefers-reduced-motion:reduce){header,#nav,#app.ivgo>*{animation:none}}
+</style>
+
+</head>
+<body>
+<header>
+  <span class="brand">ImmiVault</span><span class="ver" id="ver"></span>
+  <span class="sp"></span>
+  <button class="menubtn" id="menubtn" data-act="menu" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+</header>
+<div id="menuback" data-act="menuclose"></div>
+<nav id="menu" aria-label="Menu"></nav>
+<main id="app"></main>
+<div class="nav hide" id="nav">
+  <button class="btn sec ib" data-act="home" id="navhome"></button>
+  <button class="btn sec ib" data-act="prev" id="prev"></button>
+  <div class="mid" id="mid"></div>
+  <button class="btn next ib" data-act="next" id="next"></button>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="proc" class="on" role="status" aria-live="polite"><h2 class="pt" id="procmsg">Processing</h2><div class="pp"><div class="tbl"></div><div class="net"></div><div class="pad l"></div><div class="pad r"></div><div class="bx"><div class="sh"></div><div class="ball"></div></div></div></div>
+
+
+<script>
+const VER='Ver024';
+const KEY_ENC='immivault.enc.v1';
+const KEY_PLAIN='immivault.plain.v1';
+const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+const L=(en,es)=>({en,es});
+
+const UI={
+ home:L('Cases','Casos'),lock:L('Lock','Bloquear'),lang:L('Español','English'),
+ newCase:L('New case','Nuevo caso'),caseName:L('Person / case name','Nombre de la persona / caso'),
+ open:L('Open','Abrir'),del:L('Delete','Borrar'),confirmDel:L('Delete this case permanently?','¿Borrar este caso permanentemente?'),
+ noCases:L('No cases yet.','Aún no hay casos.'),
+ backup:L('Backup','Respaldo'),exportAll:L('Export all (JSON)','Exportar todo (JSON)'),importAll:L('Import backup','Importar respaldo'),
+ backupNote:L('Data lives only in this browser. Export a backup regularly.','Los datos viven solo en este navegador. Exporte un respaldo con regularidad.'),
+ setPass:L('Protect with a passphrase','Proteger con una contraseña'),passNote:L('Everything is encrypted in this browser with your passphrase. If you forget it, the data cannot be recovered.','Todo se cifra en este navegador con su contraseña. Si la olvida, los datos no se pueden recuperar.'),
+ passphrase:L('Passphrase','Contraseña'),unlock:L('Unlock','Desbloquear'),skipPass:L('Continue without a passphrase (not recommended)','Continuar sin contraseña (no recomendado)'),
+ setBtn:L('Set passphrase','Crear contraseña'),wrongPass:L('Wrong passphrase.','Contraseña incorrecta.'),minPass:L('Use at least 8 characters.','Use al menos 8 caracteres.'),
+ disclaimerTitle:L('Before you start','Antes de empezar'),
+ disclaimer:L('This tool helps organize information for Form N-400 (edition 01/20/25). It is not legal advice and does not replace an attorney or accredited representative. Verify every answer against the official USCIS form and instructions before filing.','Esta herramienta ayuda a organizar información para el Formulario N-400 (edición 01/20/25). No es asesoría legal y no reemplaza a un abogado o representante acreditado. Verifique cada respuesta con el formulario e instrucciones oficiales de USCIS antes de presentar.'),
+ ack:L('I understand','Entiendo'),
+ prev:L('Back','Atrás'),next:L('Next','Siguiente'),review:L('Review','Revisión'),
+ add:L('Add','Agregar'),remove:L('Remove','Quitar'),yes:L('Yes','Sí'),no:L('No','No'),select:L('Select…','Seleccione…'),
+ saved:L('Saved','Guardado'),item:L('Item','Ítem'),
+ reviewTitle:L('Review','Revisión'),missing:L('Missing required answers','Respuestas obligatorias faltantes'),allComplete:L('All required answers are complete.','Todas las respuestas obligatorias están completas.'),
+ risk:L('Risk screen','Evaluación de riesgo'),score:L('Score','Puntuación'),
+ tier0:L('Log only','Solo registro'),tier1:L('Warning: review these answers carefully','Aviso: revise estas respuestas con cuidado'),tier2:L('Flagged: strongly consider an attorney before filing','Marcado: considere seriamente un abogado antes de presentar'),tier3:L('Attorney review required before filing','Se requiere revisión de un abogado antes de presentar'),tier4:L('Blocked: do not file without an attorney','Bloqueado: no presente sin un abogado'),
+ flagged:L('Answers that raised the score','Respuestas que aumentaron la puntuación'),
+ continueAnyway:L('I have read this and want to continue anyway','He leído esto y deseo continuar de todos modos'),
+ attorneyName:L('Reviewing attorney / representative','Abogado / representante que revisó'),attorneyDate:L('Review date','Fecha de revisión'),
+ elig:L('Eligibility screen','Evaluación de elegibilidad'),
+ eligNote:L('Screening only. Rules have exceptions; confirm with the official instructions or an attorney.','Solo orientativo. Las reglas tienen excepciones; confirme con las instrucciones oficiales o un abogado.'),
+ ageOk:L('Age 18 or older','Edad de 18 años o más'),earliest:L('Earliest filing date (90 days early rule)','Fecha más temprana para presentar (regla de 90 días)'),
+ daysIn:L('Days in the U.S. during the period (estimate)','Días en EE. UU. durante el período (estimado)'),needDays:L('Physical presence needed (half of period)','Presencia física requerida (mitad del período)'),
+ longTrip:L('Trip of 6+ months: continuous residence may be questioned','Viaje de 6+ meses: la residencia continua puede cuestionarse'),
+ breakTrip:L('Trip of 1+ year: continuous residence likely broken','Viaje de 1+ año: la residencia continua probablemente se interrumpió'),
+ noLpr:L('Enter the permanent resident date (Part 2, Item 7) to compute dates.','Ingrese la fecha de residencia permanente (Parte 2, Ítem 7) para calcular fechas.'),
+ outputs:L('Outputs','Salidas'),print:L('Print answers worksheet','Imprimir hoja de respuestas'),exportCase:L('Export this case (JSON)','Exportar este caso (JSON)'),
+ fillPdf:L('Fill the official N-400 PDF','Llenar el PDF oficial del N-400'),
+ pdfNote:L('Fills the official fillable N-400, edition 01/20/25 (expires 02/28/2027). Check uscis.gov/n-400 to confirm this is still the current edition. Signatures and dates are left blank for you to sign by hand.','Llena el N-400 oficial, edición 01/20/25 (vence 02/28/2027). Verifique en uscis.gov/n-400 que siga siendo la edición vigente. Las firmas y fechas quedan en blanco para firmarlas a mano.'),
+ download:L('Fill and download the PDF','Llenar y descargar el PDF'),
+ pdfLoading:L('Preparing the PDF…','Preparando el PDF…'),pdfLibFail:L('Could not load the PDF library (internet needed once).','No se pudo cargar la biblioteca PDF (se necesita internet).'),
+ pdfBlankFail:L('Could not load the blank N-400. Open ImmiVault from its web address (not a downloaded file).','No se pudo cargar el N-400 en blanco. Abra ImmiVault desde su dirección web (no desde un archivo descargado).'),
+ pdfErr:L('Could not fill the PDF.','No se pudo llenar el PDF.'),
+ pdfDone:L('fields filled','campos llenados'),pdfTrunc:L('values were too long and were shortened','valores eran demasiado largos y se acortaron'),pdfMiss:L('values could not be placed (see Part 14 sheet)','valores no se pudieron colocar (vea la hoja de la Parte 14)'),
+ p14sheet:L('Part 14 continuation sheet','Hoja de continuación de la Parte 14'),
+ p14note:L('Print this sheet, add your name and A-Number at the top, sign and date it, and attach it to the form.','Imprima esta hoja, agregue su nombre y Número A arriba, fírmela y féchela, y adjúntela al formulario.'),
+ blockedMsg:L('Output is blocked at this risk level.','La salida está bloqueada en este nivel de riesgo.'),
+ unlockNeeds:L('Complete the acknowledgement below to unlock outputs.','Complete la confirmación abajo para habilitar las salidas.'),
+ translateNote:L('Spanish text is a working translation; official form language is English.','El texto en español es una traducción de trabajo; el idioma oficial del formulario es inglés.'),
+ caseOf:L('Case','Caso'),formLbl:L('Form','Formulario'),part:L('Part','Parte'),of:L('of','de'),
+ cap:L('rows fit on the form; extra rows go to Part 14','filas caben en el formulario; las demás van a la Parte 14'),
+ explain:L('Explain (what, when, where, outcome) — goes to Part 14','Explique (qué, cuándo, dónde, resultado) — va a la Parte 14'),
+ part9intro:L('When a question says EVER, include conduct anywhere in the world, at any time. A "Yes" does not automatically disqualify; it helps decide whether you need an attorney. Details matter.','Cuando una pregunta dice ALGUNA VEZ (EVER), incluya conducta en cualquier lugar del mundo y en cualquier momento. Un "Sí" no descalifica automáticamente; ayuda a decidir si necesita un abogado. Los detalles importan.')
+};
+UI.testTitle=L('Test cases (sample data)','Casos de prueba (datos de ejemplo)');
+UI.testNote=L('Tap a scenario to create a case with every field filled with fictional sample data, then open it and download the PDFs. For testing only.','Toque un escenario para crear un caso con todos los campos llenos con datos ficticios y luego descargue los PDF. Solo para pruebas.');
+UI.testEvery=L('One test case for every form','Un caso de prueba por cada formulario');UI.testAll=L('Create all scenarios','Crear todos los escenarios');UI.testDel=L('Delete all test cases','Borrar todos los casos de prueba');UI.reviewDl=L('Review / download','Revisar / descargar');UI.testBadge=L('TEST','PRUEBA');
+UI.startShort=L('Start','Iniciar');
+UI.passTitle=L('Passphrase','Contraseña');UI.cancel=L('Cancel','Cancelar');UI.passOn=L('Passphrase protection is on. Your data is encrypted in this browser.','La protección con contraseña está activada. Sus datos están cifrados en este navegador.');UI.passOff=L('Passphrase protection is off. Anyone using this browser can see your cases.','La protección con contraseña está desactivada. Cualquiera que use este navegador puede ver sus casos.');UI.passSet=L('Set a passphrase','Crear una contraseña');UI.passChange=L('Change passphrase','Cambiar contraseña');
+UI.mStart=L('Start an application','Iniciar una solicitud');UI.on=L('On','Activa');UI.off=L('Off','Apagada');UI.langName=L('Español','English');
+UI.noCases=L('No cases yet. Open the menu and choose Start an application.','Aún no hay casos. Abra el menú y elija Iniciar una solicitud.');
+UI.exitHint=L('Press back again to exit','Presione atrás otra vez para salir');
+const T=(o)=>{const lg=S.lang;return (o&&(o[lg]||o.en))||''};
+
+const f=(k,type,l,o={})=>Object.assign({k,type,l},o);
+const rows=(prefix,n,suffix='[0]')=>Array.from({length:n},(_,i)=>`${prefix}${i+1}${suffix}`);
+
+
+let PARTS=[],OPT={},RISK=[],RISK_INDEX={},FD=null;const FORMS={};
+function registerForm(d){FORMS[d.id]=d}
+let UI0=null;
+function setForm(id){FD=FORMS[id]||FORMS.n400||Object.values(FORMS)[0];PARTS=FD.PARTS;OPT=FD.OPT;RISK=FD.RISK||[];RISK_INDEX=FD.RISK_INDEX||{};if(!UI0)UI0=Object.assign({},UI);Object.assign(UI,UI0,FD.ui||{})}
+const shortName=t=>String(t||'').replace(/N-400/g,FD?FD.short:'N-400');
+Object.assign(UI,{
+ newApp:L('Start a new application','Iniciar una nueva solicitud'),
+ pickTitle:L('What do you want to prepare?','¿Qué desea preparar?'),
+ packages:L('Packages','Paquetes'),
+ packagesNote:L('Several forms prepared together. Shared answers are entered once and copied to every form.','Varios formularios preparados juntos. Las respuestas compartidas se escriben una vez y se copian a cada formulario.'),
+ singles:L('Single applications','Solicitudes individuales'),
+ otherForms:L('For other forms click here','Para otros formularios haga clic aquí'),
+ hideOther:L('Hide other forms','Ocultar otros formularios'),
+ includes:L('Includes','Incluye'),optional:L('optional','opcional'),
+ startApp:L('Start My Application','Comenzar mi solicitud'),
+ backPick:L('Back to forms','Volver a los formularios'),
+ usingForm:L('Using Form','Usando el Formulario'),usingForms:L('Using Forms','Usando los Formularios'),
+ quizTitle:L('A few quick questions','Unas preguntas rápidas'),
+ yourForms:L('Forms in your package','Formularios en su paquete'),
+ notYet:L('Often filed with these, but not in ImmiVault yet:','Suelen presentarse junto con estos, pero aún no están en ImmiVault:'),
+ sharedNote:L('Answers that appear on more than one form are entered once and copied to each form.','Las respuestas que aparecen en más de un formulario se escriben una vez y se copian a cada formulario.'),
+ answerAll:L('Please answer this question.','Por favor responda esta pregunta.'),
+ nameReq:L('Please enter a name for this case.','Por favor escriba un nombre para este caso.'),
+ looksGood:L('Looks good!','¡Se ve bien!'),
+ pleaseEnter:L('Please enter','Por favor ingrese'),pleaseSelect:L('Please select','Por favor seleccione'),
+ pleaseAnswer:L('Please choose an answer.','Por favor elija una respuesta.'),pleaseFill:L('Please fill in this field.','Por favor complete este campo.'),
+ pleaseAdd:L('Please add at least one.','Por favor agregue al menos uno.'),
+ badEmail:L('Please enter a valid email address.','Por favor ingrese un correo electrónico válido.'),
+ badPhone:L('Please enter a valid phone number (10 digits or more).','Por favor ingrese un teléfono válido (10 dígitos o más).'),
+ badZip:L('Please enter a valid ZIP code (5 digits, or 5+4).','Por favor ingrese un código postal válido (5 dígitos, o 5+4).'),
+ badSsn:L('Please enter a valid 9-digit Social Security number.','Por favor ingrese un número de Seguro Social válido de 9 dígitos.'),
+ badA:L('Please enter a valid A-Number (7 to 9 digits).','Por favor ingrese un Número A válido (7 a 9 dígitos).'),
+ badDate:L('Please enter a valid date.','Por favor ingrese una fecha válida.'),
+ noMiddle:L("I don't have a middle name",'No tengo segundo nombre'),noMiddleOk:L('No middle name','Sin segundo nombre'),
+ stDone:L('Complete','Completo'),stProg:L('In progress','En progreso'),stNext:L('Up next','Siguiente'),stNeed:L('Needs info','Falta información'),
+ processing:L('Processing','Procesando'),
+ fillAll:L('Fill every PDF in this package','Llenar todos los PDF de este paquete'),
+ fillAllDone:L('PDFs downloaded','PDF descargados'),fillAllSkip:L('skipped (locked by the risk screen)','omitidos (bloqueados por la evaluación de riesgo)'),
+ formsLbl:L('Forms','Formularios'),casesLbl:L('Cases','Casos')
+});
+
+let S={lang:'en',db:{cases:[],lang:'en'},key:null,salt:null,mode:'boot',caseId:null,partIdx:0,ack:{},pick:null,quiz:{},touched:new Set(),attempt:new Set(),sig:{},showOther:false,curKey:''};
+
+/* ---------- artwork (stylized, marked SAMPLE; not official documents) ---------- */
+let ARTN=0;
+const flagG=(x,y,w,h)=>{let s='';const sh=h/13;for(let i=0;i<13;i++)s+=`<rect x="${x}" y="${(y+i*sh).toFixed(1)}" width="${w}" height="${(sh+.5).toFixed(1)}" fill="${i%2?'#fff':'#C8102E'}"/>`;s+=`<rect x="${x}" y="${y}" width="${(w*.42).toFixed(1)}" height="${(sh*7).toFixed(1)}" fill="#0B3D91"/>`;for(let r=0;r<4;r++)for(let c=0;c<5;c++)s+=`<circle cx="${(x+w*.42*(c+.7)/5.4).toFixed(1)}" cy="${(y+sh*7*(r+.65)/4.3).toFixed(1)}" r="${(w*.013+.5).toFixed(1)}" fill="#fff"/>`;return s};
+const paper=(x,y,rot,w,h)=>`<g transform="rotate(${rot} ${x+w/2} ${y+h/2})"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="#fff"/><rect x="${x}" y="${y}" width="${w}" height="14" rx="3" fill="#C8102E"/><rect x="${x+12}" y="${y+26}" width="${w*.5}" height="5" rx="2" fill="#0B3D91" opacity=".75"/>${[40,52,64,76,88,100,112].map((d,i)=>`<rect x="${x+12}" y="${y+d}" width="${w-24-(i%3)*26}" height="4" rx="2" fill="#B9C5DD"/>`).join('')}</g>`;
+const ART={
+ card(){const u='c'+(++ARTN);return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample green card with application documents"><defs><linearGradient id="${u}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D6EEF1"/><stop offset="1" stop-color="#B2D0EA"/></linearGradient><filter id="${u}s" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000" flood-opacity=".38"/></filter></defs>
+<g filter="url(#${u}s)">${paper(112,6,-10,200,150)}${paper(150,2,5,200,150)}${paper(124,12,-2,200,150)}</g>
+<g filter="url(#${u}s)"><rect x="40" y="92" width="320" height="196" rx="16" fill="url(#${u}g)"/>
+<path d="M200 92H344a16 16 0 0 1 16 16V200Z" fill="#C8102E" opacity=".16"/><path d="M40 270 L190 288H56a16 16 0 0 1-16-16Z" fill="#0B3D91" opacity=".15"/>
+<text x="58" y="116" font-family="DM Sans,Arial" font-size="9" font-weight="700" letter-spacing="2" fill="#14213D">UNITED STATES OF AMERICA</text>
+<text x="58" y="140" font-family="DM Sans,Arial" font-size="20" font-weight="700" letter-spacing="1.5" fill="#0B1F4B">PERMANENT RESIDENT</text>
+<rect x="58" y="154" width="86" height="106" rx="4" fill="#EEF3FA" stroke="#8FA6C6"/><circle cx="101" cy="188" r="18" fill="#8FA6C6"/><path d="M66 258q4-36 35-36t35 36z" fill="#8FA6C6"/>
+${[[160,158,110],[160,174,150],[160,190,80],[160,206,130],[160,222,100],[160,238,140]].map(([a,b,c])=>`<rect x="${a}" y="${b}" width="${c}" height="7" rx="3" fill="#5A6785" opacity=".42"/>`).join('')}
+<g opacity=".5" fill="none" stroke="#5A6785" stroke-width="1.4"><ellipse cx="322" cy="238" rx="26" ry="32"/><ellipse cx="322" cy="238" rx="19" ry="25"/><ellipse cx="322" cy="238" rx="12" ry="18"/><ellipse cx="322" cy="238" rx="5" ry="10"/></g>
+<g transform="rotate(-15 205 196)"><rect x="140" y="178" width="130" height="36" rx="7" fill="none" stroke="#C8102E" stroke-width="3" opacity=".8"/><text x="205" y="204" text-anchor="middle" font-family="DM Sans,Arial" font-weight="700" font-size="23" letter-spacing="4" fill="#C8102E" opacity=".8">SAMPLE</text></g></g></svg>`},
+ cert(){const u='n'+(++ARTN);return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample naturalization certificate with passport and flag"><defs><filter id="${u}s" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000" flood-opacity=".4"/></filter></defs>
+<g filter="url(#${u}s)"><rect x="296" y="26" width="5" height="250" rx="2" fill="#E6EAF3"/><circle cx="298.5" cy="24" r="6" fill="#F2C94C"/><g transform="rotate(-4 300 70)">${flagG(300,36,92,60)}</g></g>
+<g filter="url(#${u}s)"><rect x="34" y="40" width="262" height="196" rx="5" fill="#FBF8EE"/><rect x="44" y="50" width="242" height="176" rx="3" fill="none" stroke="#0B3D91" stroke-width="3"/><rect x="51" y="57" width="228" height="162" rx="2" fill="none" stroke="#C8102E" stroke-width="1.2"/>
+<text x="165" y="82" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="14" fill="#0B1F4B" letter-spacing="1">CERTIFICATE OF</text><text x="165" y="100" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="16" fill="#0B1F4B" letter-spacing="1">NATURALIZATION</text>
+<rect x="66" y="114" width="64" height="80" rx="3" fill="#EEF3FA" stroke="#8FA6C6"/><circle cx="98" cy="142" r="14" fill="#8FA6C6"/><path d="M72 192q3-27 26-27t26 27z" fill="#8FA6C6"/>
+${[[142,118,120],[142,132,100],[142,146,124],[142,160,90],[142,174,110]].map(([a,b,c])=>`<rect x="${a}" y="${b}" width="${c}" height="6" rx="3" fill="#5A6785" opacity=".4"/>`).join('')}
+<circle cx="246" cy="196" r="20" fill="#C8102E"/><circle cx="246" cy="196" r="15" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M246 186l3 7 7 .6-5.4 4.6 1.8 7L246 201.500 239.600 205.200l1.800-7-5.400-4.600 7-.6z" fill="#fff"/>
+<g transform="rotate(-14 150 218)"><rect x="96" y="203" width="110" height="30" rx="6" fill="none" stroke="#C8102E" stroke-width="2.6" opacity=".75"/><text x="151" y="225" text-anchor="middle" font-family="DM Sans,Arial" font-weight="700" font-size="19" letter-spacing="3" fill="#C8102E" opacity=".75">SAMPLE</text></g></g>
+<g filter="url(#${u}s)" transform="rotate(8 300 232)"><rect x="236" y="168" width="124" height="118" rx="8" fill="#0B3D91"/><rect x="236" y="168" width="124" height="118" rx="8" fill="none" stroke="#fff" stroke-opacity=".35"/><circle cx="298" cy="216" r="22" fill="none" stroke="#F2C94C" stroke-width="2.4"/><path d="M298 200l4 9 10 1-7.500 6.500 2.400 9.500-8.900-5.200-8.900 5.200 2.400-9.500-7.500-6.500 10-1z" fill="#F2C94C"/><text x="298" y="262" text-anchor="middle" font-family="DM Sans,Arial" font-size="11" font-weight="700" letter-spacing="3" fill="#fff">PASSPORT</text></g></svg>`},
+ flag(){const u='f'+(++ARTN);return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flag, rings and application documents"><defs><filter id="${u}s" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000" flood-opacity=".4"/></filter></defs>
+<g filter="url(#${u}s)">${paper(40,50,-8,190,170)}${paper(90,40,5,190,170)}${paper(66,64,-1,190,170)}</g>
+<g filter="url(#${u}s)"><rect x="246" y="24" width="5" height="254" rx="2" fill="#E6EAF3"/><circle cx="248.5" cy="22" r="6" fill="#F2C94C"/><g transform="rotate(-3 250 70)">${flagG(251,34,130,86)}</g></g>
+<g filter="url(#${u}s)"><circle cx="300" cy="226" r="26" fill="none" stroke="#F2C94C" stroke-width="7"/><circle cx="334" cy="226" r="26" fill="none" stroke="#E9ECF5" stroke-width="7"/><g transform="translate(150 196)"><circle r="30" fill="#C8102E"/><path d="M-12 0l8 8 18-17" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g></g></svg>`},
+ papers(){const u='p'+(++ARTN);return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stack of forms"><defs><filter id="${u}s" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000" flood-opacity=".38"/></filter></defs><g filter="url(#${u}s)">${paper(70,26,-9,210,200)}${paper(130,18,6,210,200)}${paper(100,44,-1,210,200)}</g><g transform="translate(262 196)"><circle r="36" fill="#C8102E"/><path d="M-15 0l9 9 21-20" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`}
+};
+const art=k=>(ART[k]||ART.papers)();
+
+/* ---------- forms catalogue and packages ---------- */
+const FORM_META={
+ n400:{cat:'primary',art:'cert',tag:L('U.S. Citizenship','Ciudadanía de EE. UU.'),sub:L('Apply to become a U.S. citizen.','Solicite la ciudadanía estadounidense.')},
+ i130:{cat:'primary',art:'card',tag:L('Petition for Alien Relative','Petición para familiar extranjero'),sub:L('Sponsor a spouse, parent, child or sibling for a green card.','Patrocine a un cónyuge, padre/madre, hijo(a) o hermano(a) para una tarjeta verde.')},
+ i485:{cat:'primary',art:'card',tag:L('Adjustment of Status (Green Card)','Ajuste de estatus (tarjeta verde)'),sub:L('Apply for a green card from inside the United States.','Solicite la tarjeta verde desde dentro de Estados Unidos.')},
+ i90:{cat:'primary',art:'card',tag:L('Green Card Replacement / Renewal','Reemplazo / renovación de tarjeta verde'),sub:L('Replace or renew a lost, stolen, damaged or expiring green card.','Reemplace o renueve una tarjeta verde perdida, robada, dañada o por vencer.')},
+ i765:{cat:'primary',art:'card',tag:L('Employment Authorization (Work Permit)','Autorización de empleo (permiso de trabajo)'),sub:L('Apply for or renew a work permit.','Solicite o renueve un permiso de trabajo.')},
+ n565:{cat:'primary',art:'cert',tag:L('Replace Certificate of Citizenship','Reemplazo de certificado de ciudadanía'),sub:L('Replace a lost, stolen or damaged naturalization or citizenship certificate.','Reemplace un certificado de naturalización o ciudadanía perdido, robado o dañado.')},
+ n600:{cat:'primary',art:'cert',tag:L('Certificate of Citizenship','Certificado de ciudadanía'),sub:L('Get proof of citizenship you acquired or derived through your parents.','Obtenga prueba de la ciudadanía adquirida o derivada de sus padres.')},
+ i751:{cat:'primary',art:'card',tag:L('Remove Green Card Conditions','Eliminar condiciones de la tarjeta verde'),sub:L('Petition to remove the conditions on a 2-year marriage green card.','Petición para eliminar las condiciones de una tarjeta verde de matrimonio de 2 años.')},
+ i129f:{cat:'primary',art:'flag',tag:L('Fiancé(e) K-1 Petition','Petición de prometido(a) K-1'),sub:L('Bring your fiancé(e) to the U.S. to marry within 90 days.','Traiga a su prometido(a) a EE. UU. para casarse en 90 días.')},
+ i131:{cat:'secondary',tag:L('Travel document / advance parole','Documento de viaje / permiso adelantado')},
+ i864:{cat:'secondary',tag:L('Affidavit of Support','Declaración jurada de patrocinio')},
+ i864a:{cat:'secondary',tag:L('Contract with household member','Contrato con miembro del hogar')},
+ i864ez:{cat:'secondary',tag:L('Affidavit of Support (EZ)','Declaración jurada de patrocinio (EZ)')},
+ i693:{cat:'secondary',tag:L('Medical exam report','Informe de examen médico')},
+ i589:{cat:'secondary',tag:L('Asylum application','Solicitud de asilo')},
+ i539:{cat:'secondary',tag:L('Extend / change nonimmigrant status','Extender / cambiar estatus de no inmigrante')},
+ i134:{cat:'secondary',tag:L('Declaration of Financial Support','Declaración de apoyo financiero')},
+ i102:{cat:'secondary',tag:L('Replace arrival-departure record','Reemplazo de registro de llegada-salida')},
+ i212:{cat:'secondary',tag:L('Permission to reapply after removal','Permiso para volver a solicitar tras deportación')},
+ i290b:{cat:'secondary',tag:L('Appeal or motion','Apelación o moción')},
+ i360:{cat:'secondary',tag:L('Special immigrant petition','Petición de inmigrante especial')},
+ i601:{cat:'secondary',tag:L('Inadmissibility waiver','Dispensa de inadmisibilidad')},
+ i601a:{cat:'secondary',tag:L('Provisional unlawful presence waiver','Dispensa provisional de presencia ilegal')},
+ i821:{cat:'secondary',tag:L('Temporary Protected Status','Estatus de Protección Temporal')},
+ i821d:{cat:'secondary',tag:L('Deferred Action (DACA)','Acción diferida (DACA)')},
+ i824:{cat:'secondary',tag:L('Action on approved petition','Acción sobre petición aprobada')},
+ i865:{cat:'secondary',tag:L('Sponsor change of address','Cambio de dirección del patrocinador')},
+ i907:{cat:'secondary',tag:L('Premium processing','Procesamiento premium')},
+ i912:{cat:'secondary',tag:L('Fee waiver request','Solicitud de exención de tarifa')},
+ i914:{cat:'secondary',tag:L('T nonimmigrant status','Estatus T de no inmigrante')},
+ i918:{cat:'secondary',tag:L('U nonimmigrant status','Estatus U de no inmigrante')},
+ n336:{cat:'secondary',tag:L('Naturalization hearing request','Solicitud de audiencia de naturalización')},
+ n648:{cat:'secondary',tag:L('Medical disability exception','Excepción médica por discapacidad')},
+ g28:{cat:'secondary',tag:L('Attorney / representative appearance','Comparecencia de abogado / representante')},
+ g639:{cat:'secondary',tag:L('FOIA / Privacy Act records request','Solicitud de expediente FOIA / Privacidad')},
+ g1145:{cat:'secondary',tag:L('E-notification of receipt','Notificación electrónica de recibo')},
+ g1450:{cat:'secondary',tag:L('Pay fees by credit card','Pago con tarjeta de crédito')},
+ g1650:{cat:'secondary',tag:L('Pay fees by bank transfer (ACH)','Pago por transferencia bancaria (ACH)')},
+ g1651:{cat:'secondary',tag:L('Paper payment exemption (check / money order)','Exención de pago en papel (cheque / giro)')}
+};
+const meta=id=>FORM_META[id]||{cat:'secondary',tag:L((FORMS[id]||{}).name||id,(FORMS[id]||{}).name||id)};
+const YN=[['yes',L('Yes','Sí')],['no',L('No','No')]];
+const PAYQ={k:'pay',q:L('How will you pay the USCIS fee?','¿Cómo pagará la tarifa de USCIS?'),opts:[['none',L('Not sure yet','Aún no sé')],['card',L('Credit card (G-1450)','Tarjeta de crédito (G-1450)')],['ach',L('Bank account (G-1650)','Cuenta bancaria (G-1650)')],['paper',L('Check or money order (G-1651 paper exemption)','Cheque o giro postal (exención de pago en papel G-1651)')]]};
+const ATTQ={k:'atty',q:L('Will an attorney or accredited representative file with you?','¿Un abogado o representante acreditado presentará con usted?'),opts:YN};
+const ENOTQ={k:'enot',q:L('Do you want e-mail / text notice when USCIS accepts the filing?','¿Desea aviso por correo electrónico / texto cuando USCIS acepte la solicitud?'),opts:YN};
+const addExtras=(f,q)=>{if(q.atty==='yes')f.push('g28');if(q.enot==='yes')f.push('g1145');if(q.pay==='card')f.push('g1450');if(q.pay==='ach')f.push('g1650');if(q.pay==='paper')f.push('g1651');return f};
+const PKG={
+ family:{art:'card',title:L('Family Green Card','Tarjeta verde familiar'),sub:L('Petition for a relative and, if they are in the U.S., their green card application.','Peticione por un familiar y, si está en EE. UU., su solicitud de tarjeta verde.'),
+  base:['i130','i485','i864'],opt:['i765','i131','g28','g1145','g1450','g1650','g1651'],
+  quiz:[
+   {k:'rel',q:L('Who are you petitioning for?','¿Para quién es la petición?'),opts:[['spouse',L('My spouse','Mi cónyuge')],['parent',L('My parent','Mi padre / madre')],['child',L('My child','Mi hijo(a)')],['sibling',L('My brother or sister','Mi hermano(a)')]]},
+   {k:'loc',q:L('Where is your relative now?','¿Dónde está su familiar ahora?'),opts:[['us',L('In the United States (I-130 + I-485)','En Estados Unidos (I-130 + I-485)')],['abroad',L('Outside the U.S. (I-130 only)','Fuera de EE. UU. (solo I-130)')]]},
+   {k:'wk',q:L('Do you also want a work permit for your relative (I-765)?','¿Desea también un permiso de trabajo para su familiar (I-765)?'),opts:YN,show:q=>q.loc==='us'},
+   {k:'tv',q:L('Do you also want a travel permit for your relative (I-131)?','¿Desea también un permiso de viaje para su familiar (I-131)?'),opts:YN,show:q=>q.loc==='us'},
+   ATTQ,ENOTQ,PAYQ],
+  build:q=>addExtras(['i130',...(q.loc==='us'?['i485']:[]),'i864',...(q.loc==='us'&&q.wk==='yes'?['i765']:[]),...(q.loc==='us'&&q.tv==='yes'?['i131']:[])],q),
+  notes:q=>{const n=[];if(q.loc==='abroad')n.push(L('Your relative will finish through consular processing (DS-260), which is not in ImmiVault yet.','Su familiar terminará por proceso consular (DS-260), que aún no está en ImmiVault.'));if(q.loc==='us')n.push(L('Being allowed to apply for the green card from inside the U.S. depends on your relative’s status and entry. Confirm with the official instructions or an attorney.','Poder solicitar la tarjeta verde desde EE. UU. depende del estatus y de la entrada de su familiar. Confirme con las instrucciones oficiales o un abogado.'));n.push(L('The medical exam (I-693) is often filed with the green card application; add it separately as a single application.','El examen médico (I-693) suele presentarse con la solicitud de tarjeta verde; agréguelo por separado como solicitud individual.'));return n},
+  links:c=>{const q=c.quiz||{};const B=['i130.pFamily=i864.P4_Line1a_FamilyName_0','i130.pGiven=i864.P4_Line1b_GivenName_0','i130.pMiddle=i864.P4_Line1c_MiddleName_0','i130.pDob=i864.P4_Line6_DateOfBirth_0','i130.pA=i864.P4_Line12_AlienNumber_0','i130.pUscis=i864.P4_Line13_AcctIdentifier_0','i485.familyName=i765.Page1_0_Line1a_FamilyName_0','i485.givenName=i765.Page1_0_Line1b_GivenName_0','i485.middleName=i765.Page1_0_Line1c_MiddleName_0','i485.dob=i765.Page3_0_Line19_DOB_0','i485.aNumber=i765.Page2_0_Line7_AlienNumber_0','i485.uscisAcct=i765.Page2_0_Line8_ElisAccountNumber_0','i485.ssn=i765.Page2_0_Line12b_SSN_0','i485.birthCity=i765.Page3_0_Line18a_CityTownOfBirth_0','i485.birthCountry=i765.Page3_0_Line18c_CountryOfBirth_0','i130.bFamily=i485.familyName','i130.bGiven=i485.givenName','i130.bMiddle=i485.middleName','i130.bDob=i485.dob','i130.bSex=i485.sex','i130.bBirthCity=i485.birthCity','i130.bBirthCountry=i485.birthCountry','i130.bA=i485.aNumber','i130.bUscis=i485.uscisAcct','i130.bSsn=i485.ssn','i130.bEmail=i485.email','i130.bPhone=i485.phone','i130.bMobile=i485.mobile','i130.bPass=i485.passNum','i130.bPassCountry=i485.passCountry','i130.bPassExp=i485.passExp','i130.bI94=i485.i94Num','i130.bMarital=i485.marital','i130.bMarDate=i485.mDate','i130.bMarCity=i485.mCity','i130.bMarState=i485.mState','i130.bMarCountry=i485.mCountry','i130.bTimes=i485.timesMarried','i130.bOther=i485.otherNames','i130.bUsAddr=i485.curAddr',
+    'i130.inFamily=i485.inFamily','i130.inGiven=i485.inGiven','i130.inOrg=i485.inOrg','i130.inPhone=i485.inPhone','i130.inMobile=i485.inMobile','i130.inEmail=i485.inEmail',
+    'i130.g28=i485.g28','i130.volag=i485.volag','i130.barNo=i485.barNo','i130.attyAcct=i485.attyAcct','i130.prOrg=i485.prOrg','i130.prPhone=i485.prPhone','i130.prMobile=i485.prMobile','i130.prEmail=i485.prEmail','i130.prFamily=i485.prFamily2','i130.prGiven=i485.prGiven2',
+    'i130.pFamily=g28.cFamily=g1145.family','i130.pGiven=g28.cGiven=g1145.given','i130.pMiddle=g28.cMiddle=g1145.middle','i130.pUscis=g28.cUscis','i130.pA=g28.aNumber','i130.pPhone=g28.cPhone','i130.pMobile=g28.cMobile=g1145.mobile','i130.pEmail=g28.cEmail=g1145.email','i130.pMail=g28.cAddr'];
+   if(q.rel==='spouse')B.push('i130.pFamily=i485.spFamily','i130.pGiven=i485.spGiven','i130.pMiddle=i485.spMiddle','i130.pA=i485.spA','i130.pDob=i485.spDob','i130.pBirthCountry=i485.spCountry','i130.bMarDate=i130.pMarDate','i130.bMarCity=i130.pMarCity','i130.bMarState=i130.pMarState','i130.bMarCountry=i130.pMarCountry');
+   return B}},
+ citizen:{art:'cert',title:L('U.S. Citizenship','Ciudadanía de EE. UU.'),sub:L('Naturalization application with optional attorney, e-notice and payment forms.','Solicitud de naturalización con formularios opcionales de abogado, aviso electrónico y pago.'),
+  base:['n400'],opt:['g28','g1145','g1450','g1650','g1651'],
+  quiz:[ATTQ,ENOTQ,PAYQ],
+  build:q=>addExtras(['n400'],q),
+  notes:q=>[],
+  links:c=>['n400.familyName=g28.cFamily=g1145.family','n400.givenName=g28.cGiven=g1145.given','n400.middleName=g28.cMiddle=g1145.middle','n400.uscisAccount=g28.cUscis','n400.aNumber=g28.aNumber','n400.phone=g28.cPhone','n400.mobile=g28.cMobile=g1145.mobile','n400.email=g28.cEmail=g1145.email','n400.curAddr=g28.cAddr']}
+,
+ fiance:{art:'flag',title:L('Fiancé(e) K-1 Petition','Petición de prometido(a) K-1'),sub:L('Petition to bring your fiancé(e) to the U.S., with optional attorney, e-notice and payment forms.','Petición para traer a su prometido(a) a EE. UU., con formularios opcionales de abogado, aviso electrónico y pago.'),
+  base:['i129f'],opt:['g28','g1145','g1450','g1650','g1651'],quiz:[ATTQ,ENOTQ,PAYQ],build:q=>addExtras(['i129f'],q),notes:q=>[],
+  links:c=>['i129f.Pt1Line6a_FamilyName_0=g28.cFamily=g1145.family', 'i129f.Pt1Line6b_GivenName_0=g28.cGiven=g1145.given', 'i129f.Pt1Line6c_MiddleName_0=g28.cMiddle=g1145.middle', 'i129f.Pt1Line1_AlienNumber_0=g28.aNumber', 'i129f.Pt1Line2_AcctIdentifier_0=g28.cUscis']},
+ renew:{art:'card',title:L('Green Card Renewal / Replacement','Renovación / reemplazo de tarjeta verde'),sub:L('Replace or renew your green card, with optional attorney, e-notice and payment forms.','Reemplace o renueve su tarjeta verde, con formularios opcionales de abogado, aviso electrónico y pago.'),
+  base:['i90'],opt:['g28','g1145','g1450','g1650','g1651'],quiz:[ATTQ,ENOTQ,PAYQ],build:q=>addExtras(['i90'],q),notes:q=>[],
+  links:c=>['i90.P1_Line3a_FamilyName_0=g28.cFamily=g1145.family', 'i90.P1_Line3b_GivenName_0=g28.cGiven=g1145.given', 'i90.P1_Line3c_MiddleName_0=g28.cMiddle=g1145.middle', 'i90.P1_Line1_AlienNumber_0=g28.aNumber', 'i90.P1_Line2_AcctIdentifier_0=g28.cUscis']},
+ conditions:{art:'card',title:L('Remove Green Card Conditions','Eliminar condiciones de la tarjeta verde'),sub:L('Petition to remove conditions on a 2-year green card, with optional attorney, e-notice and payment forms.','Petición para eliminar condiciones de una tarjeta verde de 2 años, con formularios opcionales de abogado, aviso electrónico y pago.'),
+  base:['i751'],opt:['g28','g1145','g1450','g1650','g1651'],quiz:[ATTQ,ENOTQ,PAYQ],build:q=>addExtras(['i751'],q),notes:q=>[],
+  links:c=>['i751.Pt1Line1a_FamilyName_0=g28.cFamily=g1145.family', 'i751.Pt1Line1b_GivenName_0=g28.cGiven=g1145.given', 'i751.Pt1Line1c_MiddleName_0=g28.cMiddle=g1145.middle', 'i751.P1_Line7_AlienNumber_0=g28.aNumber', 'i751.P1_Line9_AcctIdentifier_0=g28.cUscis']}
+};
+const qShown=(pk,q)=>pk.quiz.filter(x=>!x.show||x.show(q));
+const pkgDone=(pk,q)=>qShown(pk,q).every(x=>q[x.k]);
+
+/* ---------- case data helpers ---------- */
+const AN=c=>c.sets?(c.sets[c.active]=c.sets[c.active]||{}):c.answers;
+const formsOf=c=>c.forms||[c.form];
+const withForm=(id,fn)=>{const prev=FD&&FD.id;setForm(id);try{return fn()}finally{if(prev&&prev!==id)setForm(prev)}};
+const forEachForm=(c,fn)=>{const save=c.active;const out=[];formsOf(c).forEach(fid=>{if(c.sets)c.active=fid;out.push(withForm(fid,()=>fn(fid)))});if(c.sets)c.active=save;return out};
+const defCache={};
+function defOf(fid,k){const key=fid+'|'+k;if(key in defCache)return defCache[key];let r=null;const F=FORMS[fid];if(F)F.PARTS.forEach(p=>p.fields.forEach(x=>{if(x.k===k)r=x}));return defCache[key]=r}
+const lk=s=>s.split('=').map(m=>{const i=m.indexOf('.');return [m.slice(0,i),m.slice(i+1)]});
+function linksFor(c){
+ if(!c.pkg||!c.sets||!PKG[c.pkg])return [];
+ const have=new Set(c.forms);
+ return PKG[c.pkg].links(c).map(s=>lk(s).filter(m=>have.has(m[0])&&defOf(m[0],m[1]))).filter(l=>l.length>1);
+}
+const valEmpty=v=>v===undefined||v===null||v===''||(Array.isArray(v)?v.every(x=>x&&typeof x==='object'?Object.values(x).every(valEmpty):valEmpty(x)):(typeof v==='object'?Object.values(v).every(valEmpty):false));
+function copyVal(d2,v){
+ if(d2.type==='group'&&Array.isArray(d2.sub)){const o={};const sk=new Set(d2.sub.map(s=>s.k));Object.keys(v||{}).forEach(k=>{if(sk.has(k))o[k]=v[k]});return o}
+ if(d2.type==='list'){const sk=new Set((d2.item||[]).map(s=>s.k));return (Array.isArray(v)?v:[]).map(it=>{const o={};Object.keys(it||{}).forEach(k=>{if(sk.has(k))o[k]=it[k]});return o})}
+ return Array.isArray(v)?v.slice():v;
+}
+function propagate(c,fid,key,fill){
+ if(!c.sets)return;
+ const LL=linksFor(c);if(!LL.length)return;
+ const seen=new Set([fid+'|'+key]);const q=[[fid,key]];
+ while(q.length){
+  const [f1,k1]=q.shift();const src=c.sets[f1]||{};
+  LL.forEach(l=>{
+   if(!l.some(m=>m[0]===f1&&m[1]===k1))return;
+   l.forEach(([f2,k2])=>{
+    const id=f2+'|'+k2;if(seen.has(id))return;seen.add(id);
+    const d2=defOf(f2,k2),d1=defOf(f1,k1);if(!d1||!d2)return;
+    const dst=c.sets[f2]=c.sets[f2]||{};
+    if(fill&&!valEmpty(dst[k2])&&!(isMid(d2)&&dst['nm:'+k2]))return;
+    dst[k2]=copyVal(d2,src[k1]);
+    if(isMid(d1)&&isMid(d2))dst['nm:'+k2]=src['nm:'+k1];
+    q.push([f2,k2]);
+   });
+  });
+ }
+}
+function syncFill(c){
+ if(!c.sets)return;
+ linksFor(c).forEach(l=>l.forEach(([f,k])=>{const a=c.sets[f]||{};if(!valEmpty(a[k])||a['nm:'+k])propagate(c,f,k,true)}));
+}
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+
+async function deriveKey(pass,salt){
+ const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
+ return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function persist(){
+ try{
+  if(S.key){
+   const iv=crypto.getRandomValues(new Uint8Array(12));
+   const data=await crypto.subtle.encrypt({name:'AES-GCM',iv},S.key,new TextEncoder().encode(JSON.stringify(S.db)));
+   localStorage.setItem(KEY_ENC,JSON.stringify({salt:b64(S.salt),iv:b64(iv),data:b64(data)}));
+   localStorage.removeItem(KEY_PLAIN);
+  }else{
+   localStorage.setItem(KEY_PLAIN,JSON.stringify(S.db));
+  }
+  flash();
+ }catch(e){console.error(e)}
+}
+let flashT;
+function flash(){const m=$('#mid');if(!m||S.mode!=='wizard')return;m.innerHTML=`${T(UI.saved)}<small>${VER}</small>`;clearTimeout(flashT);flashT=setTimeout(updateMid,900)}
+let saveT;
+function saveSoon(){clearTimeout(saveT);saveT=setTimeout(persist,400)}
+
+function proc(on){const o=document.getElementById('proc');if(o)o.classList.toggle('on',!!on)}
+async function withProc(fn,min=750){proc(true);const t=Date.now();try{return await fn()}finally{const w=Math.max(0,min-(Date.now()-t));await new Promise(r=>setTimeout(r,w));proc(false)}}
+
+let lastMode=null,popping=false,exitArmed=false,toastT;
+function toast(t){const e=document.getElementById('toast');if(!e)return;e.textContent=t;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),2200)}
+function navSync(){
+ if(popping){lastMode=S.mode;return}
+ if(lastMode===null){try{history.replaceState({root:1},'');history.pushState({mode:S.mode},'')}catch(e){}lastMode=S.mode;return}
+ if(S.mode===lastMode)return;
+ const rp=['setpass','unlock'].includes(lastMode)||(['setpass','unlock'].includes(S.mode)&&!S.fromHome)||(lastMode==='front'&&S.mode==='disclaimer')||(lastMode==='disclaimer'&&S.mode==='wizard')||(lastMode==='wizard'&&S.mode==='review')||(lastMode==='review'&&S.mode==='wizard')||S.mode==='home'&&['disclaimer'].includes(lastMode);
+ const st={mode:S.mode,caseId:S.caseId};
+ try{rp?history.replaceState(st,''):history.pushState(st,'')}catch(e){}
+ lastMode=S.mode;
+}
+window.addEventListener('popstate',e=>{
+ const st=e.state||{};
+ document.body.classList.remove('menuopen');
+ if(S.mode==='unlock'||(S.mode==='setpass'&&!S.fromHome)){history.pushState({mode:S.mode},'');return}
+ if(st.root){
+  if(exitArmed){exitArmed=false;history.back();return}
+  exitArmed=true;toast(T(UI.exitHint));history.pushState({mode:S.mode,caseId:S.caseId},'');setTimeout(()=>{exitArmed=false},2500);return}
+ let m=st.mode||'home';
+ if(['wizard','review','disclaimer'].includes(m)){
+  const cc=st.caseId&&S.db.cases.find(x=>x.id===st.caseId);
+  if(!cc)m='home';
+  else{S.caseId=cc.id;setForm(cc.active||cc.form);if(m==='disclaimer'&&cc.disc)m='wizard';if(m==='wizard'&&S.partIdx>=PARTS.length)S.partIdx=0}
+ }
+ if(m==='pick'&&S.skipPick){S.skipPick=false;history.back();return}
+ if(m==='front'&&!S.pick)m='pick';
+ if(m==='home')S.caseId=null;
+ if(m==='pick')S.pick=null;
+ popping=true;S.mode=m;try{render()}finally{popping=false}
+});
+function boot(){
+ setForm('n400');
+ let enc=null,plain=null;
+ try{enc=localStorage.getItem(KEY_ENC);plain=localStorage.getItem(KEY_PLAIN)}catch(e){}
+ if(enc){S.mode='unlock'}
+ else if(plain){try{S.db=JSON.parse(plain)}catch(e){}S.lang=S.db.lang||'en';S.mode='pick'}
+ else{S.mode='setpass'}
+ render();
+ setTimeout(()=>proc(false),850);
+}
+
+const NI={home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>',prev:'<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',next:'<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',rev:'<svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>'};
+function navBtn(id,ic,label){const b=document.getElementById(id);if(!b)return;const k=id+'|'+ic+'|'+label;if(b.dataset.k===k)return;b.dataset.k=k;b.setAttribute('aria-label',label);b.title=label;b.innerHTML=(ic==='next'||ic==='rev')?`<span class="lbl">${label}</span>${NI[ic]}`:`${NI[ic]}<span class="lbl">${label}</span>`}
+function navBtns(){navBtn('navhome','home',T(UI.home));navBtn('prev','prev',T(UI.prev));const last=S.mode==='wizard'&&S.partIdx===PARTS.length-1;navBtn('next',last?'rev':'next',last?T(UI.review):T(UI.next))}
+const MI={pick:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',home:'<svg viewBox="0 0 24 24"><path d="M4 6h16v13H4zM9 6V4h6v2"/></svg>',secure:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>',lang:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',backup:'<svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>',tests:'<svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3"/></svg>',lock:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 017-2"/></svg>',x:'<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>'};
+function buildMenu(){
+ const it=(act,to,ic,label,extra)=>`<button class="mi ${to&&S.mode===to?'on':''}" data-act="${act}" ${to?`data-to="${to}"`:''}>${MI[ic]}<span>${label}</span>${extra||''}</button>`;
+ const n=S.db.cases.length;
+ $('#menu').innerHTML=`<div class="mh"><span>ImmiVault <span class="ver">${VER}</span></span><button class="mi" style="width:44px;min-height:44px;padding:10px" data-act="menuclose" aria-label="${T(UI.cancel)}">${MI.x}</button></div>`+
+  it('go','pick','pick',T(UI.mStart))+it('go','home','home',T(UI.casesLbl),n?`<small>${n}</small>`:'')+'<hr>'+
+  it('go','secure','secure',T(UI.passTitle),`<small>${S.key?T(UI.on):T(UI.off)}</small>`)+it('lang','', 'lang',T(UI.langName))+it('go','backup','backup',T(UI.backup))+it('go','tests','tests',T(UI.testTitle))+
+  (S.key?'<hr>'+it('lock','','lock',T(UI.lock)):'');
+}
+function chrome(){
+ $('#ver').textContent=VER;
+ $('#procmsg').textContent=T(UI.processing);
+ const open=S.mode!=='unlock'&&!(S.mode==='setpass'&&!S.fromHome);
+ $('#menubtn').classList.toggle('hide',!open);
+ document.body.classList.remove('menuopen');$('#menubtn').setAttribute('aria-expanded','false');
+ if(open)buildMenu();
+ $('#nav').classList.toggle('hide',S.mode!=='wizard');
+ navBtns();
+ document.querySelector('header').classList.toggle('hide',S.mode==='wizard');
+ document.documentElement.lang=S.lang;
+}
+
+function render(keep){
+ const y0=window.scrollY;
+ document.body.classList.remove('kb');
+ chrome();
+ const a=$('#app');
+ if(S.mode==='setpass')a.innerHTML=viewSetPass();
+ else if(S.mode==='unlock')a.innerHTML=viewUnlock();
+ else if(S.mode==='home')a.innerHTML=viewHome();
+ else if(S.mode==='pick')a.innerHTML=viewPick();
+ else if(S.mode==='secure')a.innerHTML=viewSecure();
+ else if(S.mode==='backup')a.innerHTML=viewBackup();
+ else if(S.mode==='tests')a.innerHTML=viewTests();
+ else if(S.mode==='front')a.innerHTML=viewFront();
+ else if(S.mode==='disclaimer')a.innerHTML=viewDisclaimer();
+ else if(S.mode==='wizard'){a.innerHTML=viewWizard();updateMid();}
+ else if(S.mode==='review'){a.innerHTML=viewReview();$('#nav').classList.add('hide')}
+ window.scrollTo({top:keep?y0:0,behavior:'instant'});
+ if(!keep){a.classList.remove('ivgo');void a.offsetWidth;a.classList.add('ivgo')}
+ navSync();
+}
+
+const viewSetPass=()=>`<div class="card"><h2>${T(UI.setPass)}</h2><p class="help">${T(UI.passNote)}</p>
+<label>${T(UI.passphrase)}</label><input type="password" id="pp" autocomplete="new-password"><div id="err" class="help" style="color:var(--rose)"></div>
+<div class="row" style="margin-top:12px"><button class="btn" data-act="setpass">${T(UI.setBtn)}</button>${S.fromHome?`<button class="btn sec" data-act="cancelpass">${T(UI.cancel)}</button>`:`<button class="btn sec" data-act="skippass">${T(UI.skipPass)}</button>`}</div></div>`;
+const viewUnlock=()=>`<div class="card"><h2>${T(UI.unlock)}</h2><label>${T(UI.passphrase)}</label><input type="password" id="pp" autocomplete="current-password"><div id="err" class="help" style="color:var(--rose)"></div>
+<div class="row" style="margin-top:12px"><button class="btn" data-act="unlock">${T(UI.unlock)}</button></div></div>`;
+const IC={
+ ck:'<svg class="ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+ ex:'<svg class="ex" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5v5.5M12 16.4v.4"/></svg>',
+ chev:'<svg class="chev" viewBox="0 0 24 24"><path d="M5 9l7 7 7-7"/></svg>',
+ pdone:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+ pprog:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg>',
+ pnext:'<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M9 12h6M9 16h6"/></svg>',
+ pneed:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.4v.4"/></svg>'
+};
+const aNone=a=>a;
+const plain=s=>String(s||'').replace(/\*/g,'').replace(/\s+/g,' ').trim();
+
+const pageHead=t=>`<div class="rowhead"><h2>${t}</h2></div>`;
+function viewSecure(){return pageHead(T(UI.passTitle))+`<div class="card"><p class="help">${S.key?T(UI.passOn):T(UI.passOff)}</p><button class="btn sec" data-act="gopass">${S.key?T(UI.passChange):T(UI.passSet)}</button></div>`}
+function viewBackup(){return pageHead(T(UI.backup))+`<div class="card"><p class="help">${T(UI.backupNote)}</p><div class="row"><button class="btn sec" data-act="exportall">${T(UI.exportAll)}</button><label class="btn sec" style="margin:0">${T(UI.importAll)}<input type="file" accept="application/json" data-act="importall" class="hide"></label></div></div>`}
+function viewTests(){return pageHead(T(UI.testTitle))+testCard(true)}
+function viewHome(){
+ const rows=S.db.cases.map(c=>{
+  const fs=formsOf(c);const tags=fs.map(id=>(FORMS[id]||{}).short||id).join(' + ');
+  const pct=pctCase(c);const a0=c.pkg?PKG[c.pkg].art:(meta(c.form).art||'papers');
+  return `<div class="card case"><div class="cthumb">${art(a0)}</div><div class="cinfo"><strong>${c.test?`<span class="pill r">${T(UI.testBadge)}</span> `:''}${esc(c.name)}</strong><div class="help mono">${esc(tags)} · ${esc((c.updated||'').slice(0,10))} · ${pct}%</div><div class="bar mini"><i style="width:${pct}%"></i></div></div><div class="row">${c.test?`<button class="btn sm" data-act="openrev" data-id="${c.id}">${T(UI.reviewDl)}</button>`:''}<button class="btn sm ${c.test?'sec':''}" data-act="open" data-id="${c.id}">${T(UI.open)}</button><button class="btn sm sec" data-act="delcase" data-id="${c.id}">${T(UI.del)}</button></div></div>`}).join('')||`<p class="help">${T(UI.noCases)}</p>`;
+ return `<div class="rowhead"><h2>${T(UI.casesLbl)}</h2><button class="cta sm" data-act="pick">+ ${T(UI.newApp)}</button></div>${rows||`<div class="card"><p class="help">${T(UI.noCases)}</p></div>`}
+<p class="help">${T(UI.translateNote)}</p>`;
+}
+function testCard(){
+ if(!window.TEST)return '';
+ const n=S.db.cases.filter(c=>c.test).length;
+ const b=Object.entries(TEST.SCEN).map(([id,sc])=>`<button class="btn sec tbtn" data-act="mktest" data-id="${id}">${esc(sc.n)}</button>`).join('');
+ return `<div class="card"><p class="help">${T(UI.testNote)}</p><div class="tlist">${b}</div><div class="row" style="margin-top:12px"><button class="btn" data-act="mkevery">${T(UI.testEvery)}</button><button class="btn sec" data-act="mkall">${T(UI.testAll)}</button>${n?`<button class="btn sec" data-act="deltests">${T(UI.testDel)} (${n})</button>`:''}</div></div>`;
+}
+
+/* ---------- form picker ---------- */
+function tileHtml(kind,id){
+ if(kind==='pkg'){
+  const p=PKG[id];
+  return `<div class="tile"><div class="art">${art(p.art)}</div><div class="tb"><div class="tt">${T(p.title)}</div><div class="tf">${T(UI.usingForms)} ${p.base.map(b=>(FORMS[b]||{}).short||b).join(' + ')}</div><div class="ts">${T(p.sub)}</div><button class="cta" data-act="selpkg" data-id="${id}">${T(UI.startApp)}</button></div></div>`;
+ }
+ const F=FORMS[id],m=meta(id);
+ return `<div class="tile"><div class="art">${art(m.art||'papers')}</div><div class="tb"><div class="tt">${T(m.tag)}</div><div class="tf">${T(UI.usingForm)} ${esc(F.short)}</div><div class="ts">${T(m.sub||L(F.name,F.name))}</div><button class="cta" data-act="selform" data-id="${id}">${T(UI.startApp)}</button></div></div>`;
+}
+function viewPick(){
+ const ids=Object.keys(FORMS);
+ const prim=ids.filter(i=>meta(i).cat==='primary'),sec=ids.filter(i=>meta(i).cat!=='primary');
+ const okP=k=>PKG[k].base.every(b=>FORMS[b]);
+ const solo={};Object.keys(PKG).forEach(k=>{if(PKG[k].base.length===1&&okP(k))solo[PKG[k].base[0]]=k});
+ const multi=Object.keys(PKG).filter(k=>PKG[k].base.length>1&&okP(k));
+ return `<h2>${T(UI.pickTitle)}</h2>
+<h3 class="sect">${T(UI.packages)}</h3><p class="help">${T(UI.packagesNote)}</p>
+<div class="tiles">${multi.map(k=>tileHtml('pkg',k)).join('')}</div>
+<h3 class="sect">${T(UI.singles)}</h3>
+<div class="tiles">${prim.map(i=>solo[i]?tileHtml('pkg',solo[i]):tileHtml('form',i)).join('')}</div>
+<button class="otherbtn" data-act="toggleother">${S.showOther?T(UI.hideOther):T(UI.otherForms)}</button>
+<div class="otherlist ${S.showOther?'open':''}" id="otherlist"><div>${sec.map(i=>{const F=FORMS[i];return `<div class="orow"><div class="th">${art('papers')}</div><div class="oi"><b>${esc(F.short)}</b><span>${T(meta(i).tag)}</span></div><button class="btn sm" data-act="selform" data-id="${i}">${T(UI.startShort)}</button></div>`}).join('')}</div></div>`;
+}
+
+/* ---------- front page (hero + questionnaire + name) ---------- */
+function quizForms(){
+ const pk=S.pick;if(!pk||pk.type!=='pkg')return pk?[pk.id]:[];
+ const p=PKG[pk.id];if(!pkgDone(p,S.quiz))return null;
+ return p.build(S.quiz).filter(id=>FORMS[id]);
+}
+function tilesQ(q,val,name,extra){
+ const tot=q.opts.reduce((n,o)=>n+T(o[1]).length,0);const long=q.opts.length>3||q.opts.some(o=>T(o[1]).length>16)||tot>30;
+ return `<div class="yn ${long?'col':''}" role="radiogroup">${q.opts.map(([v,l],i)=>`<label class="${v==='no'?'no':''}"><input type="radio" name="${name}" value="${esc(v)}" data-q="${esc(q.k)}" ${val===v?'checked':''}><span>${esc(T(l))}</span></label>`).join('')}</div>`;
+}
+function quizHtml(p){
+ return `<div id="qz">`+qShown(p,S.quiz).map(q=>{const v=S.quiz[q.k];return `<div class="fld grp ${v?'ok':''}" data-qq="${q.k}"><div class="box"><div class="glabel">${T(q.q)}</div>${tilesQ(q,v,'q_'+q.k)}<span class="ico">${IC.ck}${IC.ex}</span></div><div class="msg">${v?T(UI.looksGood):''}</div></div>`}).join('')+`</div>`;
+}
+function summaryHtml(){
+ const pk=S.pick;if(pk.type!=='pkg')return '';
+ const p=PKG[pk.id];const fs=quizForms();
+ if(!fs)return `<div class="help">${T(UI.yourForms)}: <span class="chip">${p.base.map(b=>(FORMS[b]||{}).short||b).join(' + ')}</span> + <span class="chip opt">${T(UI.optional)}</span></div>`;
+ const notes=p.notes(S.quiz);
+ return `<div class="banner sage"><strong>${T(UI.yourForms)}</strong><div class="chips" style="justify-content:flex-start">${fs.map(id=>`<span class="chip">${esc(FORMS[id].short)}</span>`).join('')}</div><div class="help">${T(UI.sharedNote)}</div>${notes.map(n=>`<div class="help" style="margin-top:6px">• ${T(n)}</div>`).join('')}</div>`;
+}
+function viewFront(){
+ const pk=S.pick;const isPkg=pk.type==='pkg';
+ const m=isPkg?PKG[pk.id]:meta(pk.id);const F=isPkg?null:FORMS[pk.id];
+ const title=isPkg?T(m.title):(T(m.tag)||F.name);
+ const forms=isPkg?m.base:[pk.id];
+ const kick=T(isPkg?UI.usingForms:UI.usingForm);
+ const hero=`<div class="hero"><div class="kick">${kick} ${forms.map(b=>(FORMS[b]||{}).short||b).join(' + ')}</div><h1>${esc(title)}</h1>${isPkg?`<p class="sub2">${T(m.sub)}</p>`:(F.edition?`<p class="sub2">${esc(F.name)} · ${esc(F.edition)}</p>`:'')}${art(isPkg?m.art:(m.art||'papers'))}</div>`;
+ const nm=`<div class="fld" data-raw="cname" data-req="1" data-e="${esc(T(UI.nameReq))}"><div class="box"><input id="cname" type="text" placeholder=" " autocomplete="off" value="${esc(S.pick.name||'')}"><label for="cname">${T(UI.caseName)} *</label><span class="ico">${IC.ck}${IC.ex}</span></div><div class="msg"></div></div>`;
+ return `<div class="rowhead noprint"><button class="btn sec sm" data-act="pick">‹ ${T(UI.backPick)}</button></div>${hero}
+<div class="card">${isPkg?`<h3>${T(UI.quizTitle)}</h3>${quizHtml(m)}<div id="qsum" style="margin-top:14px">${summaryHtml()}</div>`:''}
+${nm}<div style="margin-top:18px"><button class="cta" data-act="startcase">${T(UI.startApp)} ›</button></div></div>`;
+}
+const viewDisclaimer=()=>`<div class="banner gold"><h3>${T(UI.disclaimerTitle)}</h3><p>${T(UI.disclaimer)}</p><button class="btn warn" data-act="ackdisc">${T(UI.ack)}</button></div>`;
+
+/* ---------- case helpers ---------- */
+function cur(){return S.db.cases.find(c=>c.id===S.caseId)}
+function isShown(x,a){return !x.show||x.show(a)}
+function visible(fl,a){return fl.filter(x=>isShown(x,a))}
+function isEmpty(v){return v===undefined||v===null||v===''||(Array.isArray(v)&&v.length===0)}
+const lbl=(x)=>x.l;
+const isMid=x=>!!x&&x.type==='text'&&/middle(name)?$/i.test(x.k||'');
+const isReq=x=>!!(x.req||isMid(x));
+const getVal=(a,path)=>{const s=path.split('.');if(s.length===1)return a[s[0]];if(s.length===2)return (a[s[0]]||{})[s[1]];return ((a[s[0]]||[])[+s[1]]||{})[s[2]]};
+const needs=(a,s,v,path)=>isReq(s)&&isEmpty(v)&&!(isMid(s)&&a['nm:'+path]);
+function partMissing(c,p){
+ const out=[];const a=AN(c);
+ visible(p.fields,a).forEach(x=>{
+  if(x.type==='list'){
+   const arr=a[x.k]||[];
+   if(x.min&&arr.length<x.min)out.push([p.id,x.l]);
+   arr.forEach((it,i)=>x.item.forEach(s=>{if((!s.show||s.show(a))&&needs(a,s,it[s.k],`${x.k}.${i}.${s.k}`))out.push([p.id,L(`${x.l.en} #${i+1}: ${s.l.en}`,`${x.l.es} #${i+1}: ${s.l.es}`)])}));
+  }else if(x.type==='group'){
+   const g=a[x.k]||{};
+   x.sub.forEach(s=>{if(needs(a,s,g[s.k],`${x.k}.${s.k}`))out.push([p.id,L(`${x.l.en}: ${s.l.en}`,`${x.l.es}: ${s.l.es}`)])});
+  }else if(needs(a,x,a[x.k],x.k))out.push([p.id,x.l]);
+ });
+ return out;
+}
+function missingFor(c){const out=[];PARTS.forEach(p=>partMissing(c,p).forEach(m=>out.push(m)));return out}
+function partTotal(c,p){let t=0;const a=AN(c);visible(p.fields,a).forEach(x=>{if(isReq(x)||(x.type==='list'&&x.min))t++;if(x.type==='group')x.sub.forEach(s=>{if(isReq(s))t++})});return t}
+function pctDone(c){
+ const m=missingFor(c).length;let total=0;
+ PARTS.forEach(p=>{total+=partTotal(c,p)});
+ return total?Math.max(0,Math.round((total-m)/total*100)):0;
+}
+function pctCase(c){const r=forEachForm(c,()=>pctDone(c));return r.length?Math.round(r.reduce((s,v)=>s+v,0)/r.length):0}
+function partHasData(c,p){const a=AN(c);return visible(p.fields,a).some(x=>!valEmpty(a[x.k]))}
+const vkey=(c,p)=>`${FD.id}:${p.id}`;
+function partStatus(c,i,p){
+ if(S.mode==='wizard'&&S.partIdx===i&&S.openIdx===i)return 'prog';
+ const miss=partMissing(c,p).length;
+ const seen=(c.visited||{})[vkey(c,p)]||partHasData(c,p);
+ if(!seen)return 'next';
+ return miss?'need':'done';
+}
+const stText=s=>T({done:UI.stDone,prog:UI.stProg,next:UI.stNext,need:UI.stNeed}[s]);
+const stIcon=s=>({done:IC.pdone,prog:IC.pprog,next:IC.pnext,need:IC.pneed}[s]);
+
+/* ---------- fields ---------- */
+const STATES='AA AE AK AL AP AR AS AZ CA CO CT DC DE FL FM GA GU HI IA ID IL IN KS KY LA MA MD ME MH MI MN MO MP MS MT NC ND NE NH NJ NM NV NY OH OK OR PA PR PW RI SC SD TN TX UT VA VI VT WA WI WV WY'.split(' ');
+const kindOf=x=>{
+ if(x.type==='date')return 'date';
+ if(x.type!=='text')return '';
+ const k=x.k||'';
+ if(/email/i.test(k))return 'email';
+ if(/(phone|mobile|fax)$/i.test(k))return 'phone';
+ if(/zip$/i.test(k))return 'zip';
+ if(/ssn$/i.test(k))return 'ssn';
+ if(/^(aNumber|bA|pA|spA|prA|a)$/.test(k))return 'anum';
+ return '';
+};
+function chk(kind,v){
+ const s=String(v).trim();
+ switch(kind){
+  case 'email':return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s)?'':'badEmail';
+  case 'phone':{const n=s.replace(/\D/g,'').length;return n>=10&&n<=15?'':'badPhone'}
+  case 'zip':return /^\d{5}(-?\d{4})?$/.test(s)?'':'badZip';
+  case 'ssn':return s.replace(/\D/g,'').length===9?'':'badSsn';
+  case 'anum':return /^\d{7,9}$/.test(s.replace(/^A[-\s]*/i,'').replace(/[-\s]/g,''))?'':'badA';
+  case 'date':{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s);if(!m)return 'badDate';const y=+m[1];return y>=1900&&y<=2100&&!isNaN(Date.parse(s))?'':'badDate'}
+ }
+ return '';
+}
+function stateCalc(kind,req,val,flag,show){
+ if(flag)return {cls:'ok',msg:'noMiddleOk'};
+ if(isEmpty(val))return req&&show?{cls:'err',msg:'e'}:{cls:'',msg:''};
+ const bad=chk(kind,Array.isArray(val)?'x':val);
+ if(bad)return show?{cls:'err',msg:bad}:{cls:'',msg:''};
+ return {cls:'ok',msg:'looksGood'};
+}
+function emptyMsg(x){
+ const l=plain(T(x.l));
+ if(x.type==='yesno')return T(UI.pleaseAnswer);
+ const pre=(x.type==='select'||x.type==='multi')?UI.pleaseSelect:UI.pleaseEnter;
+ return l.length>60?((x.type==='select'||x.type==='multi')?T(UI.pleaseAnswer):T(UI.pleaseFill)):`${T(pre)} ${l}`;
+}
+const msgText=(st,e)=>st.msg==='e'?e:st.msg?T(UI[st.msg]):'';
+const showNow=path=>S.touched.has(path)||S.attempt.has(S.curKey);
+const isFull=x=>['textarea','yesno','multi'].includes(x.type)||(x.type==='select'&&!x.d&&(OPT[x.opts]||[]).some(o=>T(o[1]).length>26));
+let NO_LAST=null;
+const noTag=x=>{if(!x.no||x.no===NO_LAST)return '';NO_LAST=x.no;return `<div class="itemrow">${T(UI.item)} ${esc(x.no)}</div>`};
+
+function fld(x,val,path,a){
+ const req=isReq(x);const mid=isMid(x);const flag=mid&&!!a['nm:'+path];
+ const id='f_'+path.replace(/\W/g,'_');
+ const st=stateCalc(kindOf(x),req,val,flag,showNow(path));
+ const em=emptyMsg(x);
+ const lab=esc(plain(T(x.l)))+(req?' *':'');
+ const attrs=`data-path="${esc(path)}" data-kind="${kindOf(x)}" data-req="${req?1:0}" data-ty="${x.type}" data-e="${esc(em)}" data-mid="${mid?1:0}"`;
+ const ico=`<span class="ico" aria-hidden="true">${IC.ck}${IC.ex}</span>`;
+ let cls='',box='';
+ if(x.type==='yesno'){
+  cls='grp';
+  box=`<div class="glabel">${esc(plain(T(x.l)))}${req?' *':''}</div><div class="yn" role="radiogroup"><label><input type="radio" name="${esc(path)}" value="yes" data-path="${esc(path)}" data-t="yesno" ${val==='yes'?'checked':''}><span>${T(UI.yes)}</span></label><label class="no"><input type="radio" name="${esc(path)}" value="no" data-path="${esc(path)}" data-t="yesno" ${val==='no'?'checked':''}><span>${T(UI.no)}</span></label></div>${ico}`;
+ }else if(x.type==='multi'){
+  cls='grp';const opts=OPT[x.opts]||[];const cv=Array.isArray(val)?val:[];
+  box=`<div class="glabel">${esc(plain(T(x.l)))}${req?' *':''}</div><div class="opts">${opts.map(([v,l])=>`<label class="chk"><input type="checkbox" data-path="${esc(path)}" data-t="multi" value="${esc(v)}" ${cv.includes(v)?'checked':''}><span>${esc(T(l))}</span></label>`).join('')}</div>${ico}`;
+ }else if(x.type==='select'||(x.type==='text'&&x.d&&x.up&&!x.fuzzy)){
+  cls='fl sel';
+  const opts=x.type==='select'?(OPT[x.opts]||[]).map(([v,l])=>[v,T(l)]):STATES.map(v=>[v,v]);
+  const cv=x.type==='select'?val:String(val||'').toUpperCase();
+  box=`<select id="${id}" data-path="${esc(path)}" data-t="select"><option value="">${T(UI.select)}</option>${opts.map(([v,l])=>`<option value="${esc(v)}" ${cv===v?'selected':''}>${esc(l)}</option>`).join('')}</select><label for="${id}">${lab}</label>${ico}`;
+ }else if(x.type==='textarea'){
+  cls='ta';
+  box=`<textarea id="${id}" data-path="${esc(path)}" data-t="text" placeholder=" ">${esc(val||'')}</textarea><label for="${id}">${lab}</label>${ico}`;
+ }else{
+  const ty=x.type==='date'?'date':x.type==='number'?'number':'text';
+  if(ty==='date')cls='fl';
+  box=`<input id="${id}" type="${ty}" ${ty==='number'?'inputmode="numeric" min="0"':''} ${ty==='date'?'min="1900-01-01" max="2100-12-31"':''} value="${esc(val||'')}" data-path="${esc(path)}" data-t="text" placeholder=" " autocomplete="off" ${flag?'disabled':''}><label for="${id}">${lab}</label>${ico}`;
+ }
+ return `<div class="fld ${cls} ${st.cls} ${flag?'dis':''} ${isFull(x)?'full':''}" ${attrs}><div class="box">${box}</div><div class="msg">${esc(msgText(st,em))}</div>${mid?`<label class="nm"><input type="checkbox" data-nm="${esc(path)}" ${flag?'checked':''}><span>${T(UI.noMiddle)}</span></label>`:''}${x.help?`<div class="help">${T(x.help)}</div>`:''}</div>`;
+}
+
+function fieldHtml(x,a){
+ if(x.type==='list'){
+  const arr=a[x.k]||[];const max=x.max||99;
+  const tag=noTag(x);
+  const need=x.min&&arr.length<x.min&&S.attempt.has(S.curKey);
+  return `${tag}<div class="sub ${need?'err':''}"><div class="subh">${esc(plain(T(x.l)))}${x.min?' *':''}</div>${x.help?`<div class="help">${T(x.help)}</div>`:''}${x.cap?`<div class="help mono">${x.cap} ${T(UI.cap)}</div>`:''}
+  ${arr.map((it,i)=>`<div class="item"><div class="row"><strong class="grow">#${i+1}</strong><button class="btn sm sec" data-act="rmitem" data-k="${x.k}" data-i="${i}">${T(UI.remove)}</button></div><div class="grid">${x.item.filter(s=>!s.show||s.show(a)).map(s=>fld(s,it[s.k],`${x.k}.${i}.${s.k}`,a)).join('')}</div></div>`).join('')}
+  ${need?`<div class="fld err"><div class="msg">${T(UI.pleaseAdd)}</div></div>`:''}
+  ${arr.length<max?`<button class="btn sm sec" style="margin-top:8px" data-act="additem" data-k="${x.k}">+ ${T(UI.add)}</button>`:''}</div>`;
+ }
+ if(x.type==='group'){
+  const g=a[x.k]||{};
+  return `${noTag(x)}<div class="sub"><div class="subh">${esc(plain(T(x.l)))}</div><div class="grid">${x.sub.map(s=>fld(s,g[s.k],`${x.k}.${s.k}`,a)).join('')}</div></div>`;
+ }
+ return noTag(x)+fld(x,a[x.k],x.k,a);
+}
+function sigOf(fl,a){
+ return JSON.stringify(fl.map(x=>[x.k,x.type==='list'?[(a[x.k]||[]).length,(a[x.k]||[]).map(()=>x.item.filter(s=>!s.show||s.show(a)).map(s=>s.k))]:0]));
+}
+function bodyHtml(c,p){
+ const a=AN(c);NO_LAST=null;
+ S.curKey=`${c.id}|${FD.id}|${p.id}`;
+ const fl=visible(p.fields,a);
+ S.sig[S.curKey]=sigOf(fl,a);
+ let body='';
+ if(p.risk){
+  body=`<div class="banner sage help">${T(UI.part9intro)}</div>`+fl.map(x=>x.type==='list'?fieldHtml(x,a):`<div class="item">${fieldHtml(x,a)}</div>`).join('');
+ }else{
+  const grouped=[];let buf=[];
+  fl.forEach(x=>{if(x.type==='list'||x.type==='group'||isFull(x)){if(buf.length){grouped.push(`<div class="grid">${buf.join('')}</div>`);buf=[]}grouped.push(fieldHtml(x,a))}else buf.push(fieldHtml(x,a))});
+  if(buf.length)grouped.push(`<div class="grid">${buf.join('')}</div>`);
+  body=grouped.join('');
+ }
+ return `<div class="pbody">${body}</div>`;
+}
+
+/* ---------- wizard (collapsible sections) ---------- */
+function partHtml(c,p,i){
+ const open=S.openIdx===i;const st=partStatus(c,i,p);
+ return `<section class="part ${st} ${open?'open':''}" data-pi="${i}" id="part-${i}"><button class="phead" data-act="togglepart" data-i="${i}" aria-expanded="${open}"><span class="pic">${stIcon(st)}</span><span class="ptitle"><small>${T(UI.part)} ${p.id}</small>${esc(T(p.t))}</span><span class="pst">${stText(st)}</span>${IC.chev}</button><div class="pwrap"><div class="pin">${open?bodyHtml(c,p):''}</div></div></section>`;
+}
+function formTabs(c){
+ if(!c.sets)return '';
+ const pc=forEachForm(c,()=>pctDone(c));
+ return `<div class="formtabs noprint">${formsOf(c).map((id,i)=>`<button class="${id===c.active?'on':''}" data-act="swform" data-f="${id}">${esc(FORMS[id].short)}<small>${pc[i]}%</small></button>`).join('')}</div>`;
+}
+function viewWizard(){
+ const c=cur();
+ if(S.openIdx===undefined||S.openIdx<0)S.openIdx=S.partIdx;
+ markVisited(c,PARTS[S.partIdx]);
+ return `${formTabs(c)}<div class="bar" id="pbar"><i style="width:${pctDone(c)}%"></i></div><div class="acc" id="acc">${PARTS.map((p,i)=>partHtml(c,p,i)).join('')}</div>`;
+}
+function markVisited(c,p){c.visited=c.visited||{};c.visited[vkey(c,p)]=true}
+function updateMid(){const m=$('#mid');if(!m)return;m.innerHTML=`${S.partIdx+1} ${T(UI.of)} ${PARTS.length}<small>${VER}</small>`;navBtns()}
+function refreshHeads(){
+ const c=cur();if(!c||S.mode!=='wizard')return;
+ PARTS.forEach((p,i)=>{
+  const el=document.getElementById('part-'+i);if(!el)return;
+  const st=partStatus(c,i,p);
+  el.classList.remove('done','prog','need','next');el.classList.add(st);
+  el.querySelector('.pic').innerHTML=stIcon(st);el.querySelector('.pst').textContent=stText(st);
+ });
+ const b=$('#pbar i');if(b)b.style.width=pctDone(c)+'%';
+ document.querySelectorAll('.formtabs button').forEach(bt=>{const id=bt.dataset.f;const v=forEachForm(c,fid=>fid===id?pctDone(c):null).find(x=>x!==null);const s=bt.querySelector('small');if(s&&v!==undefined)s.textContent=v+'%'});
+}
+let headT;const schedHeads=()=>{clearTimeout(headT);headT=setTimeout(refreshHeads,350)};
+function openPart(i,scroll=true){
+ const c=cur();const acc=$('#acc');if(!acc)return;
+ const prev=acc.querySelector('.part.open');
+ if(prev){prev.classList.remove('open');prev.querySelector('.phead').setAttribute('aria-expanded','false');const pi=+prev.dataset.pi;setTimeout(()=>{if(S.openIdx!==pi){const pin=prev.querySelector('.pin');if(pin&&!prev.classList.contains('open'))pin.innerHTML=''}},450)}
+ S.partIdx=i;S.openIdx=i;markVisited(c,PARTS[i]);
+ const el=document.getElementById('part-'+i);
+ el.querySelector('.pin').innerHTML=bodyHtml(c,PARTS[i]);
+ el.querySelector('.phead').setAttribute('aria-expanded','true');
+ requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('open')));
+ refreshHeads();updateMid();saveSoon();
+ if(scroll)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),430);
+}
+function closePart(i){
+ const el=document.getElementById('part-'+i);if(!el)return;
+ el.classList.remove('open');el.querySelector('.phead').setAttribute('aria-expanded','false');
+ S.openIdx=-1;refreshHeads();
+}
+function rebuildBody(keepPath){
+ const c=cur();const p=PARTS[S.partIdx];const el=document.getElementById('part-'+S.partIdx);if(!el)return;
+ const y=window.scrollY;
+ el.querySelector('.pin').innerHTML=bodyHtml(c,p);
+ window.scrollTo({top:y,behavior:'instant'});
+}
+function nextPart(){
+ const c=cur();const p=PARTS[S.partIdx];
+ S.curKey=`${c.id}|${FD.id}|${p.id}`;
+ if(S.openIdx===S.partIdx&&partMissing(c,p).length&&!S.attempt.has(S.curKey)){
+  S.attempt.add(S.curKey);rebuildBody();refreshHeads();
+  const e=document.querySelector('.part.open .fld.err');if(e)e.scrollIntoView({behavior:'smooth',block:'center'});
+  return;
+ }
+ if(S.partIdx<PARTS.length-1)openPart(S.partIdx+1);else{S.mode='review';render()}
+}
+function advanceFrom(w){
+ if(!w)return;const body=w.closest('.pin');if(!body)return;
+ const all=[...body.querySelectorAll('.fld[data-path]')].filter(x=>!x.classList.contains('dis'));
+ const i=all.indexOf(w);const next=all[i+1];
+ if(!next){
+  const c=cur(),p=PARTS[S.partIdx];
+  if(partMissing(c,p).length){const f=all.find(x=>!x.classList.contains('ok'));if(f){f.scrollIntoView({behavior:'smooth',block:'center'});f.classList.add('pulse');setTimeout(()=>f.classList.remove('pulse'),950)}return}
+  if(S.partIdx<PARTS.length-1)openPart(S.partIdx+1);
+  return}
+ next.scrollIntoView({behavior:'smooth',block:'center'});
+ next.classList.add('pulse');setTimeout(()=>next.classList.remove('pulse'),950);
+ const inp=next.querySelector('input[type=text],input[type=number],input[type=date],textarea');
+ if(inp&&!inp.disabled)setTimeout(()=>inp.focus({preventScroll:true}),480);
+}
+function refreshFld(w,o={}){
+ const c=cur();if(!c)return;const a=AN(c);
+ let val;
+ if(w.dataset.raw){const i=w.querySelector('input');val=i?i.value.trim():''}
+ else val=getVal(a,w.dataset.path);
+ const path=w.dataset.path||'';
+ const flag=w.dataset.mid==='1'&&!!a['nm:'+path];
+ const show=!!o.show||(path&&showNow(path))||w.dataset.touched==='1';
+ const st=stateCalc(w.dataset.kind||'',w.dataset.req==='1',val,flag,show);
+ w.classList.remove('ok','err');if(st.cls)w.classList.add(st.cls);
+ const m=w.querySelector('.msg');if(m)m.textContent=msgText(st,w.dataset.e||'');
+ return st;
+}
+
+function setPath(c,path,val){
+ const a=AN(c);const seg=path.split('.');
+ if(seg.length===1){a[seg[0]]=val}
+ else if(seg.length===2){const g=a[seg[0]]=a[seg[0]]||{};g[seg[1]]=val}
+ else{const arr=a[seg[0]]=a[seg[0]]||[];const it=arr[+seg[1]]=arr[+seg[1]]||{};it[seg[2]]=val}
+ c.updated=new Date().toISOString();
+ if(c.sets)propagate(c,c.active,seg[0]);
+}
+let WS_LAST=null;
+const wsTag=x=>{if(!x.no||x.no===WS_LAST)return '';WS_LAST=x.no;return `<span class="mono" style="display:block;color:var(--mute);font-weight:600">${T(UI.item)} ${esc(x.no)}</span>`};
+
+function riskCalc(c){
+ const a=AN(c);let score=0;const hits=[];
+ RISK.forEach(r=>{
+  if(r.w<=0)return;
+  if(r.show&&!r.show(a))return;
+  if(a['q_'+r.id]===r.adv){score+=r.w;hits.push({id:r.id,w:r.w,l:L(r.en,r.es),x:a['x_'+r.id],no:r.id.replace(/([0-9]+)([a-z])/,'$1.$2')})}
+ });
+ score=Math.min(100,score);
+ const tier=score<=30?0:score<=50?1:score<=65?2:score<=80?3:4;
+ return{score,hits,tier};
+}
+function part14(c){
+ const a=AN(c);const E=[];
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{
+  if(x.type==='list'&&x.cap){
+   const arr=a[x.k]||[];
+   if(arr.length>x.cap)E.push({page:x.page,part:x.part,item:x.no||'',text:arr.slice(x.cap).map(it=>x.item.map(s=>it[s.k]).filter(v=>!isEmpty(v)).join(', ')).join('; ')});
+  }else if(x.p14&&x.p14.from!=='x'&&!isEmpty(a[x.k]))E.push({page:x.p14.page,part:x.p14.part,item:x.p14.item,text:String(a[x.k])});
+  else if(x.p14&&x.p14.from==='x'&&!isEmpty(a[x.k]))E.push({page:x.p14.page,part:9,item:x.p14.item,text:String(a[x.k])});
+ }));
+ const ord=E.filter(e=>e.part!==14);const extra=E.filter(e=>e.part===14);
+ ord.sort((x,y)=>(x.part-y.part)||String(x.item).localeCompare(String(y.item),undefined,{numeric:true}));
+ return ord.concat(extra);
+}
+function viewReview(){
+ const c=cur();const a=AN(c);const miss=missingFor(c);const rk=riskCalc(c);
+ const tcls=['l','w','w','r','r'][rk.tier];
+ const ak=S.ack[c.id+':'+FD.id]||{};
+ let unlocked=true,gate='';
+ if(rk.tier===4){unlocked=false;gate=`<div class="banner rose"><strong>${T(UI.tier4)}</strong><div>${T(UI.blockedMsg)}</div></div>`}
+ else if(rk.tier===3){
+  const okAtt=(a.attorneyName||'').trim()&&a.attorneyDate;unlocked=!!okAtt;
+  gate=`<div class="banner rose"><strong>${T(UI.tier3)}</strong><div class="grid"><div><label>${T(UI.attorneyName)}</label><input data-path="attorneyName" data-t="text" value="${esc(a.attorneyName||'')}"></div><div><label>${T(UI.attorneyDate)}</label><input type="date" data-path="attorneyDate" data-t="text" value="${esc(a.attorneyDate||'')}"></div></div>${okAtt?'':`<div class="help">${T(UI.unlockNeeds)}</div>`}</div>`;
+ }else if(rk.tier>=1){
+  unlocked=!!ak.go;
+  gate=`<div class="banner ${rk.tier===2?'rose':'gold'}"><strong>${T(rk.tier===2?UI.tier2:UI.tier1)}</strong><label style="font-weight:400"><input type="checkbox" style="width:auto;min-height:0" data-act="goack" ${ak.go?'checked':''}> ${T(UI.continueAnyway)}</label></div>`;
+ }
+ return `${formTabs(c)}<div class="noprint"><div class="row"><button class="btn sec sm" data-act="backwiz">${T(UI.prev)}</button><h2 class="grow" style="margin:0">${T(UI.reviewTitle)}: ${esc(c.name)}</h2></div></div>
+ <div class="card noprint"><h3>${T(UI.missing)}</h3>${miss.length?`<ul>${miss.map(([pid,l])=>`<li><a href="#" data-act="gotopart" data-pid="${pid}">${T(UI.part)} ${pid}</a>: ${T(l)}</li>`).join('')}</ul>`:`<p>${T(UI.allComplete)}</p>`}</div>
+ ${RISK.length?`<div class="card noprint"><h3>${T(UI.risk)} <span class="pill ${tcls}">${T(UI.score)} ${rk.score}</span></h3><p>${T([UI.tier0,UI.tier1,UI.tier2,UI.tier3,UI.tier4][rk.tier])}</p>
+  ${rk.hits.length?`<div class="help">${T(UI.flagged)}</div><ul>${rk.hits.map(h=>`<li><span class="mono">${h.no}</span> ${T(h.l)} <span class="pill w">+${h.w}</span>${h.x?`<div class="help">${esc(h.x)}</div>`:''}</li>`).join('')}</ul>`:''}
+  <div class="banner gold help">${T(UI.disclaimer)}</div>${gate}</div>`:`<div class="card noprint"><div class="banner gold help">${T(UI.disclaimer)}</div></div>`}
+ ${FD.elig?`<div class="card noprint"><h3>${T(UI.elig)}</h3><p class="help">${T(UI.eligNote)}</p>${FD.elig(Object.assign({},c,{answers:a}))}</div>`:''}
+ <div class="card noprint"><h3>${T(UI.outputs)}</h3><div class="row">
+  <button class="btn" data-act="print" ${unlocked?'':'disabled'}>${T(UI.print)}</button>
+  <button class="btn sec" data-act="exportcase" ${unlocked?'':'disabled'}>${T(UI.exportCase)}</button></div>
+  <div style="margin-top:16px"><h3>${shortName(T(UI.fillPdf))}</h3><p class="help">${T(UI.pdfNote)}</p>
+  <button class="btn" data-act="fillpdf" ${unlocked?'':'disabled'}>${T(UI.download)}</button>
+  <div id="pdfmsg" class="help" role="status" style="margin-top:8px"></div></div>${c.sets?`<div style="margin-top:16px"><button class="btn sec" data-act="fillall">${T(UI.fillAll)}</button></div>`:''}</div>
+ <div id="worksheet" class="card">${viewWorksheet(c)}</div>`;
+}
+function fmt(v){return v===undefined||v===null||v===''?'—':esc(v)}
+function labelOpt(x,v){const m=(OPT[x.opts]||[]).find(([k])=>k===v);return m?T(m[1]):v}
+function showVal(x,v){
+ if(x.type==='yesno')return v?T(v==='yes'?UI.yes:UI.no):'';
+ if(x.type==='select')return v?labelOpt(x,v):'';
+ if(x.type==='multi')return (Array.isArray(v)?v:[]).map(k=>labelOpt(x,k)).join(', ');
+ return v;
+}
+function viewWorksheet(c){
+ const a=AN(c);
+ const head=`<h2>${esc(c.name)} — ${FD.short} ${T(L('answers worksheet','hoja de respuestas'))}</h2><div class="help">ImmiVault ${VER} · ${new Date().toISOString().slice(0,10)} · ${T(L('form edition','edición del formulario'))} ${FD.edition}</div>`;
+ const parts=PARTS.map(p=>{WS_LAST=null;
+  const rowsH=visible(p.fields,a).filter(x=>!x.sub).map(x=>{
+   if(x.type==='list'){const arr=a[x.k]||[];return `<tr><td>${wsTag(x)}${T(x.l)}</td><td>${arr.length?arr.map((it,i)=>`<div>#${i+1} ${x.item.map(s=>fmt(showVal(s,it[s.k]))).join(' · ')}</div>`).join(''):'—'}</td></tr>`}
+   if(x.type==='group'){const g=a[x.k]||{};return `<tr><td>${wsTag(x)}${T(x.l)}</td><td>${x.sub.map(s=>`<div>${T(s.l)}: ${fmt(showVal(s,g[s.k]))}</div>`).join('')}</td></tr>`}
+   const ex=x.k.startsWith('q_')?a['x_'+x.k.slice(2)]:'';
+   return `<tr><td>${wsTag(x)}${T(x.l)}</td><td>${fmt(showVal(x,a[x.k]))}${ex&&a[x.k]===(RISK_INDEX[x.k.slice(2)]||{}).adv?`<div class="help">${esc(ex)}</div>`:''}</td></tr>`;
+  }).join('');
+  return `<h3 style="margin-top:16px">${T(UI.part)} ${p.id}: ${T(p.t)}</h3><table>${rowsH}</table>`;
+ }).join('');
+ const e14=part14(c);
+ const sheet=e14.length?`<div style="page-break-before:always"><h2>${T(UI.p14sheet)}</h2><p class="help">${T(UI.p14note)}</p><p><strong>${esc(c.name)}</strong> · A-${esc(a.aNumber||'')}</p>${e14.map(e=>`<div class="item"><div class="mono">${T(UI.part)} ${e.part}${e.item?`, ${T(UI.item)} ${esc(e.item)}`:''}${e.page?` · p. ${e.page}`:''}</div><div>${esc(e.text)}</div></div>`).join('')}</div>`:'';
+ return head+parts+sheet;
+}
+function loadPdfLib(){
+ if(window.PDFLib)return Promise.resolve();
+ return new Promise((res,rej)=>{const s=document.createElement('script');s.src=PDFLIB_URL;s.onload=res;s.onerror=()=>rej(new Error('pdf-lib'));document.head.appendChild(s)});
+}
+function pdfMsg(t,bad){const m=document.getElementById('pdfmsg');if(!m)return;m.textContent=t||'';m.style.color=bad?'var(--rose)':'var(--mute)'}
+function usDate(v){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');return m?`${m[2]}/${m[3]}/${m[1]}`:String(v||'')}
+
+function collectOps(c){
+ const a=AN(c);const ops=[];
+ const txt=(n,v,x)=>{if(!n||isEmpty(v))return;let s=String(v).trim();if(!s)return;if(x&&x.type==='date')s=usDate(s);if(x&&x.dg)s=s.replace(/\D/g,'');if(x&&x.up)s=s.toUpperCase();ops.push({k:'t',n,v:s,d:x&&x.d,fuzzy:x&&x.fuzzy})};
+ const pick=(spec,i)=>Array.isArray(spec)?spec[i]:spec;
+ const emit=(x,val,i,p14ctx)=>{
+  if(isEmpty(val))return;
+  if(x.tf){x.tf(val,a).forEach(([n,v])=>txt(n,v));return}
+  if(x.type==='yesno'){const b=pick(x.y,i);if(b&&typeof b==='object')ops.push({k:'yn',yes:b.yes,no:b.no,v:val});else if(b)ops.push({k:'y',base:b,v:val});return}
+  if(x.type==='select'&&x.c){const n=x.c[val];if(n)ops.push({k:'c',n,on:true});return}
+  if(x.type==='multi'&&x.c){(Array.isArray(val)?val:[]).forEach(v=>{if(x.c[v])ops.push({k:'c',n:x.c[v],on:true})});return}
+  if(x.d){ops.push({k:'d',n:x.d,v:String(val).toUpperCase(),fuzzy:x.fuzzy,raw:String(val)});return}
+  const n=pick(x.t,i);if(n)txt(n,val,x);
+  if(x.tf2)x.tf2.forEach(m=>txt(m,val,x));
+ };
+ PARTS.forEach(p=>visible(p.fields,a).forEach(x=>{
+  if(x.type==='list'&&x.cap){(a[x.k]||[]).slice(0,x.cap).forEach((it,i)=>x.item.forEach(s=>{if(!s.show||s.show(a))emit(s,it[s.k],i)}))}
+  else if(x.type==='group'){const g=a[x.k]||{};x.sub.forEach(s=>emit(s,g[s.k]))}
+  else if(x.type==='list'){}
+  else emit(x,a[x.k]);
+ }));
+ RISK.forEach(r=>{const v=a['q_'+r.id];if(v&&(!r.show||r.show(a)))ops.push(typeof r.base==='object'?{k:'yn',yes:r.base.yes,no:r.base.no,v}:{k:'y',base:r.base,v})});
+ const e14=part14(c);
+ if(FD.p14)FD.p14.name.forEach(([n,k])=>txt(n,a[k]));
+ if(e14.length&&FD.p14){
+  const nb=FD.p14.blocks.length;
+  const take=e14.slice(0,nb);
+  take.forEach((e,i)=>{
+   const last=i===nb-1&&e14.length>nb;
+   const rest=last?e14.slice(nb-1):[e];
+   const text=rest.map(r=>(last?`P${r.part} I${r.item}: `:'')+r.text).join(' | ');
+   const clipped=text.length>420||last?text.slice(0,400)+' … '+T(L('(see attached sheet)','(vea la hoja adjunta)')):text;
+   const [pg,pt,it,tx]=FD.p14.blocks[i];
+   txt(pg,String(e.page||''));txt(pt,String(e.part||''));txt(it,String(e.item||''));txt(tx,clipped);
+  });
+ }
+ return ops;
+}
+function resolveFields(form){
+ const m={};
+ form.getFields().forEach(fl=>{const k=fl.getName().replace(/^form1\[0\]\.#subform\[\d+\]\./,'').replace(/^#area\[\d+\]\./,'').replace(/^form1\[0\]\./,'').replace(/\\/g,'');m[k]=fl});
+ return m;
+}
+function applyOps(form,ops){
+ const P=window.PDFLib;const map=resolveFields(form);const res={done:0,trunc:0,miss:[]};
+ const ckOn=(fl)=>{try{return String(fl.acroField.getOnValue()).replace('/','')}catch(e){return ''}};
+ ops.forEach(o=>{
+  try{
+   if(o.k==='t'){
+    const fl=map[o.n];
+    if(!fl){res.miss.push(o.n);return}
+    if(fl instanceof P.PDFTextField){
+     let v=o.v;const max=fl.getMaxLength();
+     if(max&&v.length>max){v=v.slice(0,max);res.trunc++}
+     fl.setText(v);res.done++;
+    }else if(fl instanceof P.PDFDropdown){
+     const opt=fl.getOptions().find(x=>x.trim().toUpperCase()===o.v.toUpperCase());
+     if(opt){fl.select(opt);res.done++}else res.miss.push(o.n);
+    }
+   }else if(o.k==='d'){
+    const fl=map[o.n];
+    if(!fl||!(fl instanceof P.PDFDropdown)){res.miss.push(o.n);return}
+    const opts=fl.getOptions();
+    let opt=opts.find(x=>x.trim().toUpperCase()===o.v.trim());
+    if(!opt&&o.fuzzy)opt=opts.find(x=>x.toUpperCase().startsWith(o.v.trim()+' '))||opts.find(x=>x.toUpperCase().includes(o.v.trim()));
+    if(opt){fl.select(opt);res.done++}else res.miss.push(o.n);
+   }else if(o.k==='c'){
+    const fl=map[o.n];
+    if(!fl||!(fl instanceof P.PDFCheckBox)){res.miss.push(o.n);return}
+    o.on?fl.check():fl.uncheck();res.done++;
+   }else if(o.k==='yn'){
+    const fy=map[o.yes],fn=map[o.no];
+    if(!fy||!fn){res.miss.push(o.yes||o.no);return}
+    if(o.v==='yes'){fy.check();fn.uncheck()}else{fn.check();fy.uncheck()}
+    res.done++;
+   }else if(o.k==='y'){
+    const f0=map[o.base+'[0]'],f1=map[o.base+'[1]'];
+    if(!f0||!f1){res.miss.push(o.base);return}
+    const want=o.v==='yes'?'Y':'N';
+    [f0,f1].forEach(fl=>{if(ckOn(fl)===want)fl.check();else fl.uncheck()});
+    res.done++;
+   }
+  }catch(err){res.miss.push(o.n||o.base)}
+ });
+ return res;
+}
+function pulse(el){if(!el)return;el.classList.add('pulse');setTimeout(()=>el.classList.remove('pulse'),950)}
+function unlockedFor(c){
+ const a=AN(c);const rk=riskCalc(c);const ak=S.ack[c.id+':'+FD.id]||{};
+ if(rk.tier===4)return false;
+ if(rk.tier===3)return !!((a.attorneyName||'').trim()&&a.attorneyDate);
+ if(rk.tier>=1)return !!ak.go;
+ return true;
+}
+async function fillAll(c){
+ const save=c.active;let ok=0,skip=0;
+ await withProc(async()=>{
+  for(const fid of c.forms){
+   c.active=fid;setForm(fid);
+   if(!unlockedFor(c)){skip++;continue}
+   if(await fillPdf({quiet:true}))ok++;
+   await new Promise(r=>setTimeout(r,500));
+  }
+ },900);
+ c.active=save;setForm(save);
+ pdfMsg(`${ok} ${T(UI.fillAllDone)}`+(skip?` · ${skip} ${T(UI.fillAllSkip)}`:''));
+}
+async function fillPdf(opt){
+ opt=opt||{};const c=cur();
+ const msg=opt.quiet?(()=>{}):pdfMsg;
+ msg(T(UI.pdfLoading));
+ try{await loadPdfLib()}catch(e){msg(T(UI.pdfLibFail),true);return false}
+ let bytes;
+ try{const r=await fetch(FD.pdf);if(!r.ok)throw new Error(r.status);bytes=await r.arrayBuffer()}catch(e){msg(shortName(T(UI.pdfBlankFail)),true);return false}
+ try{
+  const doc=await window.PDFLib.PDFDocument.load(bytes,{updateMetadata:false});
+  const form=doc.getForm();
+  form.getFields().forEach(fl=>{try{if(fl instanceof window.PDFLib.PDFTextField&&fl.isRichFormatted())fl.disableRichFormatting();if(!/BarCode/.test(fl.getName())){fl.disableReadOnly();const P=window.PDFLib;fl.acroField.getWidgets().forEach(w=>{const v=w.dict.lookup(P.PDFName.of('F'));const n=v instanceof P.PDFNumber?v.asNumber():0;if(n&64)w.dict.set(P.PDFName.of('F'),P.PDFNumber.of(n&~64))})}}catch(e){}});
+  const res=applyOps(form,collectOps(c));
+  const out=await doc.save();
+  dl(new Blob([out],{type:'application/pdf'}),`${c.name.replace(/\W+/g,'_')}_${FD.short}_${FD.edition.replace(/\//g,'-')}.pdf`);
+  msg(`${res.done} ${T(UI.pdfDone)}`+(res.trunc?` · ${res.trunc} ${T(UI.pdfTrunc)}`:'')+(res.miss.length?` · ${res.miss.length} ${T(UI.pdfMiss)}: ${res.miss.slice(0,8).join(', ')}`:''));
+  window.__lastFill=res;
+  return true;
+ }catch(err){console.error(err);msg(T(UI.pdfErr)+' ('+(err&&err.message||err)+')',true);return false}
+}
+function dl(blob,name){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},500)}
+
+async function startCase(){
+ const pk=S.pick;const ni=$('#cname');const name=ni.value.trim();let bad=false;
+ if(pk.type==='pkg'&&!quizForms()){
+  const q=qShown(PKG[pk.id],S.quiz).find(x=>!S.quiz[x.k]);const w=document.querySelector(`.fld[data-qq="${q.k}"]`);
+  w.classList.add('err');w.querySelector('.msg').textContent=T(UI.answerAll);w.scrollIntoView({behavior:'smooth',block:'center'});bad=true;
+ }
+ if(!name){const w=ni.closest('.fld');w.dataset.touched='1';refreshFld(w,{show:true});if(!bad){w.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>ni.focus({preventScroll:true}),400)}bad=true}
+ if(bad)return;
+ const nc={id:uid(),name,updated:new Date().toISOString(),disc:false,visited:{}};
+ if(pk.type==='pkg'){
+  const forms=quizForms();
+  nc.pkg=pk.id;nc.forms=forms;nc.form=forms[0];nc.active=forms[0];nc.quiz=Object.assign({},S.quiz);nc.sets={};forms.forEach(f=>{nc.sets[f]={}});
+  if(nc.sets.g28){nc.sets.g28.agency='U';nc.sets.g28.matter=forms.filter(f=>f!=='g28'&&meta(f).cat==='primary').map(f=>FORMS[f].short).join(', ')}
+  syncFill(nc);
+ }else{nc.form=pk.id;nc.answers={}}
+ await withProc(async()=>{
+  S.db.cases.unshift(nc);await persist();S.caseId=nc.id;setForm(nc.active||nc.form);
+  S.partIdx=0;S.openIdx=0;S.touched=new Set();S.attempt=new Set();S.pick=null;S.skipPick=true;S.mode='disclaimer';render();
+ },900);
+}
+function quizAnswer(el){
+ const k=el.dataset.q;S.quiz[k]=el.value;
+ let w=el.closest('.fld');w.classList.remove('err');w.classList.add('ok');w.querySelector('.msg').textContent=T(UI.looksGood);
+ const qs=$('#qsum');if(qs)qs.innerHTML=summaryHtml();
+ const pkq=PKG[S.pick.id];
+ if(qShown(pkq,S.quiz).length!==document.querySelectorAll('.fld[data-qq]').length){$('#qz').outerHTML=quizHtml(pkq);w=document.querySelector(`.fld[data-qq="${k}"]`)}
+ setTimeout(()=>{
+  const all=[...document.querySelectorAll('.fld[data-qq]')];const next=all[all.indexOf(w)+1];
+  if(next&&!next.classList.contains('ok')){next.scrollIntoView({behavior:'smooth',block:'center'});pulse(next)}
+  else if(!next){const n=$('#cname');if(n){const nw=n.closest('.fld');nw.scrollIntoView({behavior:'smooth',block:'center'});pulse(nw);setTimeout(()=>n.focus({preventScroll:true}),480)}}
+ },330);
+}
+function afterChange(w,adv){
+ const c=cur();const p=PARTS[S.partIdx];const a=AN(c);
+ S.curKey=`${c.id}|${FD.id}|${p.id}`;
+ const path=w.dataset.path;
+ const nsig=sigOf(visible(p.fields,a),a);
+ let w2=w;
+ refreshFld(w,{show:true});
+ if(nsig!==S.sig[S.curKey]){rebuildBody();w2=document.querySelector(`#part-${S.partIdx} .fld[data-path="${CSS.escape(path)}"]`)||w}
+ refreshHeads();
+ if(adv)setTimeout(()=>advanceFrom(w2),330);
+}
+function nmChange(el){
+ const c=cur();const a=AN(c);const path=el.dataset.nm;const w=el.closest('.fld');
+ a['nm:'+path]=el.checked;
+ if(el.checked)setPath(c,path,'');
+ else if(!path.includes('.'))propagate(c,c.active,path);
+ const inp=w.querySelector('.box>input');
+ if(inp){inp.disabled=el.checked;if(el.checked)inp.value=''}
+ w.classList.toggle('dis',el.checked);
+ S.touched.add(path);refreshFld(w,{show:true});refreshHeads();saveSoon();
+ if(el.checked)setTimeout(()=>advanceFrom(w),330);else if(inp)setTimeout(()=>inp.focus(),60);
+}
+
+document.addEventListener('click',async e=>{
+ const el=e.target.closest('[data-act]');if(!el)return;
+ const act=el.dataset.act;
+ if(el.tagName==='INPUT'&&(el.type==='file'||el.type==='checkbox'))return;
+ if(el.tagName==='A')e.preventDefault();
+ const c=S.caseId?cur():null;
+ switch(act){
+  case 'menu':{const o=!document.body.classList.contains('menuopen');document.body.classList.toggle('menuopen',o);$('#menubtn').setAttribute('aria-expanded',o);break}
+  case 'menuclose':document.body.classList.remove('menuopen');break;
+  case 'go':S.caseId=null;S.pick=null;S.skipPick=false;S.mode=el.dataset.to;render();break;
+  case 'lang':S.lang=S.lang==='en'?'es':'en';S.db.lang=S.lang;persist();render(true);break;
+  case 'home':S.mode='home';S.caseId=null;render();break;
+  case 'lock':S.key=null;S.salt=null;S.db={cases:[],lang:S.lang};S.caseId=null;S.mode='unlock';render();break;
+  case 'setpass':{
+   const p=$('#pp').value;if(p.length<8){$('#err').textContent=T(UI.minPass);break}
+   S.salt=crypto.getRandomValues(new Uint8Array(16));S.key=await deriveKey(p,S.salt);{const fh=S.fromHome;S.fromHome=false;S.mode=fh?'secure':'pick'}await persist();render();break}
+  case 'gopass':S.fromHome=true;S.mode='setpass';render();break;
+  case 'cancelpass':S.fromHome=false;S.mode='secure';render();break;
+  case 'skippass':S.mode='pick';await persist();render();break;
+  case 'unlock':{
+   try{
+    const st=JSON.parse(localStorage.getItem(KEY_ENC));const salt=unb64(st.salt);const key=await deriveKey($('#pp').value,salt);
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(st.iv)},key,unb64(st.data));
+    S.db=JSON.parse(new TextDecoder().decode(pt));S.key=key;S.salt=salt;S.lang=S.db.lang||'en';S.mode='pick';render();
+   }catch(err){$('#err').textContent=T(UI.wrongPass)}
+   break}
+  case 'pick':S.skipPick=false;S.mode='pick';S.pick=null;render();break;
+  case 'toggleother':{S.showOther=!S.showOther;const ol=$('#otherlist');if(ol)ol.classList.toggle('open',S.showOther);el.textContent=S.showOther?T(UI.hideOther):T(UI.otherForms);if(S.showOther&&ol)setTimeout(()=>ol.scrollIntoView({behavior:'smooth',block:'nearest'}),200);break}
+  case 'selpkg':case 'selform':await withProc(async()=>{S.pick={type:act==='selpkg'?'pkg':'form',id:el.dataset.id,name:''};S.quiz={};S.mode='front';render()},550);break;
+  case 'startcase':await startCase();break;
+  case 'mktest':await withProc(()=>TEST.makeTest(el.dataset.id),900);S.mode='home';render();break;
+  case 'mkall':await withProc(()=>TEST.makeAllTests(),900);render();break;
+  case 'mkevery':await withProc(()=>TEST.makeEveryForm(),900);render();break;
+  case 'deltests':if(confirm(T(UI.testDel)+'?')){await TEST.delTests();render()}break;
+  case 'openrev':{const cc=S.db.cases.find(x=>x.id===el.dataset.id);await withProc(async()=>{S.caseId=cc.id;setForm(cc.active||cc.form);if(cc.sets)syncFill(cc);S.partIdx=0;S.openIdx=0;S.touched=new Set();S.attempt=new Set();S.mode='review';render()},700);break}
+  case 'open':{
+   const cc=S.db.cases.find(x=>x.id===el.dataset.id);
+   await withProc(async()=>{
+    S.caseId=cc.id;setForm(cc.active||cc.form);if(cc.sets)syncFill(cc);
+    const fi=PARTS.findIndex(p=>partMissing(cc,p).length);S.partIdx=fi<0?0:fi;S.openIdx=S.partIdx;
+    S.touched=new Set();S.attempt=new Set();S.mode=cc.disc?'wizard':'disclaimer';render();
+   },700);break}
+  case 'delcase':if(confirm(T(UI.confirmDel))){S.db.cases=S.db.cases.filter(x=>x.id!==el.dataset.id);await persist();render()}break;
+  case 'ackdisc':cur().disc=true;await persist();S.openIdx=S.partIdx;S.mode='wizard';render();break;
+  case 'togglepart':{const i=+el.dataset.i;if(S.openIdx===i)closePart(i);else openPart(i);break}
+  case 'swform':{
+   c.active=el.dataset.f;setForm(c.active);syncFill(c);
+   const fi=PARTS.findIndex(p=>partMissing(c,p).length);S.partIdx=S.mode==='review'?0:(fi<0?0:fi);S.openIdx=S.partIdx;
+   S.touched=new Set();S.attempt=new Set();await persist();render();break}
+  case 'gotopart':S.partIdx=PARTS.findIndex(p=>p.id===+el.dataset.pid);S.openIdx=S.partIdx;S.mode='wizard';render();break;
+  case 'prev':if(S.partIdx>0)openPart(S.partIdx-1);break;
+  case 'next':nextPart();break;
+  case 'backwiz':S.openIdx=S.partIdx;S.mode='wizard';render();break;
+  case 'additem':{const a=AN(c);const arr=a[el.dataset.k]=a[el.dataset.k]||[];arr.push({});if(c.sets)propagate(c,c.active,el.dataset.k);await persist();rebuildBody();refreshHeads();break}
+  case 'rmitem':{const a=AN(c);a[el.dataset.k].splice(+el.dataset.i,1);if(c.sets)propagate(c,c.active,el.dataset.k);await persist();rebuildBody();refreshHeads();break}
+  case 'exportall':dl(new Blob([JSON.stringify(S.db)],{type:'application/json'}),`ImmiVault-${VER}-backup.json`);break;
+  case 'exportcase':dl(new Blob([JSON.stringify(c)],{type:'application/json'}),`${c.name.replace(/\W+/g,'_')}.json`);break;
+  case 'print':window.print();break;
+  case 'fillpdf':await withProc(()=>fillPdf(),900);break;
+  case 'fillall':await fillAll(c);break;
+ }
+});
+
+document.addEventListener('change',async e=>{
+ const el=e.target;
+ if(el.dataset.act==='importall'){
+  const txt=await el.files[0].text();try{const d=JSON.parse(txt);if(!Array.isArray(d.cases))throw 0;d.cases.forEach(cs=>{if(!S.db.cases.find(x=>x.id===cs.id))S.db.cases.push(cs)});await persist();render()}catch(err){alert('Invalid file')}
+  return}
+ if(el.dataset.act==='goack'){S.ack[S.caseId+':'+FD.id]={go:el.checked};render(true);return}
+ if(el.dataset.q){quizAnswer(el);return}
+ if(el.dataset.nm!==undefined){nmChange(el);return}
+ if(!el.dataset.path)return;
+ const c=cur();const t=el.dataset.t;const w=el.closest('.fld');
+ if(S.mode==='review'){setPath(c,el.dataset.path,el.value);await persist();render(true);return}
+ if(S.mode!=='wizard'||!w)return;
+ if(t==='multi'){
+  const k=el.dataset.path;const a=AN(c);const arr=Array.isArray(a[k])?a[k].slice():[];
+  const i=arr.indexOf(el.value);if(el.checked&&i<0)arr.push(el.value);if(!el.checked&&i>=0)arr.splice(i,1);
+  setPath(c,k,arr);S.touched.add(k);saveSoon();afterChange(w,false);return}
+ if(t==='yesno'||t==='select'){setPath(c,el.dataset.path,el.value);S.touched.add(el.dataset.path);saveSoon();afterChange(w,!isEmpty(el.value));return}
+ if(t==='text'){
+  setPath(c,el.dataset.path,el.value);saveSoon();S.touched.add(el.dataset.path);
+  afterChange(w,el.type==='date'&&!isEmpty(el.value)&&!chk('date',el.value));
+ }
+});
+document.addEventListener('input',e=>{
+ const el=e.target;
+ if(el.id==='cname'&&S.mode==='front'){S.pick.name=el.value;refreshFld(el.closest('.fld'),{});return}
+ if(el.dataset.path&&el.dataset.t==='text'&&S.mode==='wizard'){
+  setPath(cur(),el.dataset.path,el.value);saveSoon();
+  const w=el.closest('.fld');if(w)refreshFld(w,{});schedHeads();
+ }
+});
+document.addEventListener('focusout',e=>{
+ const el=e.target;const w=el.closest&&el.closest('.fld');if(!w)return;
+ if(w.dataset.raw){w.dataset.touched='1';refreshFld(w,{show:true});return}
+ if(S.mode!=='wizard'||!el.dataset.path)return;
+ S.touched.add(el.dataset.path);refreshFld(w,{show:true});schedHeads();
+});
+const isTyp=el=>!!(el&&el.matches&&el.matches('input:not([type=checkbox]):not([type=radio]):not([type=file]),textarea,select'));
+document.addEventListener('focusin',e=>{if(S.mode==='wizard'&&isTyp(e.target))document.body.classList.add('kb')});
+document.addEventListener('focusout',()=>setTimeout(()=>{if(!isTyp(document.activeElement))document.body.classList.remove('kb')},120));
+document.addEventListener('focusin',e=>{
+ const el=e.target;const w=el.closest&&el.closest('.fld');
+ if(w&&w.classList.contains('err')&&el.matches&&el.matches('input[type=text],input[type=number],input[type=date],textarea,select')&&!el.value){w.classList.remove('err');const m=w.querySelector('.msg');if(m)m.textContent=''}
+});
+document.addEventListener('keydown',e=>{
+ if(e.key!=='Enter')return;
+ const el=e.target;
+ if(S.mode==='front'&&el.id==='cname'){e.preventDefault();startCase();return}
+ if(S.mode==='wizard'&&el.matches&&el.matches('input[type=text],input[type=number],input[type=date]')&&el.dataset.path){
+  e.preventDefault();const w=el.closest('.fld');S.touched.add(el.dataset.path);refreshFld(w,{show:true});advanceFrom(w);
+ }
+});
+
+
+</script>
+<script src="forms/n400.js"></script>
+<script src="forms/i485.js"></script>
+<script src="forms/i130.js"></script>
+<script src="forms/g28.js"></script>
+<script src="forms/g639.js"></script>
+<script src="forms/g1145.js"></script>
+<script src="forms/g1450.js"></script>
+<script src="forms/g1650.js"></script>
+<script src="forms/g1651.js"></script>
+<script src="forms/i102.js"></script>
+<script src="forms/i129f.js"></script>
+<script src="forms/i131.js"></script>
+<script src="forms/i134.js"></script>
+<script src="forms/i212.js"></script>
+<script src="forms/i290b.js"></script>
+<script src="forms/i360.js"></script>
+<script src="forms/i539.js"></script>
+<script src="forms/i589.js"></script>
+<script src="forms/i601.js"></script>
+<script src="forms/i601a.js"></script>
+<script src="forms/i693.js"></script>
+<script src="forms/i751.js"></script>
+<script src="forms/i765.js"></script>
+<script src="forms/i821.js"></script>
+<script src="forms/i821d.js"></script>
+<script src="forms/i824.js"></script>
+<script src="forms/i864.js"></script>
+<script src="forms/i864a.js"></script>
+<script src="forms/i864ez.js"></script>
+<script src="forms/i865.js"></script>
+<script src="forms/i90.js"></script>
+<script src="forms/i907.js"></script>
+<script src="forms/i912.js"></script>
+<script src="forms/i914.js"></script>
+<script src="forms/i918.js"></script>
+<script src="forms/n336.js"></script>
+<script src="forms/n565.js"></script>
+<script src="forms/n600.js"></script>
+<script src="forms/n648.js"></script>
+<script src="sample.js"></script>
+<script>boot();</script></body></html>

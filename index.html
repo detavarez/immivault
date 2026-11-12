@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ImmiVault Ver023</title>
+<title>ImmiVault Ver024</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -233,11 +233,12 @@ body.kb .nav{display:none}
 @media(max-width:480px){header{flex-wrap:nowrap;gap:6px;padding:8px 10px}header .brand{font-size:1.1rem}.ver{padding:2px 7px;font-size:.8rem}header .btn{padding:3px 8px;font-size:.85rem;white-space:nowrap}}
 @media(max-width:600px){.ib .lbl{display:none}.nav .ib{width:52px;padding:0;flex:0 0 52px}.nav{gap:6px}}
 @media print{header,.nav,.noprint,#proc{display:none!important}body{background:#fff}.card{border:0;padding:0;box-shadow:none}main{padding:0}}
-@keyframes ivIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-header{animation:ivIn .6s ease-out both}
-#app{animation:ivIn .7s .15s ease-out both}
-#nav{animation:ivIn .6s .35s ease-out both}
-@media (prefers-reduced-motion:reduce){header,#app,#nav{animation:none}}
+@keyframes ivIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+header{animation:ivIn .9s ease-out both}
+#nav{animation:ivIn .9s .4s ease-out both}
+#app.ivgo>*{animation:ivIn .9s ease-out both}
+#app.ivgo>*:nth-child(2){animation-delay:.12s}#app.ivgo>*:nth-child(3){animation-delay:.24s}#app.ivgo>*:nth-child(4){animation-delay:.36s}#app.ivgo>*:nth-child(n+5){animation-delay:.48s}
+@media (prefers-reduced-motion:reduce){header,#nav,#app.ivgo>*{animation:none}}
 </style>
 
 </head>
@@ -261,7 +262,7 @@ header{animation:ivIn .6s ease-out both}
 
 
 <script>
-const VER='Ver023';
+const VER='Ver024';
 const KEY_ENC='immivault.enc.v1';
 const KEY_PLAIN='immivault.plain.v1';
 const PDFLIB_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
@@ -646,6 +647,7 @@ function render(keep){
  else if(S.mode==='wizard'){a.innerHTML=viewWizard();updateMid();}
  else if(S.mode==='review'){a.innerHTML=viewReview();$('#nav').classList.add('hide')}
  window.scrollTo({top:keep?y0:0,behavior:'instant'});
+ if(!keep){a.classList.remove('ivgo');void a.offsetWidth;a.classList.add('ivgo')}
  navSync();
 }
 
